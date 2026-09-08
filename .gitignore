@@ -2,3 +2,7 @@ data
 .claude
 .claude-flow/
 ruvector.db
+.env
+__pycache__/
+.pytest_cache/
+.cache*

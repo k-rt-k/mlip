@@ -1,0 +1,24 @@
+#!/bin/sh
+# Pre-commit guard against leaking secrets.
+# Activated via: git config core.hooksPath scripts/git-hooks
+
+# 1. Refuse secret-bearing files by name, wherever they sit in the tree.
+blocked=$(git diff --cached --name-only --diff-filter=ACM |
+  grep -E '(^|/)(\.env|\.cache[^/]*|.*\.pem|kaggle\.json)$')
+if [ -n "$blocked" ]; then
+  echo "pre-commit: refusing to commit secret file(s):" >&2
+  echo "$blocked" >&2
+  exit 1
+fi
+
+# 2. Scan staged content for key-like strings.
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks git --pre-commit --staged --no-banner --redact || {
+    echo "pre-commit: gitleaks flagged potential secrets above." >&2
+    echo "False positive? Add a 'gitleaks:allow' comment on that line." >&2
+    exit 1
+  }
+else
+  echo "pre-commit: WARNING: gitleaks not installed (brew install gitleaks);" >&2
+  echo "only filename checks ran." >&2
+fi
