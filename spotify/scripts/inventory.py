@@ -1,0 +1,98 @@
+"""EDA step 2: inventory all personal data the dev-mode API exposes.
+
+Pulls every user-side collection, caches raw JSON under data/spotify/,
+and prints sizes/overlap/freshness. Rerun anytime; overwrites the cache.
+
+    ~/mamba/envs/claude/bin/python spotify/scripts/inventory.py
+"""
+
+import json
+import sys
+from collections import Counter
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO_ROOT / "spotify" / "src"))
+
+from spotipy.exceptions import SpotifyException
+
+from auth import get_spotify
+from client import SpotifyClient, unwrap_item
+
+OUT_DIR = REPO_ROOT / "data" / "spotify"
+TIME_RANGES = ("short_term", "medium_term", "long_term")
+
+
+def dump(name, obj):
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    (OUT_DIR / f"{name}.json").write_text(json.dumps(obj, indent=1))
+    return obj
+
+
+def track_ids(entries):
+    """Unique non-local track ids from a list of (possibly wrapped) entries."""
+    unwrapped = (unwrap_item(e) for e in entries)
+    return {t["id"] for t in unwrapped if t and t.get("id")}
+
+
+def main():
+    client = SpotifyClient(get_spotify())
+
+    top = {tr: dump(f"top_tracks_{tr}", client.top_tracks(time_range=tr, max_items=None))
+           for tr in TIME_RANGES}
+    top_artists = {tr: dump(f"top_artists_{tr}", client.top_artists(time_range=tr, max_items=None))
+                   for tr in TIME_RANGES}
+    saved = dump("saved_tracks", client.saved_tracks())
+    recent = dump("recently_played", client.recently_played())
+    followed = dump("followed_artists", client.followed_artists())
+    playlists = dump("playlists", client.playlists())
+    # Non-owned (followed/editorial) playlists 403 in dev mode — skip those.
+    playlist_tracks, blocked_playlists = {}, []
+    for p in playlists:
+        try:
+            playlist_tracks[p["id"]] = client.playlist_tracks(p["id"])
+        except SpotifyException as e:
+            if e.http_status != 403:
+                raise
+            blocked_playlists.append(f"{p['name']} (owner: {p['owner']['display_name']})")
+    dump("playlist_tracks", playlist_tracks)
+
+    print(f"Raw JSON cached in {OUT_DIR}\n")
+    print("== Sizes ==")
+    for tr in TIME_RANGES:
+        print(f"top tracks {tr:12}: {len(top[tr]):4}   top artists {tr}: {len(top_artists[tr])}")
+    print(f"saved tracks        : {len(saved)}")
+    print(f"recently played     : {len(recent)}")
+    print(f"followed artists    : {len(followed)}")
+    print(f"playlists           : {len(playlists)} "
+          f"({sum(len(v) for v in playlist_tracks.values())} tracks pulled; "
+          f"{len(blocked_playlists)} blocked 403)")
+    for name in blocked_playlists:
+        print(f"  blocked: {name}")
+
+    saved_ids = track_ids(saved)
+    pool = {
+        "top(all ranges)": set().union(*(track_ids(top[tr]) for tr in TIME_RANGES)),
+        "saved": saved_ids,
+        "playlists": set().union(*(track_ids(v) for v in playlist_tracks.values())) if playlist_tracks else set(),
+        "recent": track_ids(recent),
+    }
+    all_ids = set().union(*pool.values())
+    print(f"\n== Coverage ==\nunique tracks overall: {len(all_ids)}")
+    for name, ids in pool.items():
+        overlap = len(ids & saved_ids) / len(ids) if ids and name != "saved" else None
+        extra = f"  ({overlap:.0%} also saved)" if overlap is not None else ""
+        print(f"{name:16}: {len(ids):4} unique{extra}")
+
+    artist_counts = Counter(
+        a["name"]
+        for e in saved + recent
+        if (t := unwrap_item(e))
+        for a in t["artists"]
+    )
+    print("\ntop artists across saved+recent:",
+          ", ".join(f"{a} ({n})" for a, n in artist_counts.most_common(5)))
+
+
+if __name__ == "__main__":
+    main()
