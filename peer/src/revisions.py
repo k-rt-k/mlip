@@ -70,13 +70,25 @@ def _check_version(api_version):
         raise ValueError(f"api_version must be 1 or 2, got {api_version!r}")
 
 
+V1_SUBMISSION_NAMES = ("Blind_Submission", "submission")  # 2018-2023, then 2017
+
+
 def fetch_submissions(client, venue_id, api_version, limit=None):
-    """All submissions for a venue, ordered by paper number."""
+    """All submissions for a venue (accepted and rejected), ordered by paper number.
+
+    v2: the Submission invitation. Do not filter by content.venueid, which
+    only matches accepted papers (rejected ones get a different venueid).
+    v1: Blind_Submission (ICLR 2018-2023) with a fallback to the 2017 name.
+    """
     _check_version(api_version)
     if api_version == 2:
-        notes = client.get_all_notes(content={"venueid": venue_id}, sort="number:asc")
+        notes = client.get_all_notes(invitation=f"{venue_id}/-/Submission", sort="number:asc")
     else:
-        notes = client.get_all_notes(invitation=f"{venue_id}/-/submission", sort="number:asc")
+        notes = []
+        for name in V1_SUBMISSION_NAMES:
+            notes = client.get_all_notes(invitation=f"{venue_id}/-/{name}", sort="number:asc")
+            if notes:
+                break
     return notes if limit is None else notes[:limit]
 
 

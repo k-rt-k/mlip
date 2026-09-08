@@ -99,19 +99,28 @@ class TestClientWrappers:
         assert fetch_revisions(client, "n1", api_version=1) == ["r"]
         client.get_references.assert_called_once_with(referent="n1", original=True)
 
-    def test_fetch_submissions_v2_filters_by_venueid(self):
+    def test_fetch_submissions_v2_uses_submission_invitation_not_venueid(self):
+        # content.venueid only returns accepted papers (2260 of 7404 for ICLR 2024).
         client = MagicMock()
         client.get_all_notes.return_value = ["n"]
         assert fetch_submissions(client, "ICLR.cc/2024/Conference", api_version=2) == ["n"]
         client.get_all_notes.assert_called_once_with(
-            content={"venueid": "ICLR.cc/2024/Conference"}, sort="number:asc")
+            invitation="ICLR.cc/2024/Conference/-/Submission", sort="number:asc")
 
-    def test_fetch_submissions_v1_uses_submission_invitation(self):
+    def test_fetch_submissions_v1_tries_blind_submission_then_submission(self):
+        client = MagicMock()
+        client.get_all_notes.side_effect = [[], ["n"]]  # 2017 has no Blind_Submission
+        assert fetch_submissions(client, "ICLR.cc/2017/conference", api_version=1) == ["n"]
+        calls = [c.kwargs["invitation"] for c in client.get_all_notes.call_args_list]
+        assert calls == ["ICLR.cc/2017/conference/-/Blind_Submission",
+                         "ICLR.cc/2017/conference/-/submission"]
+
+    def test_fetch_submissions_v1_blind_submission_short_circuits(self):
         client = MagicMock()
         client.get_all_notes.return_value = ["n"]
-        fetch_submissions(client, "ICLR.cc/2017/conference", api_version=1)
+        fetch_submissions(client, "ICLR.cc/2020/Conference", api_version=1)
         client.get_all_notes.assert_called_once_with(
-            invitation="ICLR.cc/2017/conference/-/submission", sort="number:asc")
+            invitation="ICLR.cc/2020/Conference/-/Blind_Submission", sort="number:asc")
 
     def test_fetch_submissions_limit_truncates(self):
         client = MagicMock()

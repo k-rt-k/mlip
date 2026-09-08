@@ -1,0 +1,263 @@
+{
+  "ICLR.cc/2017/conference": {
+    "api": 1,
+    "decision": {
+      "iso": "2017-02-07T11:59:00+00:00",
+      "source": "website",
+      "value": 1486468740000
+    },
+    "rebuttal_end": {
+      "iso": "2017-01-21T11:59:00+00:00",
+      "source": "website",
+      "value": 1484999940000
+    },
+    "review_due": {
+      "iso": "2016-12-17T11:59:00+00:00",
+      "source": "website",
+      "value": 1481975940000
+    },
+    "reviews_released": {
+      "iso": "2016-12-17T12:00:00+00:00",
+      "source": "website",
+      "value": 1481976000000
+    },
+    "submission": {
+      "iso": "2016-11-05T21:00:00+00:00",
+      "source": "website",
+      "value": 1478379600000
+    },
+    "year": 2017
+  },
+  "ICLR.cc/2018/Conference": {
+    "api": 1,
+    "decision": {
+      "iso": "2018-01-29T22:00:00+00:00",
+      "source": "website",
+      "value": 1517263200000
+    },
+    "rebuttal_end": {
+      "iso": "2018-01-05T22:00:00+00:00",
+      "source": "website",
+      "value": 1515189600000
+    },
+    "review_due": {
+      "iso": "2017-11-27T22:00:00+00:00",
+      "source": "website",
+      "value": 1511820000000
+    },
+    "reviews_released": {
+      "iso": "2017-11-27T22:00:00+00:00",
+      "source": "website",
+      "value": 1511820000000
+    },
+    "submission": {
+      "iso": "2017-10-27T21:00:00+00:00",
+      "source": "website",
+      "value": 1509138000000
+    },
+    "year": 2018
+  },
+  "ICLR.cc/2019/Conference": {
+    "api": 1,
+    "decision": {
+      "iso": "2018-12-23T11:59:59+00:00",
+      "source": "website",
+      "value": 1545566399000
+    },
+    "rebuttal_end": {
+      "iso": null,
+      "source": null,
+      "value": null
+    },
+    "review_due": {
+      "iso": "2018-11-02T18:59:00+00:00",
+      "source": "website",
+      "value": 1541185140000
+    },
+    "reviews_released": {
+      "iso": "2018-12-04T16:00:00+00:00",
+      "source": "website",
+      "value": 1543939200000
+    },
+    "submission": {
+      "iso": "2018-09-27T17:00:00+00:00",
+      "source": "website",
+      "value": 1538067600000
+    },
+    "year": 2019
+  },
+  "ICLR.cc/2020/Conference": {
+    "api": 1,
+    "decision": {
+      "iso": "2019-12-19T22:00:00+00:00",
+      "source": "website",
+      "value": 1576792800000
+    },
+    "rebuttal_end": {
+      "iso": "2019-11-16T11:59:59+00:00",
+      "source": "website",
+      "value": 1573905599000
+    },
+    "review_due": {
+      "iso": "2019-10-24T11:59:59+00:00",
+      "source": "empirical",
+      "value": 1571918399000
+    },
+    "reviews_released": {
+      "iso": "2019-11-04T12:00:00+00:00",
+      "source": "website",
+      "value": 1572868800000
+    },
+    "submission": {
+      "iso": "2019-09-25T15:00:00+00:00",
+      "source": "website",
+      "value": 1569423600000
+    },
+    "year": 2020
+  },
+  "ICLR.cc/2021/Conference": {
+    "api": 1,
+    "decision": {
+      "iso": "2021-01-14T11:59:00+00:00",
+      "source": "website",
+      "value": 1610625540000
+    },
+    "rebuttal_end": {
+      "iso": "2020-11-24T14:00:00+00:00",
+      "source": "website",
+      "value": 1606226400000
+    },
+    "review_due": {
+      "iso": "2020-10-29T11:59:59+00:00",
+      "source": "website",
+      "value": 1603972799000
+    },
+    "reviews_released": {
+      "iso": "2020-11-11T11:59:59+00:00",
+      "source": "website",
+      "value": 1605095999000
+    },
+    "submission": {
+      "iso": "2020-10-02T15:00:00+00:00",
+      "source": "website",
+      "value": 1601650800000
+    },
+    "year": 2021
+  },
+  "ICLR.cc/2022/Conference": {
+    "api": 1,
+    "decision": {
+      "iso": "2022-01-24T11:59:00+00:00",
+      "source": "website",
+      "value": 1643025540000
+    },
+    "rebuttal_end": {
+      "iso": "2021-11-23T11:59:59+00:00",
+      "source": "website",
+      "value": 1637668799000
+    },
+    "review_due": {
+      "iso": "2021-11-03T11:59:59+00:00",
+      "source": "empirical",
+      "value": 1635940799000
+    },
+    "reviews_released": {
+      "iso": "2021-11-09T07:59:00+00:00",
+      "source": "website",
+      "value": 1636444740000
+    },
+    "submission": {
+      "iso": "2021-10-06T00:00:00+00:00",
+      "source": "website",
+      "value": 1633478400000
+    },
+    "year": 2022
+  },
+  "ICLR.cc/2023/Conference": {
+    "api": 1,
+    "decision": {
+      "iso": "2023-01-21T02:00:00+00:00",
+      "source": "website",
+      "value": 1674266400000
+    },
+    "rebuttal_end": {
+      "iso": null,
+      "source": null,
+      "value": null
+    },
+    "review_due": {
+      "iso": "2022-10-25T11:59:59+00:00",
+      "source": "empirical",
+      "value": 1666699199000
+    },
+    "reviews_released": {
+      "iso": "2022-11-05T01:00:00+00:00",
+      "source": "website",
+      "value": 1667610000000
+    },
+    "submission": {
+      "iso": "2022-09-29T11:59:59+00:00",
+      "source": "website",
+      "value": 1664452799000
+    },
+    "year": 2023
+  },
+  "ICLR.cc/2024/Conference": {
+    "api": 2,
+    "decision": {
+      "iso": "2024-01-16T11:59:59+00:00",
+      "source": "website",
+      "value": 1705406399000
+    },
+    "rebuttal_end": {
+      "iso": "2023-11-23T11:59:59+00:00",
+      "source": "website",
+      "value": 1700740799000
+    },
+    "review_due": {
+      "iso": "2023-11-01T11:59:00+00:00",
+      "source": "invitations",
+      "value": 1698839940000
+    },
+    "reviews_released": {
+      "iso": "2023-11-10T12:00:00+00:00",
+      "source": "website",
+      "value": 1699617600000
+    },
+    "submission": {
+      "iso": "2023-09-29T11:59:59+00:00",
+      "source": "website",
+      "value": 1695988799000
+    },
+    "year": 2024
+  },
+  "ICLR.cc/2025/Conference": {
+    "api": 2,
+    "decision": {
+      "iso": "2025-01-23T11:59:59+00:00",
+      "source": "website",
+      "value": 1737633599000
+    },
+    "rebuttal_end": {
+      "iso": "2024-11-28T11:59:59+00:00",
+      "source": "website",
+      "value": 1732795199000
+    },
+    "review_due": {
+      "iso": "2024-11-04T11:59:59+00:00",
+      "source": "website",
+      "value": 1730721599000
+    },
+    "reviews_released": {
+      "iso": "2024-11-14T11:59:59+00:00",
+      "source": "website",
+      "value": 1731585599000
+    },
+    "submission": {
+      "iso": "2024-10-02T11:59:59+00:00",
+      "source": "website",
+      "value": 1727870399000
+    },
+    "year": 2025
+  }
+}
