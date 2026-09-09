@@ -20,8 +20,10 @@ DECISION_KEYS = ("decision", "acceptance")
 EXCLUDE_KEYS = ("meta_review", "metareview")
 
 
-def _kind(invitation):
-    return invitation.rsplit("/", 1)[-1].lower()
+def _kinds(note):
+    """Lower-cased last segment of each invitation on a note (v1 `.invitation`, v2 `.invitations`)."""
+    invs = getattr(note, "invitations", None) or [getattr(note, "invitation", "") or ""]
+    return [inv.rsplit("/", 1)[-1].lower() for inv in invs]
 
 
 def classify_replies(replies, submission_id):
@@ -34,12 +36,12 @@ def classify_replies(replies, submission_id):
     for n in replies:
         if n.id == submission_id:
             continue
-        k = _kind(n.invitation)
-        if any(x in k for x in EXCLUDE_KEYS):
+        kinds = _kinds(n)
+        if any(x in k for k in kinds for x in EXCLUDE_KEYS):
             metas.append(n)
-        elif any(x in k for x in DECISION_KEYS):
+        elif any(x in k for k in kinds for x in DECISION_KEYS):
             decisions.append(n)
-        elif any(k.endswith(x) for x in REVIEW_KEYS):
+        elif any(k.endswith(x) for k in kinds for x in REVIEW_KEYS):
             reviews.append(n)
     reviews.sort(key=lambda n: n.tcdate)
     decisions = sorted(decisions or metas, key=lambda n: n.tcdate)

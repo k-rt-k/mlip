@@ -100,13 +100,32 @@ def fetch_revisions(client, note_id, api_version):
     return client.get_references(referent=note_id, original=True)
 
 
-def download_revision_pdf(client, rev_id, api_version, dest):
-    """Save the PDF attached to a specific revision (edit id / reference id) to `dest`."""
+class RevisionFileUnavailable(RuntimeError):
+    """The API no longer serves this revision's file (v2 keeps only the current PDF)."""
+
+
+def download_revision_pdf(client, row, api_version, dest):
+    """Save the PDF of one revision row (from summarize_revisions) to `dest`.
+
+    v1: `/references/pdf?id=<reference id>` via the client; historical files work.
+    v2: GET `<baseurl>/pdf/<hash>.pdf` (the edit's `content.pdf.value`) through
+    the client's own session (its User-Agent passes the WAF; plain requests get
+    HTML 429s). Only the *current* file of a note is served: superseded revision
+    files 404 ("Pdf file with hash name ... not found"), so v2 venues cannot
+    supply pre-decision PDFs to outside accounts. `/attachment?id=<edit id>`
+    and `/pdf?id=<edit id>` also 404 (note ids only).
+    """
     _check_version(api_version)
     if api_version == 2:
-        data = client.get_attachment(field_name="pdf", id=rev_id)
+        resp = client.session.get(client.baseurl + row["pdf"], headers=client.headers, timeout=120)
+        if resp.status_code == 404:
+            raise RevisionFileUnavailable(f"{row['rev_id']}: {row['pdf']} is no longer served (v2 keeps current file only)")
+        resp.raise_for_status()
+        if not resp.content.startswith(b"%PDF"):
+            raise RuntimeError(f"{row['pdf']}: response is not a PDF ({resp.headers.get('content-type')})")
+        data = resp.content
     else:
-        data = client.get_pdf(rev_id, is_reference=True)
+        data = client.get_pdf(row["rev_id"], is_reference=True)
     dest = Path(dest)
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_bytes(data)

@@ -64,7 +64,7 @@ In v2 every content field is wrapped: `content['title']['value']`.
 |------|----|----|
 | Submissions of a venue | `client.get_all_notes(content={'venueid': venue}, sort='number:asc')` | `client.get_all_notes(invitation=f'{venue}/-/submission', ...)` |
 | Revision history of one paper | `client.get_note_edits(note_id=id, sort='tcdate:asc')` | `client.get_references(referent=id, original=True)` |
-| PDF of a specific revision | `client.get_attachment(field_name='pdf', id=<edit id>)` | `client.get_pdf(<reference id>, is_reference=True)` |
+| PDF of a specific revision | see "v2 revision PDFs" below; `/attachment?id=<edit id>` 404s (note ids only) | `client.get_pdf(<reference id>, is_reference=True)` |
 | Latest PDF | `client.get_pdf(<note id>)` | same |
 | Reviews in the same call | add `details='replies'` to `get_all_notes`, then filter replies whose invitation ends with `Official_Review` | `details='directReplies'` |
 
@@ -163,10 +163,20 @@ on v2 venues (2024+), to be checked.
 | ICLR 2017 | v1 | `<v>/-/submission` | `<v>/-/paper<N>/official/review`, `.../acceptance` | yes | yes |
 | ICLR 2018-2019 | v1 | `<v>/-/Blind_Submission` | `<v>/-/Paper<N>/Official_Review`, `Meta_Review` (2019: this *is* the decision) | yes | yes |
 | ICLR 2020-2023 | v1 | `<v>/-/Blind_Submission` | `<v>/Paper<N>/-/Official_Review`, `Meta_Review`, `Decision` | yes | yes |
-| ICLR 2024+ | v2 | `<v>/-/Submission` (7404 for 2024; `content.venueid` gives only the 2260 accepted) | `<v>/Submission<N>/-/Official_Review`, `Meta_Review`, `Decision` | yes | yes |
+| ICLR 2024+ | v2 | `<v>/-/Submission` (7404 for 2024; `content.venueid` gives only the 2260 accepted) | `<v>/Submission<N>/-/Official_Review`, `Meta_Review`, `Decision` | yes | yes, **but not readable**: `Submission`/`Revision`/`Rebuttal_Revision` edits have restricted readers, so `get_note_edits` returns only post-decision `Camera_Ready_Revision` edits (accepted) or nothing (rejected). No pre/post pairs for outsiders. |
 | NeurIPS 2023+ | v2 | accepted only readable (3218 / 4035) | `Official_Review`, `Rebuttal`, `Decision` | accepted only | no (text rebuttal) |
 | ICML 2024 | v2 | 2610 readable | none | no | no |
-| TMLR | v2 | 4661 readable | `Review`, `Decision` | yes | yes (rolling) |
+| TMLR | v2 | 4661 readable | `TMLR/Paper<N>/-/Review`, `Decision` | yes | edits visible (title/abstract/pdf path history), **but superseded PDF files are not served** (404 "Pdf file with hash name ... not found", even for a paper revised two weeks earlier). No pre/post PDF pairs. |
+
+**Bottom line (2026-09-09):** pre-review / post-rebuttal PDF pairs are only
+obtainable from **ICLR 2017-2023 (API v1)**, where `get_references` +
+`/references/pdf` serve every historical file. On API v2 (ICLR 2024+, TMLR,
+NeurIPS) either the pre-decision edits are unreadable or their files are gone.
+
+**v2 revision PDFs:** `client.session.get(client.baseurl + edit.content.pdf.value,
+headers=client.headers)` serves the *current* file only. Plain `requests`
+without the client's User-Agent gets an HTML 429 from the WAF regardless of
+quota. `/notes/edits` also has a tighter secondary limit (~18 requests/minute).
 
 Within PeerRead only `iclr_2017` overlaps OpenReview (ACL/CoNLL used START,
 NIPS used CMT, arXiv sections have no reviews).

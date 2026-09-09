@@ -57,6 +57,15 @@ class TestClassifyReplies:
         assert out["decision"].id == "m1"
         assert [n.id for n in out["reviews"]] == ["r1"]
 
+    def test_v2_notes_carry_invitations_list_not_invitation(self):
+        v2 = lambda id, inv, t: SimpleNamespace(id=id, invitations=[inv, "V/-/Edit"], tcdate=t,
+                                                forum="F", content={}, signatures=[])
+        replies = [v2("r1", "V/Submission1/-/Official_Review", 10),
+                   v2("d1", "V/Submission1/-/Decision", 20)]
+        out = classify_replies(replies, submission_id="F")
+        assert [n.id for n in out["reviews"]] == ["r1"]
+        assert out["decision"].id == "d1"
+
     def test_iclr2020_layout_paper_group_before_dash(self):
         replies = [note("r1", "V/Paper7/-/Official_Review", 10),
                    note("m1", "V/Paper7/-/Meta_Review", 15),

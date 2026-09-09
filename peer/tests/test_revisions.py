@@ -131,18 +131,40 @@ class TestClientWrappers:
         with pytest.raises(ValueError):
             fetch_revisions(MagicMock(), "n", api_version=3)
 
-    def test_download_pdf_v2_uses_attachment(self, tmp_path):
-        client = MagicMock()
-        client.get_attachment.return_value = b"%PDF"
+    @staticmethod
+    def v2_client(status, content, ctype):
+        resp = MagicMock(content=content, status_code=status, headers={"content-type": ctype})
+        resp.raise_for_status = lambda: None
+        client = MagicMock(baseurl="https://api2.openreview.net", headers={"User-Agent": "openreview-py"})
+        client.session.get.return_value = resp
+        return client
+
+    def test_download_pdf_v2_fetches_stored_path_via_client_session(self, tmp_path):
+        # Plain `requests` gets HTML 429s from the WAF; the client's session/User-Agent works.
+        client = self.v2_client(200, b"%PDF", "application/pdf")
         dest = tmp_path / "x.pdf"
-        assert download_revision_pdf(client, "e1", 2, dest) == dest
-        client.get_attachment.assert_called_once_with(field_name="pdf", id="e1")
+        assert download_revision_pdf(client, {"rev_id": "e1", "pdf": "/pdf/abc.pdf"}, 2, dest) == dest
+        client.session.get.assert_called_once()
+        args, kwargs = client.session.get.call_args
+        assert args[0] == "https://api2.openreview.net/pdf/abc.pdf"
+        assert kwargs["headers"] is client.headers
         assert dest.read_bytes() == b"%PDF"
+
+    def test_download_pdf_v2_superseded_file_raises_unavailable(self, tmp_path):
+        from revisions import RevisionFileUnavailable
+        client = self.v2_client(404, b'{"name":"NotFoundError"}', "application/json")
+        with pytest.raises(RevisionFileUnavailable):
+            download_revision_pdf(client, {"rev_id": "e1", "pdf": "/pdf/old.pdf"}, 2, tmp_path / "x.pdf")
+
+    def test_download_pdf_v2_rejects_non_pdf_response(self, tmp_path):
+        client = self.v2_client(200, b"<html>", "text/html")
+        with pytest.raises(RuntimeError, match="not a PDF"):
+            download_revision_pdf(client, {"rev_id": "e1", "pdf": "/pdf/a.pdf"}, 2, tmp_path / "x.pdf")
 
     def test_download_pdf_v1_uses_reference_pdf(self, tmp_path):
         client = MagicMock()
         client.get_pdf.return_value = b"%PDF"
-        download_revision_pdf(client, "r1", 1, tmp_path / "y.pdf")
+        download_revision_pdf(client, {"rev_id": "r1", "pdf": "/pdf/x.pdf"}, 1, tmp_path / "y.pdf")
         client.get_pdf.assert_called_once_with("r1", is_reference=True)
 
 

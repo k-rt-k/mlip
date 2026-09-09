@@ -25,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from openreview_auth import get_client  # noqa: E402
 from reviews import classify_replies, rating_history, review_record, select_pre_post  # noqa: E402
 from revisions import (  # noqa: E402
+    RevisionFileUnavailable,
     download_revision_pdf,
     fetch_revisions,
     fetch_submissions,
@@ -85,8 +86,12 @@ def process_paper(client, note, api_version, paper_dir, thresholds):
         return record
 
     paper_dir.mkdir(parents=True, exist_ok=True)
-    download_revision_pdf(client, sel["pre"]["rev_id"], api_version, paper_dir / "pre_review.pdf")
-    download_revision_pdf(client, sel["post"]["rev_id"], api_version, paper_dir / "post_rebuttal.pdf")
+    try:
+        download_revision_pdf(client, sel["pre"], api_version, paper_dir / "pre_review.pdf")
+        download_revision_pdf(client, sel["post"], api_version, paper_dir / "post_rebuttal.pdf")
+    except RevisionFileUnavailable as exc:
+        record.update(kept=False, skip_reason=f"revision file not served: {exc}")
+        return record
     meta = {
         **record,
         "pre": sel["pre"], "post": sel["post"],

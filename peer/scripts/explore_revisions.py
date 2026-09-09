@@ -97,8 +97,9 @@ def main(argv=None):
         records.append(rec)
         if args.download_pdfs and rec["initial_pdf_rev"]:
             paper_dir = out_dir / str(rec["number"] or note.id)
-            download_revision_pdf(client, rec["initial_pdf_rev"], args.api, paper_dir / "initial.pdf")
-            download_revision_pdf(client, rec["final_pdf_rev"], args.api, paper_dir / "final.pdf")
+            by_id = {r["rev_id"]: r for r in rows}
+            download_revision_pdf(client, by_id[rec["initial_pdf_rev"]], args.api, paper_dir / "initial.pdf")
+            download_revision_pdf(client, by_id[rec["final_pdf_rev"]], args.api, paper_dir / "final.pdf")
 
     print_table(records)
     n_multi = sum(1 for r in records if r["initial_pdf_rev"])
