@@ -17,5 +17,6 @@ git config core.hooksPath scripts/git-hooks
 
 - Song tempo, key, and audio features provided by
   [GetSongBPM.com](https://getsongbpm.com/)
-- Crowd-sourced track tags via the [Last.fm API](https://www.last.fm/api)
+- Music tags and metadata powered by [Last.fm](https://www.last.fm/) via the
+  [Last.fm API](https://www.last.fm/api)
 - Listening history via the [Spotify Web API](https://developer.spotify.com/)

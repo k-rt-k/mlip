@@ -9,7 +9,77 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import enrich  # noqa: E402
-from enrich import GetSongBPM, LastFM, enrich_track  # noqa: E402
+from enrich import (  # noqa: E402
+    GetSongBPM,
+    LastFM,
+    ascii_fold,
+    clean_title,
+    enrich_track,
+    title_variants,
+)
+
+
+class TestAsciiFold:
+    def test_curly_apostrophe(self):
+        assert ascii_fold("Same Ol’ Mistakes") == "Same Ol' Mistakes"
+
+    def test_diacritics(self):
+        assert ascii_fold("Thème Rythme Léger") == "Theme Rythme Leger"
+
+    def test_never_returns_empty(self):
+        assert ascii_fold("マフィア") == "マフィア"
+
+
+class TestSearchVariants:
+    def test_honorific_and_punct_variants(self):
+        pairs = GetSongBPM._search_variants("Ms. Lauryn Hill", "Ex-Factor")
+        assert pairs[0] == ("Ms. Lauryn Hill", "Ex-Factor")
+        assert ("Lauryn Hill", "Ex-Factor") in pairs
+        assert ("Lauryn Hill", "Ex‐Factor") in pairs
+
+    def test_plain_names_collapse_to_one(self):
+        assert GetSongBPM._search_variants("Frank Ocean", "Nights") == [
+            ("Frank Ocean", "Nights")
+        ]
+
+    def test_aka_gets_trailing_period(self):
+        pairs = GetSongBPM._search_variants(
+            "Kendrick Lamar", "Sherane a.k.a Master Splinter’s Daughter"
+        )
+        assert ("Kendrick Lamar", "Sherane a.k.a. Master Splinter's Daughter") in pairs
+
+    def test_aka_already_dotted_unchanged(self):
+        from enrich import dot_aka
+        assert dot_aka("Sherane a.k.a. Daughter") == "Sherane a.k.a. Daughter"
+
+
+class TestTitleVariants:
+    def test_ordered_and_deduped(self):
+        assert title_variants("Same Ol’ Mistakes (Live)") == [
+            "Same Ol’ Mistakes (Live)",
+            "Same Ol’ Mistakes",
+            "Same Ol' Mistakes",
+        ]
+
+    def test_plain_title_single_variant(self):
+        assert title_variants("Nights") == ["Nights"]
+
+
+class TestCleanTitle:
+    def test_strips_feat_parenthetical(self):
+        assert clean_title("SIR BAUDELAIRE (feat. DJ Drama)") == "SIR BAUDELAIRE"
+
+    def test_strips_dash_suffix(self):
+        assert clean_title("Nights - 2019 Remaster") == "Nights"
+
+    def test_plain_title_unchanged(self):
+        assert clean_title("Nights") == "Nights"
+
+    def test_hyphenated_word_kept(self):
+        assert clean_title("Twenty-One") == "Twenty-One"
+
+    def test_never_returns_empty(self):
+        assert clean_title("(Intro)") == "(Intro)"
 
 
 @pytest.fixture
@@ -94,14 +164,43 @@ class TestLastFM:
         with pytest.raises(RuntimeError, match="LASTFM_API_KEY"):
             LastFM()
 
+    def test_track_info_falls_back_to_clean_title(self, http):
+        http.get.return_value.json.side_effect = [
+            {"error": 6, "message": "Track not found"},           # raw title
+            {"track": {"listeners": "5", "playcount": "9"}},      # cleaned
+        ]
+        client = LastFM(api_key="k", min_interval=0)
+        info = client.track_info("The Weeknd", "Open Hearts (Live)")
+        assert info == {"listeners": "5", "playcount": "9"}
+
+    def test_track_info_none_when_unknown(self, http):
+        http.get.return_value.json.return_value = {"error": 6, "message": "no"}
+        client = LastFM(api_key="k", min_interval=0)
+        assert client.track_info("x", "y") is None
+
+
+def dispatch_by_url(gsb_search, gsb_song, lastfm_tags, lastfm_info):
+    """URL-keyed mock responses — enrich_track's API chains run concurrently,
+    so ordered side_effect lists would be racy."""
+    def fake_get(url, params=None, timeout=None):
+        response = MagicMock()
+        if "getsong" in url:
+            response.json.return_value = gsb_song if "/song/" in url else gsb_search
+        elif params.get("method") == "track.gettoptags":
+            response.json.return_value = lastfm_tags
+        else:
+            response.json.return_value = lastfm_info
+        return response
+    return fake_get
+
 
 class TestEnrichTrack:
     def test_merges_both_sources(self, http):
-        http.get.return_value.json.side_effect = [
-            {"search": [SEARCH_HIT]},
-            SONG_DETAIL,
+        http.get.side_effect = dispatch_by_url(
+            {"search": [SEARCH_HIT]}, SONG_DETAIL,
             {"toptags": {"tag": [{"name": "soul", "count": 100}]}},
-        ]
+            {"track": {"listeners": "800", "playcount": "9000"}},
+        )
         merged = enrich_track(
             "Frank Ocean", "Nights",
             gsb=GetSongBPM(api_key="k", min_interval=0),
@@ -110,12 +209,15 @@ class TestEnrichTrack:
         assert merged["tempo"] == 89.0
         assert merged["genres"] == ["r&b", "pop"]
         assert merged["tags"] == [("soul", 100)]
+        assert merged["listeners"] == 800
+        assert merged["playcount"] == 9000
 
     def test_gsb_miss_still_returns_tags(self, http):
-        http.get.return_value.json.side_effect = [
-            {"search": {"error": "no result"}},
+        http.get.side_effect = dispatch_by_url(
+            {"search": {"error": "no result"}}, {},
             {"toptags": {"tag": [{"name": "soul", "count": 100}]}},
-        ]
+            {"error": 6, "message": "Track not found"},
+        )
         merged = enrich_track(
             "a", "t",
             gsb=GetSongBPM(api_key="k", min_interval=0),
@@ -123,3 +225,4 @@ class TestEnrichTrack:
         )
         assert merged["tempo"] is None
         assert merged["tags"] == [("soul", 100)]
+        assert merged["listeners"] is None

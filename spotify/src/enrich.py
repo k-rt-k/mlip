@@ -9,12 +9,55 @@ Both clients throttle themselves; lookups are by (artist, title), not id.
 """
 
 import os
+import re
 import time
+import unicodedata
+from concurrent.futures import ThreadPoolExecutor
 
 import requests
 from dotenv import load_dotenv
 
 from auth import ENV_PATH
+
+_TITLE_NOISE = re.compile(
+    r"\s*[(\[][^)\]]*[)\]]"      # any (...) or [...] segment
+    r"|\s+-\s+.*$",              # " - Remastered 2014", " - Live" suffixes
+)
+
+
+def clean_title(title):
+    """Strip feat./remaster/version noise that breaks name-based lookups."""
+    cleaned = _TITLE_NOISE.sub("", title).strip()
+    return cleaned or title  # never return empty (e.g. title was all brackets)
+
+
+def ascii_fold(text):
+    """Fold curly quotes and diacritics to ASCII (catalogs index the plain form)."""
+    text = text.replace("’", "'").replace("‘", "'")
+    folded = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode()
+    return folded or text
+
+
+def title_variants(title):
+    """Lookup candidates in order: raw, noise-stripped, ascii-folded."""
+    variants = [title, clean_title(title), ascii_fold(clean_title(title))]
+    return list(dict.fromkeys(variants))  # dedupe, keep order
+
+
+_HONORIFIC = re.compile(r"^(ms|mr|mrs|dr)\.?\s+", re.IGNORECASE)
+
+
+def fancy_punct(text):
+    """ASCII -> typographic punctuation (GetSongBPM stores titles this way)."""
+    return text.replace("-", "‐").replace("'", "’")
+
+
+_AKA = re.compile(r"\b([aA]\.[kK]\.[aA])(?!\.)")
+
+
+def dot_aka(text):
+    """Normalize 'a.k.a' -> 'a.k.a.' (catalogs punctuate the abbreviation)."""
+    return _AKA.sub(r"\1.", text)
 
 
 def _require_env(name):
@@ -32,20 +75,28 @@ class _ThrottledAPI:
         self._min_interval = min_interval
         self._last_call = 0.0
 
-    def _get(self, url, params):
-        wait = self._min_interval - (time.monotonic() - self._last_call)
-        if wait > 0:
-            time.sleep(wait)
-        self._last_call = time.monotonic()
-        response = requests.get(url, params=params, timeout=15)
-        response.raise_for_status()
-        return response.json()
+    def _get(self, url, params, attempts=3):
+        for attempt in range(attempts):
+            wait = self._min_interval - (time.monotonic() - self._last_call)
+            if wait > 0:
+                time.sleep(wait)
+            self._last_call = time.monotonic()
+            try:
+                response = requests.get(url, params=params, timeout=20)
+                response.raise_for_status()
+                return response.json()
+            except requests.exceptions.RequestException as e:
+                # 4xx won't heal on retry; timeouts, 5xx and 429s often do.
+                status = getattr(getattr(e, "response", None), "status_code", None)
+                if (status and status < 500 and status != 429) or attempt == attempts - 1:
+                    raise
+                time.sleep(30 if status == 429 else 2 ** attempt)
 
 
 class GetSongBPM(_ThrottledAPI):
     BASE = "https://api.getsong.co"
 
-    def __init__(self, api_key=None, min_interval=1.3):  # 3,000/hour ceiling
+    def __init__(self, api_key=None, min_interval=1.2):  # 3,000/hour ceiling
         super().__init__(min_interval)
         self._key = api_key or _require_env("GETSONGBPM_API_KEY")
 
@@ -62,9 +113,26 @@ class GetSongBPM(_ThrottledAPI):
     def song(self, song_id):
         return self._call("/song/", id=song_id).get("song", {})
 
+    @staticmethod
+    def _search_variants(artist, title):
+        """Bounded (artist, title) query pairs — their search does not
+        normalize unicode punctuation or honorifics in either direction."""
+        base = clean_title(title)
+        bare = _HONORIFIC.sub("", artist)
+        pairs = [
+            (artist, title),
+            (ascii_fold(bare), dot_aka(ascii_fold(base))),
+            (bare, fancy_punct(ascii_fold(base))),
+        ]
+        return list(dict.fromkeys(pairs))
+
     def lookup_track(self, artist, title):
-        """Normalized feature dict for the top search hit, or None."""
-        hits = self.search(artist, title)
+        """Normalized feature dict for the best search hit, or None."""
+        hits = None
+        for artist_q, title_q in self._search_variants(artist, title):
+            hits = self.search(artist_q, title_q)
+            if hits:
+                break
         if not hits:
             return None
         detail = self.song(hits[0].get("song_id") or hits[0].get("id"))
@@ -106,12 +174,41 @@ class LastFM(_ThrottledAPI):
     def artist_tags(self, artist):
         return self._tags("artist.gettoptags", artist=artist)
 
+    def track_info(self, artist, title):
+        """Track metadata (listeners, playcount, …) or None. Tries title
+        variants — feat. suffixes break getInfo despite autocorrect."""
+        for variant in title_variants(title):
+            track = self._call("track.getinfo", artist=artist, track=variant).get("track")
+            if track:
+                return track
+        return None
+
 
 def enrich_track(artist, title, gsb, lastfm):
-    """Merge both sources into one feature dict; missing sources yield Nones."""
-    features = gsb.lookup_track(artist, title) or {
+    """Merge both sources into one feature dict; missing sources yield Nones.
+
+    GetSongBPM tries its own search variants internally; Last.fm gets title
+    variants here (its autocorrect handles artists, but not title noise).
+    The two APIs are independent, so their call chains run concurrently.
+    """
+    def _lastfm_part():
+        tags = []
+        for variant in title_variants(title):
+            tags = lastfm.track_tags(artist, variant)
+            if tags:
+                break
+        return tags, lastfm.track_info(artist, title)
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        features_future = pool.submit(gsb.lookup_track, artist, title)
+        tags, info = pool.submit(_lastfm_part).result()
+        features = features_future.result()
+
+    features = features or {
         "tempo": None, "key": None, "danceability": None,
         "acousticness": None, "genres": [], "mbid": None,
     }
-    features["tags"] = lastfm.track_tags(artist, title)
+    features["tags"] = tags
+    features["listeners"] = int(info["listeners"]) if info else None
+    features["playcount"] = int(info.get("playcount", 0)) if info else None
     return features
