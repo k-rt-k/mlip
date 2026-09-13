@@ -123,4 +123,12 @@ class TestAuthConfig:
         monkeypatch.delenv("SPOTIPY_CLIENT_ID", raising=False)
         monkeypatch.setattr(auth, "ENV_PATH", tmp_path / ".env")  # no .env file
         with pytest.raises(RuntimeError, match="SPOTIPY_CLIENT_ID"):
-            auth.get_spotify()
+            auth.get_spotify("test")
+
+    def test_invalid_user_rejected_before_auth(self):
+        with pytest.raises(ValueError):
+            auth.get_spotify("Not A Slug")
+
+    def test_pkce_forces_consent_dialog(self):
+        pkce = auth._PKCE(client_id="cid", redirect_uri="http://127.0.0.1:8080/callback")
+        assert "show_dialog=true" in pkce.get_authorize_url()

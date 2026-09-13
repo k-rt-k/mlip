@@ -1,11 +1,12 @@
 """EDA step 2: inventory all personal data the dev-mode API exposes.
 
-Pulls every user-side collection, caches raw JSON under data/spotify/,
+Pulls every user-side collection, caches raw JSON under data/spotify/<user>/,
 and prints sizes/overlap/freshness. Rerun anytime; overwrites the cache.
 
-    ~/mamba/envs/claude/bin/python spotify/scripts/inventory.py
+    ~/mamba/envs/claude/bin/python spotify/scripts/inventory.py --user <slug>
 """
 
+import argparse
 import json
 import sys
 from collections import Counter
@@ -18,14 +19,21 @@ from spotipy.exceptions import SpotifyException
 
 from auth import get_spotify
 from client import SpotifyClient, unwrap_item
+from users import data_dir
 
-OUT_DIR = REPO_ROOT / "data" / "spotify"
 TIME_RANGES = ("short_term", "medium_term", "long_term")
 
 
-def dump(name, obj):
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    (OUT_DIR / f"{name}.json").write_text(json.dumps(obj, indent=1))
+def user_arg(description):
+    """Shared argparse setup: every script needs a required --user slug."""
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument("--user", required=True, help="slug naming whose data (e.g. kartik)")
+    return parser
+
+
+def dump(name, obj, out_dir):
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / f"{name}.json").write_text(json.dumps(obj, indent=1))
     return obj
 
 
@@ -36,16 +44,21 @@ def track_ids(entries):
 
 
 def main():
-    client = SpotifyClient(get_spotify())
+    user = user_arg(__doc__).parse_args().user
+    out_dir = data_dir(user)
+    client = SpotifyClient(get_spotify(user))
 
-    top = {tr: dump(f"top_tracks_{tr}", client.top_tracks(time_range=tr, max_items=None))
+    def save(name, obj):
+        return dump(name, obj, out_dir)
+
+    top = {tr: save(f"top_tracks_{tr}", client.top_tracks(time_range=tr, max_items=None))
            for tr in TIME_RANGES}
-    top_artists = {tr: dump(f"top_artists_{tr}", client.top_artists(time_range=tr, max_items=None))
+    top_artists = {tr: save(f"top_artists_{tr}", client.top_artists(time_range=tr, max_items=None))
                    for tr in TIME_RANGES}
-    saved = dump("saved_tracks", client.saved_tracks())
-    recent = dump("recently_played", client.recently_played())
-    followed = dump("followed_artists", client.followed_artists())
-    playlists = dump("playlists", client.playlists())
+    saved = save("saved_tracks", client.saved_tracks())
+    recent = save("recently_played", client.recently_played())
+    followed = save("followed_artists", client.followed_artists())
+    playlists = save("playlists", client.playlists())
     # Non-owned (followed/editorial) playlists 403 in dev mode — skip those.
     playlist_tracks, blocked_playlists = {}, []
     for p in playlists:
@@ -55,9 +68,9 @@ def main():
             if e.http_status != 403:
                 raise
             blocked_playlists.append(f"{p['name']} (owner: {p['owner']['display_name']})")
-    dump("playlist_tracks", playlist_tracks)
+    save("playlist_tracks", playlist_tracks)
 
-    print(f"Raw JSON cached in {OUT_DIR}\n")
+    print(f"Raw JSON cached in {out_dir}\n")
     print("== Sizes ==")
     for tr in TIME_RANGES:
         print(f"top tracks {tr:12}: {len(top[tr]):4}   top artists {tr}: {len(top_artists[tr])}")

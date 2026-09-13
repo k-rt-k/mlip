@@ -1,20 +1,22 @@
 """End-to-end smoke test: auth + one call per endpoint family.
 
 Run after filling spotify/.env (opens a browser for consent on first run):
-    ~/mamba/envs/claude/bin/python spotify/scripts/smoke_test.py
+    ~/mamba/envs/claude/bin/python spotify/scripts/smoke_test.py --user <slug>
 """
 
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from auth import get_spotify
 from client import DeprecatedEndpointError, SpotifyClient
+from inventory import user_arg
 
 
 def main():
-    client = SpotifyClient(get_spotify())
+    client = SpotifyClient(get_spotify(user_arg(__doc__).parse_args().user))
 
     me = client.profile()
     print(f"Authenticated as: {me['display_name']} ({me['id']})")

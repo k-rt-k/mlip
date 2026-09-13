@@ -21,10 +21,34 @@ reduced endpoint set (tables below), quota counted per developer account
 
 | Flow | Use when | Our code |
 |------|----------|----------|
-| Authorization Code + PKCE | Anything under `/me/*` (personal data). No secret; browser consent once, then token cached. | `spotify/src/auth.py:get_spotify()` |
+| Authorization Code + PKCE | Anything under `/me/*` (personal data). No secret; browser consent once per person, then token cached. | `spotify/src/auth.py:get_spotify(user)` |
 | Client Credentials | Catalog-only (search/metadata), no user context. | Not implemented — PKCE covers everything we need. |
 
-Token cache: `spotify/.cache-pkce` (gitignored). Scopes: `auth.SCOPES`.
+Token cache: `spotify/.cache-pkce-<user>` (gitignored). Scopes: `auth.SCOPES`.
+
+## Multi-user: onboarding a teammate
+
+Every script takes a required `--user <slug>` (lowercase, `[a-z0-9_-]`):
+the slug names the token file `spotify/.cache-pkce-<slug>` and the data dir
+`data/spotify/<slug>/`. Helpers in `spotify/src/users.py`. The enrichment
+cache (`data/spotify/enrich_sample.json`) is shared across users.
+
+1. **Allowlist them** (you, once): dashboard → your app → Settings →
+   **User Management** → add their name + the email on their Spotify account.
+   Dev mode caps this at 5 users including you.
+2. **They authenticate on this machine**: pick a slug and run
+   `python spotify/scripts/smoke_test.py --user <slug>`. Same Client ID as
+   yours (it's not a secret). The consent page is forced every time
+   (`show_dialog=true`) — if it shows the wrong account, click **"Not you?"**
+   to switch. Check the "Authenticated as" line.
+3. **Identity guard**: the first run writes `data/spotify/<slug>/profile.json`;
+   later runs refuse to proceed if the token's account id differs (this is what
+   catches a browser auto-approving as whoever was logged in). Fix: delete
+   `spotify/.cache-pkce-<slug>` and re-authenticate.
+4. Pull their history: `python spotify/scripts/inventory.py --user <slug>`.
+
+Quota is shared per developer account (July 2026), so run big pulls
+sequentially. Port 8080 is single-use — one person authenticates at a time.
 
 ## Available in Development Mode → our wrapper
 

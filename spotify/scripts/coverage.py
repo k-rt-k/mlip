@@ -1,9 +1,9 @@
 """EDA step 4: join coverage of external datasets over our pulled track ids.
 
-Reads the inventory cache (data/spotify/) and the Kaggle 114k dump
-(data/kaggle/), joins on Spotify track_id, and reports coverage.
+Reads a user's inventory cache (data/spotify/<user>/) and the Kaggle 114k
+dump (data/kaggle/), joins on Spotify track_id, and reports coverage.
 
-    ~/mamba/envs/claude/bin/python spotify/scripts/coverage.py
+    ~/mamba/envs/claude/bin/python spotify/scripts/coverage.py --user <slug>
 """
 
 import csv
@@ -16,16 +16,18 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT / "spotify" / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from inventory import OUT_DIR, TIME_RANGES, track_ids  # noqa: E402
+from inventory import TIME_RANGES, track_ids, user_arg  # noqa: E402
+from users import data_dir  # noqa: E402
 
 KAGGLE_CSV = REPO_ROOT / "data" / "kaggle" / "spotify_tracks_114k.csv"
 
 
-def load(name):
-    return json.loads((OUT_DIR / f"{name}.json").read_text())
-
-
 def main():
+    src = data_dir(user_arg(__doc__).parse_args().user)
+
+    def load(name):
+        return json.loads((src / f"{name}.json").read_text())
+
     pools = {
         f"top_{tr}": track_ids(load(f"top_tracks_{tr}")) for tr in TIME_RANGES
     }

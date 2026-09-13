@@ -1,20 +1,20 @@
 """Spotify authentication: PKCE flow (user data), no client secret required.
 
-Config comes from spotify/.env (see .env.example). Token is cached to a
-gitignored file so the browser consent step happens only once.
+Config comes from spotify/.env (see .env.example). Each user's token is cached
+to a gitignored per-user file so the browser consent step happens once per
+person (see users.py).
 """
 
 import os
-from pathlib import Path
 
 import spotipy
 from dotenv import load_dotenv
 from spotipy.cache_handler import CacheFileHandler
 from spotipy.oauth2 import SpotifyPKCE
 
-SPOTIFY_DIR = Path(__file__).resolve().parents[1]
+from users import SPOTIFY_DIR, cache_path, check_identity, validate
+
 ENV_PATH = SPOTIFY_DIR / ".env"
-CACHE_PATH = SPOTIFY_DIR / ".cache-pkce"
 
 # Scopes needed for the EDA: personal listening data, read-only.
 SCOPES = (
@@ -29,8 +29,18 @@ SCOPES = (
 DEFAULT_REDIRECT_URI = "http://127.0.0.1:8080/callback"
 
 
-def get_spotify(scopes=SCOPES, cache_path=CACHE_PATH):
-    """Return an authenticated spotipy.Spotify (opens browser on first run)."""
+class _PKCE(SpotifyPKCE):
+    """SpotifyPKCE lacks show_dialog; without it a browser already logged into
+    Spotify auto-approves silently as whoever is signed in. Force the consent
+    page (it has a "Not you?" account switch)."""
+
+    def get_authorize_url(self, state=None):
+        return super().get_authorize_url(state=state) + "&show_dialog=true"
+
+
+def get_spotify(user, scopes=SCOPES):
+    """Authenticated spotipy.Spotify for `user` (opens browser on first run)."""
+    validate(user)
     load_dotenv(ENV_PATH)
     client_id = os.environ.get("SPOTIPY_CLIENT_ID")
     if not client_id:
@@ -39,10 +49,12 @@ def get_spotify(scopes=SCOPES, cache_path=CACHE_PATH):
             "and fill in the Client ID from developer.spotify.com/dashboard "
             "(see docs/spotify_api.md for setup steps)."
         )
-    auth_manager = SpotifyPKCE(
+    auth_manager = _PKCE(
         client_id=client_id,
         redirect_uri=os.environ.get("SPOTIPY_REDIRECT_URI", DEFAULT_REDIRECT_URI),
         scope=" ".join(scopes),
-        cache_handler=CacheFileHandler(cache_path=str(cache_path)),
+        cache_handler=CacheFileHandler(cache_path=str(cache_path(user))),
     )
-    return spotipy.Spotify(auth_manager=auth_manager)
+    sp = spotipy.Spotify(auth_manager=auth_manager)
+    check_identity(sp, user)
+    return sp
