@@ -4,7 +4,9 @@
     (normally one job per shard via spotify/scripts/babel_embed.sbatch)
 
 Embeddings are written only under /data/user_data, outside the git repo; the
-script refuses to start otherwise, so it runs on Babel compute nodes only.
+script refuses to start otherwise, so real runs happen on Babel compute nodes.
+For a quick laptop test, --local-test writes to the repo's git-ignored
+data/spotify/embeddings-local/ instead (still refused if git would track it).
 
 Work proceeds in chunks - download a chunk, embed it, save - so a preempted
 job loses at most one chunk and a rerun resumes where it stopped. Babel
@@ -36,7 +38,10 @@ from jobs import (  # noqa: E402
     shard_tag,
 )
 from previews import MIN_INTERVAL, PREVIEW_DIR, download_previews, track_isrcs  # noqa: E402
-from users import user_arg  # noqa: E402
+from users import DATA_ROOT, user_arg  # noqa: E402
+
+# Only used with --local-test; inside the repo's git-ignored data/ directory.
+LOCAL_OUT_DIR = DATA_ROOT / "embeddings-local"
 
 
 def load_existing(path):
@@ -61,8 +66,12 @@ def main():
     parser.add_argument("--model", required=True, choices=sorted(EMBEDDERS))
     parser.add_argument("--shard", default="0/1", help="i/N: process only shard i of N")
     parser.add_argument("--preview-dir", type=Path, default=PREVIEW_DIR)
-    parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR,
-                        help="must resolve under /data/user_data, outside the repo")
+    parser.add_argument("--out-dir", type=Path,
+                        help=f"must resolve under /data/user_data, outside the repo "
+                             f"(default {DEFAULT_OUT_DIR})")
+    parser.add_argument("--local-test", action="store_true",
+                        help=f"allow a laptop run: output may leave /data/user_data "
+                             f"(default {LOCAL_OUT_DIR}) but must still be untracked by git")
     parser.add_argument("--chunk", type=int, default=256,
                         help="tracks per download+embed+save step")
     parser.add_argument("--limit", type=int, help="only process this many tracks")
@@ -70,7 +79,9 @@ def main():
                                         "(default: cuda > mps > cpu)")
     args = parser.parse_args()
 
-    args.out_dir = require_persistent_out(args.out_dir, REPO_ROOT)
+    default_out = LOCAL_OUT_DIR if args.local_test else DEFAULT_OUT_DIR
+    args.out_dir = require_persistent_out(args.out_dir or default_out, REPO_ROOT,
+                                          local_test=args.local_test)
     index, total = parse_shard(args.shard)
     tag = shard_tag(args.model, index, total)
     out_path = args.out_dir / args.model / f"shard-{index}-of-{total}.npz"
@@ -84,6 +95,7 @@ def main():
     todo = [tid for tid in tracks if tid not in done]
 
     start = record(log_path, event="start", model=args.model, shard=args.shard,
+                   local_test=args.local_test,
                    preview_dir=str(args.preview_dir.resolve()),
                    tracks=len(tracks), already_done=len(done))
     print(f"{tag} on {start['node']} (job {start['job_id']}): "

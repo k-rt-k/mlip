@@ -18,8 +18,17 @@ output directory resolves (symlinks and `..` included) under `/data/user_data`
 and outside the git repo — the clone itself may live in `/data/user_data`, so
 "under /data/user_data" alone would not keep output out of git. The check is
 `jobs.require_persistent_out`, a raise rather than an `assert` (which
-`python -O` would strip). As a consequence the script only runs where
+`python -O` would strip). As a consequence real runs happen only where
 `/data/user_data` is mounted: Babel compute nodes with an active job.
+
+For a laptop test, `--local-test` lifts only the `/data/user_data` rule:
+
+    python spotify/scripts/embed.py --user kartik --model clap --local-test --limit 5
+
+It defaults to the repo's git-ignored `data/spotify/embeddings-local/`, prints a
+warning, and tags the run `local_test: true` in the shard's manifest. The git
+rule still holds: a path inside the repo is accepted only if `git check-ignore`
+confirms git ignores it.
 Verified 2026-09-24 that the real path resolves to itself on `babel-t9-20`.
 
 `/data/user_data` was 92% full (43 GB free) on 2026-09-23. Embeddings are

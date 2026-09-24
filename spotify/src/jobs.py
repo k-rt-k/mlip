@@ -15,6 +15,8 @@ import hashlib
 import json
 import os
 import socket
+import subprocess
+import sys
 import time
 from pathlib import Path
 
@@ -22,15 +24,24 @@ USER_DATA_ROOT = Path("/data/user_data")
 DEFAULT_OUT_DIR = USER_DATA_ROOT / getpass.getuser() / "mlip" / "embeddings"
 
 
-def require_persistent_out(path, repo_root):
+def require_persistent_out(path, repo_root, local_test=False):
     """Refuse any embeddings location except /data/user_data, outside the repo.
 
     Resolves symlinks first, so a link cannot smuggle output elsewhere. Also
     rejects paths inside the git repo: on Babel the clone itself may live
     under /data/user_data, and output inside it could end up tracked.
     Raises rather than asserts - `python -O` strips assert statements.
+
+    `local_test` lifts only the /data/user_data rule, for runs on a laptop.
+    The git guarantee still holds: a path inside the repo is accepted only if
+    git itself confirms it is ignored.
     """
     resolved = Path(path).resolve()
+    if local_test:
+        _require_untracked(resolved, Path(repo_root).resolve())
+        print(f"WARNING: --local-test: writing embeddings to {resolved}, "
+              f"not {USER_DATA_ROOT}. Not for real runs.", file=sys.stderr)
+        return resolved
     if not resolved.is_relative_to(USER_DATA_ROOT):
         raise RuntimeError(f"embeddings must live under {USER_DATA_ROOT}, "
                            f"but {path} resolves to {resolved}")
@@ -42,6 +53,17 @@ def require_persistent_out(path, repo_root):
         raise RuntimeError(f"{user_dir} is not available here - it is only "
                            "mounted on compute nodes with an active job")
     return resolved
+
+
+def _require_untracked(resolved, repo_root):
+    """Raise unless `resolved` is outside the repo or git-ignored in it."""
+    if not resolved.is_relative_to(repo_root):
+        return
+    ignored = subprocess.run(["git", "-C", str(repo_root), "check-ignore", "-q",
+                              str(resolved)], capture_output=True).returncode == 0
+    if not ignored:
+        raise RuntimeError(f"{resolved} is inside the git repo and not "
+                           "git-ignored; embeddings must stay out of version control")
 
 
 def shard_of(track_id, n_shards):

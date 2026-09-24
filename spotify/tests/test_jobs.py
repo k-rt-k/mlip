@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -117,3 +118,31 @@ class TestRequirePersistentOut:
         user_data, repo = root
         with pytest.raises(RuntimeError, match="not available here"):
             require_persistent_out(user_data / "someone_else" / "emb", repo)
+
+
+class TestLocalTestOverride:
+    @pytest.fixture
+    def repo(self, tmp_path):
+        """A real git repo that ignores data/."""
+        root = (tmp_path / "repo").resolve()
+        root.mkdir()
+        subprocess.run(["git", "init", "-q", str(root)], check=True)
+        (root / ".gitignore").write_text("data/\n")
+        return root
+
+    def test_allows_gitignored_path_in_repo(self, repo, capsys):
+        out = repo / "data" / "embeddings-local"
+        assert require_persistent_out(out, repo, local_test=True) == out
+        assert "WARNING" in capsys.readouterr().err
+
+    def test_still_rejects_tracked_path_in_repo(self, repo):
+        with pytest.raises(RuntimeError, match="not git-ignored"):
+            require_persistent_out(repo / "spotify" / "emb", repo, local_test=True)
+
+    def test_allows_path_outside_repo_and_user_data(self, repo, tmp_path):
+        out = (tmp_path / "anywhere").resolve()
+        assert require_persistent_out(out, repo, local_test=True) == out
+
+    def test_default_mode_is_unchanged(self, repo):
+        with pytest.raises(RuntimeError, match="must live under"):
+            require_persistent_out(repo / "data" / "x", repo)
