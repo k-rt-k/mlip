@@ -120,6 +120,7 @@ Steps 2–4 will be refined after we discuss which API features to build around.
 
 ## Related docs
 
+- `docs/babel_embedding.md` — running the sharded embedding pipeline on Babel (storage layout, node logging, rate-limit and preemption constraints).
 - `docs/mpd_dataset.md` — Million Playlist Dataset: access status, schema, and why it is the natural source of held-out evaluation labels.
 
 ## Code pointers

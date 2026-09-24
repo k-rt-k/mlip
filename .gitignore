@@ -6,3 +6,4 @@ ruvector.db
 __pycache__/
 .pytest_cache/
 .cache*
+logs/
