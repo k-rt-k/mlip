@@ -139,9 +139,10 @@ Deezer 30s previews. Three models behind one interface in
 
     python spotify/scripts/embed.py --user <slug> --model clap|muq|clamp3 [--limit N]
 
-Previews land in `data/spotify/previews/` and embeddings in
-`data/spotify/embeddings/<model>.npz` — both keyed by track id, so both are
-shared across users. Resumable: reruns only fetch and embed what is missing.
+Previews land in `--preview-dir` (default `data/spotify/previews/`; `/scratch`
+on Babel) and embeddings in `/data/user_data/$USER/mlip/embeddings/<model>/` —
+the only location `embed.py` accepts (see `docs/babel_embedding.md`). Both are
+keyed by track id, so both are shared across users. Resumable: reruns only fetch and embed what is missing.
 
 ### Availability
 

@@ -1,7 +1,10 @@
 """Download track previews and embed them with one of the audio models.
 
-Local:    python spotify/scripts/embed.py --user kartik --model clap
-Cluster:  one job per shard via spotify/scripts/babel_embed.sbatch
+    python spotify/scripts/embed.py --user kartik --model clap
+    (normally one job per shard via spotify/scripts/babel_embed.sbatch)
+
+Embeddings are written only under /data/user_data, outside the git repo; the
+script refuses to start otherwise, so it runs on Babel compute nodes only.
 
 Work proceeds in chunks - download a chunk, embed it, save - so a preempted
 job loses at most one chunk and a rerun resumes where it stopped. Babel
@@ -24,11 +27,16 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT / "spotify" / "src"))
 
 from embeddings import EMBEDDERS, get_embedder  # noqa: E402
-from jobs import parse_shard, record, shard_of, shard_tag  # noqa: E402
+from jobs import (  # noqa: E402
+    DEFAULT_OUT_DIR,
+    parse_shard,
+    record,
+    require_persistent_out,
+    shard_of,
+    shard_tag,
+)
 from previews import MIN_INTERVAL, PREVIEW_DIR, download_previews, track_isrcs  # noqa: E402
-from users import DATA_ROOT, user_arg  # noqa: E402
-
-EMBED_DIR = DATA_ROOT / "embeddings"
+from users import user_arg  # noqa: E402
 
 
 def load_existing(path):
@@ -53,7 +61,8 @@ def main():
     parser.add_argument("--model", required=True, choices=sorted(EMBEDDERS))
     parser.add_argument("--shard", default="0/1", help="i/N: process only shard i of N")
     parser.add_argument("--preview-dir", type=Path, default=PREVIEW_DIR)
-    parser.add_argument("--out-dir", type=Path, default=EMBED_DIR)
+    parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR,
+                        help="must resolve under /data/user_data, outside the repo")
     parser.add_argument("--chunk", type=int, default=256,
                         help="tracks per download+embed+save step")
     parser.add_argument("--limit", type=int, help="only process this many tracks")
@@ -61,6 +70,7 @@ def main():
                                         "(default: cuda > mps > cpu)")
     args = parser.parse_args()
 
+    args.out_dir = require_persistent_out(args.out_dir, REPO_ROOT)
     index, total = parse_shard(args.shard)
     tag = shard_tag(args.model, index, total)
     out_path = args.out_dir / args.model / f"shard-{index}-of-{total}.npz"

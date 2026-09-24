@@ -10,7 +10,14 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import jobs  # noqa: E402
-from jobs import parse_shard, record, shard_locations, shard_of, shard_tag  # noqa: E402
+from jobs import (  # noqa: E402
+    parse_shard,
+    record,
+    require_persistent_out,
+    shard_locations,
+    shard_of,
+    shard_tag,
+)
 
 
 class TestShardOf:
@@ -63,3 +70,50 @@ class TestLog:
 
     def test_locations_of_empty_dir(self, tmp_path):
         assert shard_locations(tmp_path) == {}
+
+
+class TestRequirePersistentOut:
+    @pytest.fixture
+    def root(self, tmp_path, monkeypatch):
+        """A stand-in /data/user_data with one mounted user dir and a repo."""
+        user_data = (tmp_path / "user_data").resolve()
+        (user_data / "ksnair").mkdir(parents=True)
+        repo = (tmp_path / "repo").resolve()
+        repo.mkdir()
+        monkeypatch.setattr(jobs, "USER_DATA_ROOT", user_data)
+        return user_data, repo
+
+    def test_accepts_path_under_user_data(self, root):
+        user_data, repo = root
+        out = user_data / "ksnair" / "mlip" / "embeddings"
+        assert require_persistent_out(out, repo) == out
+
+    def test_rejects_path_outside_user_data(self, root, tmp_path):
+        _, repo = root
+        with pytest.raises(RuntimeError, match="must live under"):
+            require_persistent_out(tmp_path / "elsewhere", repo)
+
+    def test_rejects_symlink_escaping_user_data(self, root, tmp_path):
+        user_data, repo = root
+        (tmp_path / "home").mkdir()
+        link = user_data / "ksnair" / "sneaky"
+        link.symlink_to(tmp_path / "home")
+        with pytest.raises(RuntimeError, match="resolves to"):
+            require_persistent_out(link / "embeddings", repo)
+
+    def test_rejects_dotdot_escape(self, root, tmp_path):
+        user_data, repo = root
+        with pytest.raises(RuntimeError, match="must live under"):
+            require_persistent_out(user_data / "ksnair" / ".." / ".." / "x", repo)
+
+    def test_rejects_repo_clone_inside_user_data(self, root):
+        user_data, _ = root
+        repo = user_data / "ksnair" / "mlip"
+        repo.mkdir()
+        with pytest.raises(RuntimeError, match="inside the git repo"):
+            require_persistent_out(repo / "data" / "embeddings", repo)
+
+    def test_rejects_unmounted_user_dir(self, root):
+        user_data, repo = root
+        with pytest.raises(RuntimeError, match="not available here"):
+            require_persistent_out(user_data / "someone_else" / "emb", repo)

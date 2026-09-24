@@ -12,13 +12,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from jobs import shard_locations  # noqa: E402
-from users import DATA_ROOT  # noqa: E402
+from jobs import DEFAULT_OUT_DIR, shard_locations  # noqa: E402
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--out-dir", type=Path, default=DATA_ROOT / "embeddings")
+    parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
     parser.add_argument("--node", metavar="SHARD_TAG",
                         help="print just the node for this shard tag")
     args = parser.parse_args()

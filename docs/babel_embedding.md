@@ -13,6 +13,15 @@ Sharded preview -> embedding runs, one GPU job per shard. Code:
 | embeddings | `/data/user_data/$USER/mlip/embeddings/<model>/shard-i-of-N.npz` | persistent; one file per shard, so jobs never write the same file |
 | node log | `/data/user_data/$USER/mlip/embeddings/manifest/<model>-shard-i-of-N.jsonl` | records the node, job id and restart count of every attempt |
 
+**Enforced, not just defaulted:** `embed.py` refuses to start unless the
+output directory resolves (symlinks and `..` included) under `/data/user_data`
+and outside the git repo — the clone itself may live in `/data/user_data`, so
+"under /data/user_data" alone would not keep output out of git. The check is
+`jobs.require_persistent_out`, a raise rather than an `assert` (which
+`python -O` would strip). As a consequence the script only runs where
+`/data/user_data` is mounted: Babel compute nodes with an active job.
+Verified 2026-09-24 that the real path resolves to itself on `babel-t9-20`.
+
 `/data/user_data` was 92% full (43 GB free) on 2026-09-23. Embeddings are
 small (2.26M x 512 float32 ~ 4.6 GB) but clear space before large runs.
 
