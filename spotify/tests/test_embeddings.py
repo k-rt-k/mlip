@@ -1,6 +1,7 @@
 """Tests for the embedding interface (no model weights downloaded)."""
 
 import sys
+import warnings
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -41,6 +42,36 @@ class TestHelpers:
 
     def test_windows_never_returns_empty(self):
         assert len(windows(np.zeros(10), 100)) == 1
+
+
+class TestDevice:
+    def test_explicit_preference_wins(self):
+        assert embeddings.pick_device("cuda:1") == "cuda:1"
+
+    def test_env_var_is_honoured(self, monkeypatch):
+        monkeypatch.setenv("EMBED_DEVICE", "cpu")
+        assert embeddings.pick_device() == "cpu"
+
+    def test_falls_back_to_cpu_with_a_warning(self, monkeypatch):
+        monkeypatch.delenv("EMBED_DEVICE", raising=False)
+        fake = MagicMock()
+        fake.cuda.is_available.return_value = False
+        fake.backends.mps.is_available.return_value = False
+        monkeypatch.setitem(sys.modules, "torch", fake)
+        with pytest.warns(UserWarning, match="cpu"):
+            assert embeddings.pick_device() == "cpu"
+
+    def test_explicit_cpu_does_not_warn(self, monkeypatch):
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            assert embeddings.pick_device("cpu") == "cpu"
+
+    def test_prefers_cuda_over_mps(self, monkeypatch):
+        monkeypatch.delenv("EMBED_DEVICE", raising=False)
+        fake = MagicMock()
+        fake.cuda.is_available.return_value = True
+        monkeypatch.setitem(sys.modules, "torch", fake)
+        assert embeddings.pick_device() == "cuda"
 
 
 class TestRegistry:

@@ -42,6 +42,8 @@ def main():
     parser = user_arg(__doc__)
     parser.add_argument("--model", required=True, choices=sorted(EMBEDDERS))
     parser.add_argument("--limit", type=int, help="only process this many tracks")
+    parser.add_argument("--device", help="torch device for clap/muq "
+                                        "(default: cuda > mps > cpu)")
     args = parser.parse_args()
 
     tracks = track_isrcs(args.user)
@@ -60,7 +62,7 @@ def main():
     if not todo:
         return
 
-    embedder = get_embedder(args.model)
+    embedder = get_embedder(args.model, device=args.device)
     ids = sorted(todo)
     vectors = embedder.embed_audio([todo[i] for i in ids])
     done.update(zip(ids, vectors))

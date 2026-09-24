@@ -23,15 +23,36 @@ Usage:
 """
 
 import os
-import shutil
 import subprocess
+import warnings
 import tempfile
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import numpy as np
 
 CLAMP3_VENV = Path(os.environ.get("CLAMP3_VENV", Path.home() / "mamba/envs/clamp3"))
 CLAMP3_REPO = Path(os.environ.get("CLAMP3_REPO", Path.home() / ".cache/clamp3"))
+
+
+def pick_device(preference=None):
+    """cuda if present, else Apple mps, else cpu. EMBED_DEVICE overrides.
+
+    Warns when it lands on cpu, since an unnoticed cpu fallback is the
+    difference between minutes and days over a full library.
+    """
+    import torch
+
+    choice = preference or os.environ.get("EMBED_DEVICE")
+    if choice:
+        return choice
+    if torch.cuda.is_available():
+        return "cuda"
+    if torch.backends.mps.is_available():
+        return "mps"
+    warnings.warn("no cuda or mps device found - embedding on cpu will be "
+                  "roughly an order of magnitude slower", stacklevel=2)
+    return "cpu"
 
 
 def l2_normalise(matrix):
@@ -64,6 +85,9 @@ class Embedder:
 
     #: clips encoded per forward pass; raise for more speed, lower for less memory
     batch_size = 8
+    #: threads used to decode mp3s; the decoder releases the GIL, and decoding
+    #: (~0.15s/clip) dominates once the forward pass runs on a real GPU
+    decode_workers = 4
 
     def embed_audio(self, paths, batch_size=None):
         """L2-normalised (len(paths), dim) embeddings of audio files."""
@@ -78,6 +102,11 @@ class Embedder:
 
         signal, _ = librosa.load(path, sr=self.sample_rate, mono=True)
         return signal
+
+    def _load_many(self, paths):
+        """Decode a batch of clips in parallel."""
+        with ThreadPoolExecutor(max_workers=self.decode_workers) as pool:
+            return list(pool.map(self._load, paths))
 
 
 class Clap(Embedder):
@@ -94,12 +123,13 @@ class Clap(Embedder):
     repo = "laion/larger_clap_music_and_speech"
     window_seconds = 10
 
-    def __init__(self):
+    def __init__(self, device=None):
         import torch
         from transformers import ClapModel, ClapProcessor
 
         self._torch = torch
-        self._model = ClapModel.from_pretrained(self.repo).eval()
+        self.device = pick_device(device)
+        self._model = ClapModel.from_pretrained(self.repo).eval().to(self.device)
         self._processor = ClapProcessor.from_pretrained(self.repo)
 
     def embed_audio(self, paths, batch_size=None):
@@ -107,8 +137,8 @@ class Clap(Embedder):
         for batch in batched(paths, batch_size or self.batch_size):
             # Encode every window of every clip in one pass, then average the
             # windows belonging to each clip back together.
-            per_clip = [windows(self._load(p), self.window_seconds * self.sample_rate)
-                        for p in batch]
+            per_clip = [windows(signal, self.window_seconds * self.sample_rate)
+                        for signal in self._load_many(batch)]
             encoded = self._encode([w for clip in per_clip for w in clip])
             offset = 0
             for clip in per_clip:
@@ -118,14 +148,15 @@ class Clap(Embedder):
 
     def _encode(self, chunks):
         inputs = self._processor(audio=list(chunks), sampling_rate=self.sample_rate,
-                                 return_tensors="pt", padding=True)
+                                 return_tensors="pt", padding=True).to(self.device)
         with self._torch.no_grad():
-            return self._model.get_audio_features(**inputs).pooler_output.numpy()
+            return self._model.get_audio_features(**inputs).pooler_output.cpu().numpy()
 
     def embed_text(self, texts):
-        inputs = self._processor(text=list(texts), return_tensors="pt", padding=True)
+        inputs = self._processor(text=list(texts), return_tensors="pt",
+                                 padding=True).to(self.device)
         with self._torch.no_grad():
-            out = self._model.get_text_features(**inputs).pooler_output.numpy()
+            out = self._model.get_text_features(**inputs).pooler_output.cpu().numpy()
         return l2_normalise(out)
 
 
@@ -136,21 +167,23 @@ class MuQMuLan(Embedder):
     sample_rate = 24000
     repo = "OpenMuQ/MuQ-MuLan-large"
 
-    def __init__(self):
+    def __init__(self, device=None):
         import torch
         from muq import MuQMuLan as _MuQMuLan
 
         self._torch = torch
-        self._model = _MuQMuLan.from_pretrained(self.repo).eval()
+        self.device = pick_device(device)
+        self._model = _MuQMuLan.from_pretrained(self.repo).eval().to(self.device)
 
     def embed_audio(self, paths, batch_size=None):
         rows = []
         for batch in batched(paths, batch_size or self.batch_size):
-            signals = [self._load(p) for p in batch]
+            signals = self._load_many(batch)
             shortest = min(len(s) for s in signals)  # previews are all 30s, but be safe
-            wavs = self._torch.from_numpy(np.stack([s[:shortest] for s in signals]))
+            wavs = self._torch.from_numpy(
+                np.stack([s[:shortest] for s in signals])).to(self.device)
             with self._torch.no_grad():
-                rows.append(self._model(wavs=wavs).numpy())
+                rows.append(self._model(wavs=wavs).cpu().numpy())
         return l2_normalise(np.concatenate(rows))
 
     def embed_text(self, texts):
@@ -183,6 +216,9 @@ class Clamp3(Embedder):
     def embed_audio(self, paths, batch_size=None):
         # Its CLI already processes a whole directory per call, so one pass is
         # the batch; batch_size is accepted only to honour the interface.
+        # Each call costs ~16s fixed (loads MERT + CLaMP3 from disk, spawns the
+        # subprocess, stages temp files) on top of ~1.2s/clip, so always pass
+        # every clip at once rather than calling this in a loop.
         return self._run({p.name: p.read_bytes() for p in paths},
                          [p.stem for p in paths])
 
@@ -213,8 +249,13 @@ class Clamp3(Embedder):
 EMBEDDERS = {cls.name: cls for cls in (Clap, MuQMuLan, Clamp3)}
 
 
-def get_embedder(name):
-    """Instantiate one embedder by name; loads weights on first use."""
+def get_embedder(name, device=None):
+    """Instantiate one embedder by name; loads weights on first use.
+
+    `device` applies to clap/muq (cuda > mps > cpu by default). CLaMP 3 picks
+    its own device inside its venv via accelerate.
+    """
     if name not in EMBEDDERS:
         raise ValueError(f"unknown model {name!r}; choose from {sorted(EMBEDDERS)}")
-    return EMBEDDERS[name]()
+    cls = EMBEDDERS[name]
+    return cls() if cls is Clamp3 else cls(device=device)

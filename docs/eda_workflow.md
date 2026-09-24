@@ -148,11 +148,31 @@ Google's **MuLan is not public** (HF 401; weights never released).
 `OpenMuQ/MuQ-MuLan-large` is the open reproduction and is what `muq` loads.
 CLAP and CLaMP 3 are both downloadable.
 
-| key | model | dim | measured (20 clips, incl. model load) |
-|-----|-------|-----|--------------------------------------|
-| `clap` | `laion/larger_clap_music_and_speech` | 512 | 12 s |
-| `muq` | `OpenMuQ/MuQ-MuLan-large` | 512 | 48 s |
-| `clamp3` | CLaMP 3 SAAS | 768 | 70 s |
+| key | model | dim | params | load | marginal cost/clip (this Mac) |
+|-----|-------|-----|--------|------|------------------------------|
+| `clap` | `laion/larger_clap_music_and_speech` | 512 | ~90M audio tower | 7 s | 0.41 s (3 windows) / 0.15 s (1 window) |
+| `muq` | `OpenMuQ/MuQ-MuLan-large` | 512 | 663M | 12 s | ~2.4 s |
+| `clamp3` | CLaMP 3 SAAS | 768 | MERT-95M + encoder | in-call | 1.2 s + **16 s fixed per call** |
+
+### Where the time actually goes (profiled 2026-09-23, 20 clips)
+
+Per clip, CLAP: **0.16 s mp3 decode + 0.06 s mel feature-extract + 0.35 s
+forward** (3 windows, CPU; mps only 0.36 vs 0.41 — Apple mps barely helps here).
+
+- **CLAP is not intrinsically slow.** 0.15 s/clip for one window; our
+  deterministic 3-window average tripled it. A deliberate accuracy-for-speed
+  trade, not overhead.
+- **MuQ is slow because it is big**: 663M params (~7x CLAP's audio tower) run
+  over 720k *raw* samples (30 s @ 24 kHz), where CLAP sees a compressed mel
+  spectrogram of 10 s.
+- **CLaMP 3 is mostly fixed cost**: 16 s per invocation (loads MERT ~400 MB and
+  CLaMP3 SAAS ~1 GB from disk, spawns a subprocess, stages temp files) and only
+  1.2 s/clip marginal. Earlier "70 s for 20 clips" was overhead, not throughput
+  — always pass every clip in one call.
+- **On real GPUs the forward collapses and mp3 decode (~0.15 s/clip, pure CPU)
+  becomes the wall.** Hence `decode_workers` (threaded decode) in the base class.
+  Device order is cuda > mps > cpu, and a cpu fallback now emits a warning —
+  an unnoticed cpu run is the difference between minutes and days.
 
 ### Rate limits
 
