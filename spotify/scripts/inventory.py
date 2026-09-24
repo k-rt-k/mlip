@@ -6,7 +6,6 @@ and prints sizes/overlap/freshness. Rerun anytime; overwrites the cache.
     ~/mamba/envs/claude/bin/python spotify/scripts/inventory.py --user <slug>
 """
 
-import argparse
 import json
 import sys
 from collections import Counter
@@ -22,13 +21,6 @@ from client import SpotifyClient, unwrap_item
 from users import data_dir
 
 TIME_RANGES = ("short_term", "medium_term", "long_term")
-
-
-def user_arg(description):
-    """Shared argparse setup: every script needs a required --user slug."""
-    parser = argparse.ArgumentParser(description=description)
-    parser.add_argument("--user", required=True, help="slug naming whose data (e.g. kartik)")
-    return parser
 
 
 def dump(name, obj, out_dir):

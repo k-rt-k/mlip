@@ -16,8 +16,8 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT / "spotify" / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from inventory import TIME_RANGES, track_ids, user_arg  # noqa: E402
-from users import data_dir  # noqa: E402
+from inventory import TIME_RANGES, track_ids  # noqa: E402
+from users import data_dir, user_arg  # noqa: E402
 
 KAGGLE_CSV = REPO_ROOT / "data" / "kaggle" / "spotify_tracks_114k.csv"
 

@@ -42,7 +42,7 @@ doc are for `kartik` unless stated).
    audio-feature dumps (frozen content features keyed by track id), open
    audio-analysis alternatives.
 
-   **First result (2026-09-08, `spotify/scripts/coverage.py`)**: the Kaggle
+   **First result (2026-09-08, `spotify/scripts/kaggle_coverage.py`)**: the Kaggle
    114k dump (HF mirror `maharshipandya/spotify-tracks-dataset`; 89,741 unique
    ids, genre-stratified ~1k/genre, frozen ~2022) covers only **162/2,152
    (7.5%)** of our tracks by id — best on playlists (21.5%) and saved (14.8%),
@@ -125,3 +125,67 @@ Steps 2–4 will be refined after we discuss which API features to build around.
 - API surface: `spotify/src/client.py` (`SpotifyClient`, `BLOCKED_METHODS`)
 - Smoke test: `spotify/scripts/smoke_test.py`
 - Tests: `spotify/tests/test_client.py`
+
+## Audio embeddings from previews (2026-09-23)
+
+Replaces the deprecated Spotify audio features with learned embeddings over the
+Deezer 30s previews. Three models behind one interface in
+`spotify/src/embeddings.py`; previews in `spotify/src/previews.py`.
+
+    python spotify/scripts/embed.py --user <slug> --model clap|muq|clamp3 [--limit N]
+
+Previews land in `data/spotify/previews/` and embeddings in
+`data/spotify/embeddings/<model>.npz` — both keyed by track id, so both are
+shared across users. Resumable: reruns only fetch and embed what is missing.
+
+### Availability
+
+Google's **MuLan is not public** (HF 401; weights never released).
+`OpenMuQ/MuQ-MuLan-large` is the open reproduction and is what `muq` loads.
+CLAP and CLaMP 3 are both downloadable.
+
+| key | model | dim | measured (20 clips, incl. model load) |
+|-----|-------|-----|--------------------------------------|
+| `clap` | `laion/larger_clap_music_and_speech` | 512 | 12 s |
+| `muq` | `OpenMuQ/MuQ-MuLan-large` | 512 | 48 s |
+| `clamp3` | CLaMP 3 SAAS | 768 | 70 s |
+
+### Rate limits
+
+- **Models: none.** Weights download once from HuggingFace (~4 GB cache) and
+  then run locally and offline. Batch size is a memory/speed tradeoff only.
+- **Deezer: 50 requests / 5 s per IP**, unauthenticated, no key. We pace at
+  5 req/s (`previews.MIN_INTERVAL`) and retry on their in-body quota error
+  (code 4, not HTTP 429). The MP3 itself comes from their CDN and does not
+  count against the API quota.
+
+### What we have and have not established
+
+Coverage is measured: **Deezer resolved 20/20 and 92/97 (95%)** of sampled
+tracks, 2020s releases included (see the gap-analysis section above).
+
+Quality is **not** established. The earlier comparison was an informal smell
+test: five pairs *we* nominated as similar, checked for where one ranked among
+the other's 19 neighbours on a 20-clip sample. Self-chosen labels, n=5 — it is
+not a retrieval benchmark and should not be quoted as one. What it suggested,
+weakly: CLaMP 3 ranked those pairs most consistently (1-2 of 19), CLAP tagged
+short text prompts best and is ~4x faster, and all three placed two Japanese
+guitar bands (my dead girlfriend / the cabs) as near neighbours — a similarity
+no metadata source we tried could express. **A real evaluation needs held-out
+labels we did not pick**, e.g. same-playlist co-occurrence from the Million
+Playlist Dataset, or Last.fm tag overlap as a proxy for ground truth.
+
+### Gotchas found
+
+- **CLAP is non-deterministic out of the box**: its feature extractor defaults
+  to `truncation="rand_trunc"`, taking a *random* 10s window of each clip
+  (cosine 0.969-0.982 between runs of the same file). `Clap` in
+  `embeddings.py` instead windows the clip itself and averages — deterministic,
+  and uses all 30 s.
+- **CLaMP 3 needs isolation**: it pins transformers 4.40 / numpy<2, which would
+  break the other two. `spotify/scripts/setup_clamp3.sh` creates its venv and
+  clone; the adapter drives it by subprocess. Its CLI also shells out to a bare
+  `python`, so the venv must lead PATH (handled in `Clamp3._run`).
+- `spotify/scripts/coverage.py` was renamed to `kaggle_coverage.py`: on
+  `sys.path` it shadowed the real `coverage` package, which broke numba (and so
+  librosa) for any script importing it.

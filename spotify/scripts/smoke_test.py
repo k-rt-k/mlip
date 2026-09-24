@@ -8,11 +8,10 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from auth import get_spotify
 from client import DeprecatedEndpointError, SpotifyClient
-from inventory import user_arg
+from users import user_arg
 
 
 def main():

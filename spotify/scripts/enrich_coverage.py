@@ -22,8 +22,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from client import unwrap_item  # noqa: E402
 from enrich import GetSongBPM, LastFM, enrich_track  # noqa: E402
-from inventory import TIME_RANGES, user_arg  # noqa: E402
-from users import DATA_ROOT, data_dir  # noqa: E402
+from inventory import TIME_RANGES  # noqa: E402
+from users import DATA_ROOT, data_dir, user_arg  # noqa: E402
 
 SAMPLE_FILE = DATA_ROOT / "enrich_sample.json"
 

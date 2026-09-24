@@ -5,6 +5,7 @@ person chooses (`--user alice`). Pure path helpers plus one guard that stops a
 cache file from silently holding someone else's token.
 """
 
+import argparse
 import json
 import re
 from pathlib import Path
@@ -51,3 +52,11 @@ def check_identity(sp, user):
         marker.parent.mkdir(parents=True, exist_ok=True)
         marker.write_text(json.dumps(profile, indent=1))
     return profile
+
+
+def user_arg(description):
+    """Argparse parser with the required --user slug every script takes."""
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument("--user", required=True,
+                        help="slug naming whose data (e.g. kartik)")
+    return parser
