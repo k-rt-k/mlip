@@ -174,6 +174,21 @@ class LastFM(_ThrottledAPI):
     def artist_tags(self, artist):
         return self._tags("artist.gettoptags", artist=artist)
 
+    def similar_tracks(self, artist, title, limit=50):
+        """[(artist, title, match 0-1)] from global listening data; [] if unknown.
+
+        Independent of any user profile - it is Last.fm's collaborative
+        filtering over all scrobbles.
+        """
+        for variant in title_variants(title):
+            result = self._call("track.getsimilar", artist=artist, track=variant,
+                                limit=limit)
+            tracks = result.get("similartracks", {}).get("track", [])
+            if tracks:
+                return [(s["artist"]["name"], s["name"], float(s.get("match", 0)))
+                        for s in tracks]
+        return []
+
     def track_info(self, artist, title):
         """Track metadata (listeners, playcount, …) or None. Tries title
         variants — feat. suffixes break getInfo despite autocorrect."""
