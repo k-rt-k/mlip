@@ -43,19 +43,26 @@ node, and reuse means pinning a job there:
 
     NODE=$(python spotify/scripts/where_shards.py \
              --out-dir /data/user_data/$USER/mlip/embeddings --node clap-shard-0-of-4)
-    sbatch --nodelist=$NODE --export=ALL,SHARD=0,NSHARDS=4,MODEL=clap,SPOTIFY_USER=kartik \
-           spotify/scripts/babel_embed.sbatch
+    bash spotify/scripts/submit_babel_embed.sh --nodelist="$NODE" --export=ALL,SHARD=0,NSHARDS=4,MODEL=clap,SPOTIFY_USER=kartik
 
 To pull audio from another node instead, you need a running job on that node
 (ssh to a node is only allowed while you hold a job there).
 
 ## Submitting
 
-    mkdir -p logs
     for i in 0 1 2 3; do
-      sbatch --export=ALL,SHARD=$i,NSHARDS=4,MODEL=clap,SPOTIFY_USER=kartik \
-             spotify/scripts/babel_embed.sbatch
+      bash spotify/scripts/submit_babel_embed.sh \
+        --export=ALL,SHARD=$i,NSHARDS=4,MODEL=clap,SPOTIFY_USER=kartik
     done
+
+The submit wrapper creates `logs/` before calling SLURM and sets absolute
+log and working-directory paths. It can be invoked from any directory using
+the path to the wrapper. Additional `sbatch` options are passed through.
+
+Decode failures are recorded as `clip_failed` events with track IDs and errors
+in the shard manifest. Valid clips are still saved; failed clips are retried
+on the next run. Downloads require HTTP 200 and an MP3 header, then are
+renamed atomically from `.mp3.part`. MuQ batches only equal-length clips.
 
 Optional env: `PYTHON` (interpreter with the deps), `PREVIEW_DIR`, `OUT_DIR`.
 The track list comes from `data/spotify/<user>/` in the repo clone — copy the

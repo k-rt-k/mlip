@@ -1,5 +1,6 @@
 """Tests for playlist pairing, the similarity recommender and scoring."""
 
+import pytest
 import json
 import sys
 from pathlib import Path
@@ -126,3 +127,9 @@ class TestLastFmSimilarTracks:
         http.get.return_value.json.return_value = {"error": 6, "message": "no"}
         monkeypatch.setattr(enrich, "requests", http)
         assert enrich.LastFM(api_key="k", min_interval=0).similar_tracks("x", "y") == []
+
+
+@pytest.mark.parametrize("kind", ["seed", "recs"])
+def test_duplicate_playlist_names_raise(kind):
+    with pytest.raises(ValueError, match=f"duplicate {kind}"):
+        pair_playlists([pl(f"{kind}: Jazz", "a"), pl(f"{kind}: jazz", "b")])

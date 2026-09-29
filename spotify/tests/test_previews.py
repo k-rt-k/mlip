@@ -84,6 +84,7 @@ class TestDownloadPreviews:
         session = MagicMock()
         session.get.return_value.json.return_value = {"preview": preview}
         session.get.return_value.content = b"ID3audio"
+        session.get.return_value.status_code = 200
         monkeypatch.setattr(previews.requests, "Session", lambda: session)
         return session
 
@@ -96,12 +97,58 @@ class TestDownloadPreviews:
 
     def test_existing_clips_are_not_refetched(self, monkeypatch, tmp_path):
         session = self.fake_session(monkeypatch)
-        (tmp_path / "t1.mp3").write_bytes(b"old")
+        (tmp_path / "t1.mp3").write_bytes(b"ID3old")
         have, _ = download_previews({"t1": {"isrc": "A"}}, tmp_path)
-        assert have["t1"].read_bytes() == b"old"
+        assert have["t1"].read_bytes() == b"ID3old"
         session.get.assert_not_called()
 
     def test_unavailable_tracks_are_reported(self, monkeypatch, tmp_path):
         self.fake_session(monkeypatch, preview="")
         have, missing = download_previews({"t1": {"isrc": "A"}}, tmp_path)
         assert have == {} and missing == ["t1"]
+
+
+@pytest.mark.parametrize("status, content", [(403, b"ID3audio"), (200, b"<html>error"), (200, b"")])
+def test_invalid_download_is_not_cached(monkeypatch, tmp_path, status, content):
+    session = TestDownloadPreviews().fake_session(monkeypatch)
+    session.get.return_value.status_code = status
+    session.get.return_value.content = content
+    have, missing = download_previews({"t": {"isrc": "A"}}, tmp_path, pause=0)
+    assert have == {} and missing == ["t"]
+    assert not list(tmp_path.iterdir())
+
+
+def test_replaces_invalid_cache_and_stale_partial(monkeypatch, tmp_path):
+    TestDownloadPreviews().fake_session(monkeypatch)
+    (tmp_path / "t.mp3").write_bytes(b"<html>error")
+    (tmp_path / "t.mp3.part").write_bytes(b"partial")
+    have, missing = download_previews({"t": {"isrc": "A"}}, tmp_path, pause=0)
+    assert have["t"].read_bytes() == b"ID3audio"
+    assert missing == [] and not (tmp_path / "t.mp3.part").exists()
+
+
+def test_failed_write_never_publishes_partial(monkeypatch, tmp_path):
+    TestDownloadPreviews().fake_session(monkeypatch)
+    original = Path.write_bytes
+    def interrupted(path, content):
+        original(path, content[:3])
+        raise OSError("interrupted")
+    monkeypatch.setattr(Path, "write_bytes", interrupted)
+    with pytest.raises(OSError, match="interrupted"):
+        download_previews({"t": {"isrc": "A"}}, tmp_path, pause=0)
+    assert not list(tmp_path.iterdir())
+
+
+def test_mpeg_header_is_accepted(monkeypatch, tmp_path):
+    session = TestDownloadPreviews().fake_session(monkeypatch)
+    session.get.return_value.content = b"\xff\xfbtest"
+    have, missing = download_previews({"t": {"isrc": "A"}}, tmp_path, pause=0)
+    assert "t" in have and not missing
+
+
+def test_network_failure_does_not_stop_other_tracks(monkeypatch, tmp_path):
+    session = TestDownloadPreviews().fake_session(monkeypatch)
+    response = session.get.return_value
+    session.get.side_effect = [previews.requests.Timeout("timeout"), response, response]
+    have, missing = download_previews({"a": {"isrc": "A"}, "b": {"isrc": "B"}}, tmp_path, pause=0)
+    assert list(have) == ["b"] and missing == ["a"]

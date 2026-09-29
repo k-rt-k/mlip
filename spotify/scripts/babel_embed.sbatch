@@ -1,15 +1,10 @@
 #!/bin/bash
 # One shard of the preview -> embedding pipeline on Babel.
 #
-# Submit from the repo root (logs/ must exist: `mkdir -p logs`):
-#   sbatch --export=ALL,SHARD=0,NSHARDS=4,MODEL=clap,SPOTIFY_USER=kartik \
-#          spotify/scripts/babel_embed.sbatch
-#
-# Previews are cached on the node's local /scratch. To reuse a shard's audio,
-# pin the job to the node that holds it:
-#   NODE=$(python spotify/scripts/where_shards.py \
-#            --out-dir /data/user_data/$USER/mlip/embeddings --node clap-shard-0-of-4)
-#   sbatch --nodelist=$NODE --export=ALL,SHARD=0,... spotify/scripts/babel_embed.sbatch
+# Submit with the wrapper, which creates logs/ and sets the working directory:
+#   bash spotify/scripts/submit_babel_embed.sh \
+#     --export=ALL,SHARD=0,NSHARDS=4,MODEL=clap,SPOTIFY_USER=kartik
+# Add --nodelist=<node> to reuse previews on a particular node.
 #
 #SBATCH --job-name=embed
 #SBATCH --partition=preempt

@@ -89,8 +89,13 @@ class Embedder:
     #: (~0.15s/clip) dominates once the forward pass runs on a real GPU
     decode_workers = 4
 
-    def embed_audio(self, paths, batch_size=None):
-        """L2-normalised (len(paths), dim) embeddings of audio files."""
+    def embed_audio(self, paths, batch_size=None, on_error=None):
+        """L2-normalised audio embeddings, in input order.
+
+        With on_error(path, message), omit undecodable clips and report each
+        failure. Without a callback, fail immediately. All-failed/empty inputs
+        return shape (0, 0), since the embedding dimension is not yet known.
+        """
         raise NotImplementedError
 
     def embed_text(self, texts):
@@ -103,10 +108,28 @@ class Embedder:
         signal, _ = librosa.load(path, sr=self.sample_rate, mono=True)
         return signal
 
-    def _load_many(self, paths):
+    def _load_many(self, paths, on_error=None):
         """Decode a batch of clips in parallel."""
+        def decode(path):
+            try:
+                signal = self._load(path)
+                if not len(signal):
+                    raise ValueError("empty audio")
+                return signal, None
+            except Exception as exc:
+                if on_error is None:
+                    raise
+                return None, str(exc)
+
         with ThreadPoolExecutor(max_workers=self.decode_workers) as pool:
-            return list(pool.map(self._load, paths))
+            results = list(pool.map(decode, paths))
+        signals = []
+        for path, (signal, error) in zip(paths, results):
+            if error is not None:
+                on_error(path, error)
+            else:
+                signals.append(signal)
+        return signals
 
 
 class Clap(Embedder):
@@ -132,19 +155,21 @@ class Clap(Embedder):
         self._model = ClapModel.from_pretrained(self.repo).eval().to(self.device)
         self._processor = ClapProcessor.from_pretrained(self.repo)
 
-    def embed_audio(self, paths, batch_size=None):
+    def embed_audio(self, paths, batch_size=None, on_error=None):
         rows = []
         for batch in batched(paths, batch_size or self.batch_size):
             # Encode every window of every clip in one pass, then average the
             # windows belonging to each clip back together.
             per_clip = [windows(signal, self.window_seconds * self.sample_rate)
-                        for signal in self._load_many(batch)]
+                        for signal in self._load_many(batch, on_error)]
+            if not per_clip:
+                continue
             encoded = self._encode([w for clip in per_clip for w in clip])
             offset = 0
             for clip in per_clip:
                 rows.append(encoded[offset:offset + len(clip)].mean(axis=0))
                 offset += len(clip)
-        return l2_normalise(np.stack(rows))
+        return l2_normalise(np.stack(rows)) if rows else np.empty((0, 0))
 
     def _encode(self, chunks):
         inputs = self._processor(audio=list(chunks), sampling_rate=self.sample_rate,
@@ -175,20 +200,28 @@ class MuQMuLan(Embedder):
         self.device = pick_device(device)
         self._model = _MuQMuLan.from_pretrained(self.repo).eval().to(self.device)
 
-    def embed_audio(self, paths, batch_size=None):
+    def embed_audio(self, paths, batch_size=None, on_error=None):
         rows = []
         for batch in batched(paths, batch_size or self.batch_size):
-            signals = self._load_many(batch)
-            shortest = min(len(s) for s in signals)  # previews are all 30s, but be safe
-            wavs = self._torch.from_numpy(
-                np.stack([s[:shortest] for s in signals])).to(self.device)
-            with self._torch.no_grad():
-                rows.append(self._model(wavs=wavs).cpu().numpy())
-        return l2_normalise(np.concatenate(rows))
+            signals = self._load_many(batch, on_error)
+            # Equal-length groups preserve each clip regardless of neighbours.
+            groups = {}
+            for index, signal in enumerate(signals):
+                groups.setdefault(len(signal), []).append(index)
+            batch_rows = [None] * len(signals)
+            for indices in groups.values():
+                wavs = self._torch.from_numpy(
+                    np.stack([signals[i] for i in indices])).to(self.device)
+                with self._torch.no_grad():
+                    encoded = self._model(wavs=wavs).cpu().numpy()
+                for index, vector in zip(indices, encoded):
+                    batch_rows[index] = vector
+            rows.extend(batch_rows)
+        return l2_normalise(np.stack(rows)) if rows else np.empty((0, 0))
 
     def embed_text(self, texts):
         with self._torch.no_grad():
-            return l2_normalise(self._model(texts=list(texts)).numpy())
+            return l2_normalise(self._model(texts=list(texts)).cpu().numpy())
 
 
 class Clamp3(Embedder):
@@ -213,20 +246,25 @@ class Clamp3(Embedder):
                 "CLAMP3_REPO at an existing install."
             )
 
-    def embed_audio(self, paths, batch_size=None):
+    def embed_audio(self, paths, batch_size=None, on_error=None):
         # Its CLI already processes a whole directory per call, so one pass is
         # the batch; batch_size is accepted only to honour the interface.
         # Each call costs ~16s fixed (loads MERT + CLaMP3 from disk, spawns the
         # subprocess, stages temp files) on top of ~1.2s/clip, so always pass
         # every clip at once rather than calling this in a loop.
+        paths = list(paths)
+        by_stem = {p.stem: p for p in paths}
         return self._run({p.name: p.read_bytes() for p in paths},
-                         [p.stem for p in paths])
+                         [p.stem for p in paths],
+                         on_error=(lambda stem, error: on_error(
+                             by_stem[stem], error))
+                         if on_error else None)
 
     def embed_text(self, texts):
         files = {f"{i}.txt": t.encode() for i, t in enumerate(texts)}
         return self._run(files, [str(i) for i in range(len(texts))])
 
-    def _run(self, files, stems):
+    def _run(self, files, stems, on_error=None):
         """Stage `files`, run the CLI, and read back embeddings in `stems` order."""
         with tempfile.TemporaryDirectory() as tmp:
             src, out = Path(tmp) / "in", Path(tmp) / "out"
@@ -242,8 +280,14 @@ class Clamp3(Embedder):
                 cwd=self.repo_dir, env=env, capture_output=True, text=True)
             if result.returncode != 0:
                 raise RuntimeError(f"clamp3_embd.py failed:\n{result.stdout[-2000:]}")
-            rows = [np.load(out / f"{stem}.npy").reshape(-1) for stem in stems]
-        return l2_normalise(np.stack(rows))
+            rows = []
+            for stem in stems:
+                path = out / f"{stem}.npy"
+                if not path.exists() and on_error is not None:
+                    on_error(stem, "CLaMP 3 produced no embedding")
+                    continue
+                rows.append(np.load(path).reshape(-1))
+        return l2_normalise(np.stack(rows)) if rows else np.empty((0, 0))
 
 
 EMBEDDERS = {cls.name: cls for cls in (Clap, MuQMuLan, Clamp3)}

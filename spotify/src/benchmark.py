@@ -29,6 +29,9 @@ def pair_playlists(playlists):
         match = _CAPTURE_NAME.match(playlist["name"])
         if match:
             kind, name = match.group(1).lower(), match.group(2).lower()
+            if kind in found[name]:
+                raise ValueError(f"duplicate {kind} playlist for {name!r}: "
+                                 f"{found[name][kind]!r} and {playlist['id']!r}")
             found[name][kind] = playlist["id"]
     return {name: {"seed": ids["seed"], "recs": ids.get("recs")}
             for name, ids in sorted(found.items()) if "seed" in ids}

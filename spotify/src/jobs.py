@@ -59,8 +59,12 @@ def _require_untracked(resolved, repo_root):
     """Raise unless `resolved` is outside the repo or git-ignored in it."""
     if not resolved.is_relative_to(repo_root):
         return
-    ignored = subprocess.run(["git", "-C", str(repo_root), "check-ignore", "-q",
-                              str(resolved)], capture_output=True).returncode == 0
+    try:
+        ignored = subprocess.run(["git", "-C", str(repo_root), "check-ignore", "-q",
+                                  str(resolved)], capture_output=True).returncode == 0
+    except FileNotFoundError as exc:
+        raise RuntimeError("git is required for --local-test to verify that "
+                           "embeddings inside the repo are git-ignored") from exc
     if not ignored:
         raise RuntimeError(f"{resolved} is inside the git repo and not "
                            "git-ignored; embeddings must stay out of version control")

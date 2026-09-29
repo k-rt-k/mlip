@@ -68,11 +68,16 @@ def preview_url(isrc, session=requests, retries=3):
     return None
 
 
+def _is_mp3(header):
+    return header.startswith(b"ID3") or (len(header) >= 2 and
+                                          header[0] == 0xff and header[1] & 0xe0 == 0xe0)
+
+
 def download_previews(tracks, out_dir=PREVIEW_DIR, pause=MIN_INTERVAL):
     """Fetch any missing previews into out_dir/<track_id>.mp3.
 
-    Resumable: existing clips are kept, so reruns only fetch what is absent.
-    Returns ({track_id: path}, [ids with no available audio]).
+    Resumable: cached clips with MP3 headers are kept; invalid files are retried.
+    Returns ({track_id: path}, [ids unavailable or whose download failed]).
     """
     out_dir.mkdir(parents=True, exist_ok=True)
     session = requests.Session()
@@ -80,13 +85,27 @@ def download_previews(tracks, out_dir=PREVIEW_DIR, pause=MIN_INTERVAL):
     for tid, meta in tracks.items():
         dest = out_dir / f"{tid}.mp3"
         if dest.exists():
+            with dest.open("rb") as cached:
+                valid = _is_mp3(cached.read(3))
+            if valid:
+                have[tid] = dest
+                continue
+        part = dest.with_suffix(".mp3.part")
+        try:
+            url = preview_url(meta["isrc"], session)
+            if not url:
+                unavailable.append(tid)
+                continue
+            response = session.get(url, timeout=30)
+            if response.status_code != 200 or not _is_mp3(response.content[:3]):
+                unavailable.append(tid)
+                continue
+            part.write_bytes(response.content)
+            part.replace(dest)
             have[tid] = dest
-            continue
-        url = preview_url(meta["isrc"], session)
-        if not url:
+        except requests.RequestException:
             unavailable.append(tid)
-            continue
-        dest.write_bytes(session.get(url, timeout=30).content)
-        have[tid] = dest
-        time.sleep(pause)  # stay under the documented quota
+        finally:
+            part.unlink(missing_ok=True)
+            time.sleep(pause)
     return have, unavailable

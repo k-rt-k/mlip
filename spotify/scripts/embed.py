@@ -110,8 +110,18 @@ def main():
         unavailable += len(missing)
         if clips:
             ids = sorted(clips)
-            done.update(zip(ids, embedder.embed_audio([clips[i] for i in ids])))
-            save(out_path, done)
+            failures = {}
+            vectors = embedder.embed_audio(
+                [clips[i] for i in ids],
+                on_error=lambda path, error: failures.update({path.stem: error}))
+            for tid, error in sorted(failures.items()):
+                record(log_path, event="clip_failed", track_id=tid, error=error)
+            successful = [tid for tid in ids if tid not in failures]
+            if len(successful) != len(vectors):
+                raise RuntimeError("embedding count does not match successful clips")
+            done.update(zip(successful, vectors))
+            if successful:
+                save(out_path, done)
         print(f"  {min(offset + args.chunk, len(todo))}/{len(todo)} "
               f"({len(done)} embedded, {unavailable} without audio)", flush=True)
 

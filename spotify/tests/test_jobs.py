@@ -146,3 +146,11 @@ class TestLocalTestOverride:
     def test_default_mode_is_unchanged(self, repo):
         with pytest.raises(RuntimeError, match="must live under"):
             require_persistent_out(repo / "data" / "x", repo)
+
+
+def test_local_test_without_git_has_actionable_error(tmp_path, monkeypatch):
+    def missing_git(*args, **kwargs):
+        raise FileNotFoundError("git")
+    monkeypatch.setattr(jobs.subprocess, "run", missing_git)
+    with pytest.raises(RuntimeError, match="git is required for --local-test"):
+        require_persistent_out(tmp_path / "data", tmp_path, local_test=True)
