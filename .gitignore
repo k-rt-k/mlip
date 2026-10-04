@@ -7,3 +7,10 @@ __pycache__/
 .pytest_cache/
 .cache*
 logs/
+.venv/
+browser.json
+browser_headers.json
+*.headers.json
+oauth.json
+*.auth.json
+client_secret*.json
