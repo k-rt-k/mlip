@@ -1,10 +1,15 @@
 # Spotify EDA Workflow — Feasibility Check
 
-Goal: decide whether the Spotify recommender project is feasible given the
-2024–26 API restrictions (see `docs/spotify_api.md`), as input to the
-spotify-vs-peer topic decision.
+**Historical exploration (September 2026).** The active project is now the
+natural-language playlist recommender described in [SCOPE.md](SCOPE.md), with
+current progress in [STATUS.md](STATUS.md). Personal listening history is not
+part of the current recommendation scope. The findings below are dated
+feasibility evidence, not authorization for new personal-data collection.
 
-Status: **steps 1–2 complete** (2026-09-08); next: discuss which API features
+Original goal: assess Spotify recommender feasibility under the 2024–26 API
+restrictions (see `docs/spotify_api.md`).
+
+Recorded status: **steps 1–2 complete** (2026-09-08); then-next: discuss which API features
 to target, then steps 3–4.
 
 ## Step 2 results (personal-data inventory, 2026-09-08, user `kartik`)

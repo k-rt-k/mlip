@@ -1,5 +1,10 @@
 # Spotify Web API Lookup (as of Sept 2026)
 
+**Context:** this reference supports the earlier API/data-feasibility tooling.
+See [SCOPE.md](SCOPE.md) for the current project, which does not use personal
+listening history for recommendations. API behavior below is a dated reference;
+revalidate relevant details before relying on a service in new work.
+
 Reference for our code in `spotify/src/`. The API shrank substantially in
 Nov 2024 and Feb 2026 — this doc tracks what we can actually call.
 
