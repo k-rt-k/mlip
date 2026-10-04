@@ -40,6 +40,8 @@ def complete(messages, model, temperature=0, seed=0, response_format=None, max_t
         if status < 400:
             body = response.json()
             error = body.get("error")
+            if not error and body["choices"][0].get("finish_reason") == "error":
+                error = {"code": 502, "message": "provider error mid-generation (finish_reason=error)"}
             if not error:
                 choice = body["choices"][0]
                 return {"text": choice["message"].get("content") or "",

@@ -111,6 +111,13 @@ def test_complete_retries_error_in_ok_body_and_gives_up(monkeypatch):
         openrouter.complete([], "m", key="sk-test", attempts=3)
 
 
+def test_complete_retries_choice_level_provider_error(monkeypatch):
+    failed = {**OK, "choices": [{"message": {"content": ""}, "finish_reason": "error"}]}
+    fake_requests(monkeypatch, response(200, failed), response(200, OK))
+    out = openrouter.complete([], "m", key="sk-test")
+    assert out["text"] == "{}" and out["retries"] == 1
+
+
 def test_complete_does_not_retry_client_errors(monkeypatch):
     http = fake_requests(monkeypatch, response(401), response(200, OK))
     with pytest.raises(openrouter.requests.HTTPError):
