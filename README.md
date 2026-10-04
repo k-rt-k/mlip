@@ -20,6 +20,23 @@ partial-playlist creation, suggestions, and browser-auth setup commands are docu
 in the scripts under `youtube_music/scripts/` (also available via `--help`).
 Keep fetched data and account credentials under gitignored `data/youtube_music/`.
 
+The shared baseline dataset is committed in
+[datasets/baselines-v2.zip](datasets/baselines-v2.zip), with a
+[checksum manifest](datasets/baselines-v2.manifest.json). After cloning or pulling,
+extract it from the repository root:
+
+```sh
+unzip -n datasets/baselines-v2.zip -d .
+```
+
+This restores the 20-prompt reference dataset, ten partial examples, selection
+manifests, and required source snapshots at the paths expected by the scripts.
+Use `data/youtube_music/references/v2/reference_pools.json` for prompt references
+and `data/youtube_music/partial_examples/v1/model_inputs.json` for partial inputs;
+`dataset.json` in the same partial directory contains the hidden answers.
+The archive contains no credentials. Reading the saved datasets needs no login;
+live operations on private playlist copies require their owning account.
+
 After cloning, activate the secret-guard git hooks (once per machine):
 
 ```sh

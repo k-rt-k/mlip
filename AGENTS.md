@@ -22,7 +22,8 @@ three cached reference playlists each (60 playlists, 4,475 distinct video IDs),
 with tracks, provenance, selection caveats, and available displayed view metadata.
 Ten partial examples have verified private seed-only copies, five seeds each,
 and hidden songs saved separately from model inputs. A local credential-free
-dataset handoff ZIP and checksum manifest are available under `data/`.
+dataset handoff ZIP and checksum manifest are committed under `datasets/`;
+extract the ZIP from the repository root as described in `README.md`.
 Development/test splits and scoring conventions remain pending;
 see `docs/STATUS.md` for artifacts and review caveats. Browser headers are the only
 supported account-auth method.
@@ -48,7 +49,8 @@ team changes direction. Do not treat historical docs as current requirements.
 - `youtube_music/` — public playlist collection, seed-only copies, suggestions,
   browser-auth setup, and tests; script docstrings contain usage
 - `prompts.txt` — twenty synthetic prompts explicitly requested by the user
-- `data/` — datasets and local artifacts (gitignored; never commit data)
+- `datasets/` — explicitly approved, credential-free baseline ZIP and checksum manifest
+- `data/` — extracted datasets and local artifacts (gitignored)
 - `docs/` — `SCOPE.md`, `STATUS.md`, and existing API/feasibility references
 - `milestones/` — descriptions of project milestone deliverables; see `milestones/baselines.md`.
 - `scripts/git-hooks/` — secret guards; setup instructions in `README.md`
@@ -101,7 +103,8 @@ team changes direction. Do not treat historical docs as current requirements.
   or task checklists there. Those belong in `STATUS.md`; keep this overview
   current. Distinguish proposed plans from implementation and verified results.
 - Share context through synchronized Git changes, following the user's
-  commit/push instructions. Never commit secrets, personal histories,
+  commit/push instructions. Commit only explicitly approved dataset bundles;
+  keep extracted data ignored. Never commit secrets, personal histories,
   identifiable feedback, or raw user prompts. The explicitly requested synthetic
   pilot prompts in `prompts.txt` are shared experiment inputs.
 

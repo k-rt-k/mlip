@@ -19,8 +19,11 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables: [baselines milestone](../milestones/b
   is supported for account operations; public collection needs no login.
   Environment: `uv`, Python 3.12, pinned dependencies. Latest checks: **81 tests
   passed**, exact offline rebuild and handoff ZIP integrity verified.
-- **Handoff:** [dataset ZIP](../data/youtube_music/dataset-handoff-v2/datasets-v2.zip)
-  and SHA-256 manifest are local and gitignored; the ZIP contains no credentials.
+- **Handoff:** [dataset ZIP](../datasets/baselines-v2.zip) and
+  [SHA-256 manifest](../datasets/baselines-v2.manifest.json) are committed for
+  teammates. `unzip -n datasets/baselines-v2.zip -d .` from the repository root
+  restores the expected paths; extracted data stays gitignored. The ZIP contains
+  no credentials.
   [Reference report](../data/youtube_music/references/v2/review.html) and
   [partial-playlist report](../data/youtube_music/partial_examples/v1/review.html)
   provide playlist links and contents/counts. Private copies require their
