@@ -353,8 +353,9 @@ def main():
     p.add_argument('--device', default='cuda')
     p.add_argument('--drain', action='store_true')
     args = p.parse_args()
-    if args.rate <= 0 or args.rate > 5 or args.threads < 1 or args.max_queue < 1:
-        p.error('rate must be in (0,5], threads and max-queue must be positive')
+    # Deezer allows 50 requests / 5 s per IP; Babel shares egress IPs, so stay below it.
+    if args.rate <= 0 or args.rate > 9 or args.threads < 1 or args.max_queue < 1:
+        p.error('rate must be in (0,9], threads and max-queue must be positive')
     args.output = require_persistent_out(args.output, REPO)
     args.queue = require_persistent_out(args.queue, REPO)
     args.queue.mkdir(parents=True, exist_ok=True); args.scratch.mkdir(parents=True, exist_ok=True)

@@ -25,6 +25,7 @@ export PYTHONUNBUFFERED=1 OMP_NUM_THREADS=4
 mkdir -p "$TMPDIR"
 EXTRA=()
 if [ -n "${MAX_CHUNKS:-}" ]; then EXTRA+=(--max-chunks "$MAX_CHUNKS"); fi
+if [ -n "${RATE:-}" ]; then EXTRA+=(--rate "$RATE"); fi
 "$RUNTIME/bin/python" "$REPO/spotify/scripts/mpd_pipeline.py" "${ROLE:-produce}" \
     --catalog "${PIPELINE_CATALOG:-$ROOT/data/mpd/catalog.sqlite}" \
     --output "${PIPELINE_OUTPUT:-$ROOT/embeddings/mpd-full/clap}" \

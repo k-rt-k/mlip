@@ -127,8 +127,9 @@ on October 4. Their outputs were backed up to
 
 `spotify/scripts/mpd_pipeline.py` now separates fetching from CLAP inference:
 
-- One CPU producer searches with eight threads under one shared 4 requests/sec
-  API budget and publishes audio TARs plus JSON ready markers to durable
+- One CPU producer searches with eight threads under one shared API budget
+  (`--rate`, default 4 requests/sec, capped at 9 below Deezer's 10/sec per IP;
+  set via `RATE=` in the sbatch export) and publishes audio TARs plus JSON ready markers to durable
   `/data/user_data/ksnair/mlip/queue-v2`. The queue is bounded to 32 bundles.
 - One GPU consumer batches inference and updates the original two-shard,
   128-track checkpoint layout. Existing vectors and match provenance are kept;
@@ -156,9 +157,13 @@ Submit the continuous supervisor with:
 sbatch --job-name=mpd-supervisor \
   --chdir=/home/ksnair/worktrees/mlip-mpd \
   --output=/data/user_data/ksnair/mlip/logs/%x-%j.out \
-  --export=ALL,ROLE=supervise,MAX_CHUNKS= \
+  --export=ALL,ROLE=supervise,MAX_CHUNKS=,RATE=8 \
   /home/ksnair/worktrees/mlip-mpd/spotify/scripts/mpd_pipeline.sbatch
 ```
+
+On 2026-10-05 supervisor `10660689` (rate 4, ~33 s per 128-track chunk, i.e.
+one search per track at the rate limit) was cancelled at ~38% of chunks and
+replaced by `10670203` at `RATE=8`. The GPU consumer `10660844` kept running.
 
 Monitor `queue-v2/supervisor-events.jsonl`, `queue-v2/consumer-job.json`,
 `queue-v2/consumer-state.json`, and `embeddings/mpd-full/clap/pipeline-events.jsonl`.
