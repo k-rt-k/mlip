@@ -1,0 +1,86 @@
+{
+  "request_hash": "8e410c9c4568782ab0d12a992c02065f332759bed522ff646a2d69377aba1257",
+  "saved_at": "2026-10-05T02:44:07.095442+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b:free",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. Delegation - Oh Honey — Soulverse\n2. The Temptations - Just My Imagination (Running Away with Me) HD — Reyes Music Group\n3. Enchantment - It's You That I Need — Soulverse\n4. Al Green - For The Good Times — lolfox99\n5. Isley Brothers-Sensuality Part 1 & 2 — fsuforlife21\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    }
+  },
+  "response": {
+    "text": "{\"songs\":[{\"title\":\"Let's Get It On\",\"artist\":\"Marvin Gaye\"},{\"title\":\"I Heard It Through the Grapevine\",\"artist\":\"Marvin Gaye\"},{\"title\":\"Sexual Healing\",\"artist\":\"Marvin Gaye\"},{\"title\":\"Ain't No Mountain High Enough\",\"artist\":\"Marvin Gaye & Tammi Terrell\"},{\"title\":\"I'll Be Waiting\",\"artist\":\"The Temptations\"},{\"title\":\"My Guy\",\"artist\":\"Mary Wells\"},{\"title\":\"Where Did Our Love Go\",\"artist\":\"The Supremes\"},{\"title\":\"You Keep Me Hangin' On\",\"artist\":\"The Supremes\"},{\"title\":\"Proud Mary\",\"artist\":\"Ike & Tina Turner\"},{\"title\":\"I Want You Back\",\"artist\":\"The Jackson 5\"}]}",
+    "finish_reason": "stop",
+    "id": "gen-1791168239-ZeZ1fs7vHb7XurPHvIkd",
+    "model": "qwen/qwen3.8-27b:free",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 344,
+      "completion_tokens": 675,
+      "total_tokens": 1019,
+      "cost": 0,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0,
+        "upstream_inference_prompt_cost": 0,
+        "upstream_inference_completions_cost": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 519,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 7.836,
+    "retries": 0
+  }
+}

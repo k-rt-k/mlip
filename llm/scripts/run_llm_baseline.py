@@ -26,11 +26,11 @@ import openrouter  # noqa: E402
 from parse import parse_songs, track_keys  # noqa: E402
 from playlists import make_client, save_json, timestamp  # noqa: E402
 from prompts import PROMPT_VERSION, SYSTEM, prompt_only, seeds_only, song_schema  # noqa: E402
-from resolve import resolve_song  # noqa: E402
+from resolve import matches, resolve_song  # noqa: E402
 
 DEFAULT_MODEL = "qwen/qwen3.8-27b:free"
 INPUTS = {"prompt_only": "data/youtube_music/references/v2/reference_pools.json",
-          "seeds_only": "data/youtube_music/partial_examples/v1/model_inputs.json"}
+          "seeds_only": "data/youtube_music/partial_examples/v2/model_inputs.json"}
 BUDGET = {"prompt_only": (20, 10), "seeds_only": (10, 5)}  # (requested, top-K kept)
 
 
@@ -58,17 +58,25 @@ def cached_complete(path, request, call):
     return response, False
 
 
-def rank_suggestions(songs, seed_ids, keep, resolve):
-    """Resolve in model order; rank unique, non-seed tracks; first `keep` ranks are the top K."""
+def rank_suggestions(songs, seed_tracks, keep, resolve):
+    """Resolve in model order; rank unique, non-seed tracks; first `keep` ranks are the top K.
+
+    Seed repeats use the resolver's fuzzy title + artist match, since a repeated
+    seed can resolve to a different upload than the seed's own video ID.
+    """
+    seed_ids = {t["video_id"] for t in seed_tracks}
     rows, used, rank = [], set(seed_ids), 0
     for llm_rank, song in enumerate(songs, 1):
         track = resolve(song["title"], song["artist"])
         row = {"llm_rank": llm_rank, **song, "resolved": track is not None, "rank": None,
                "in_top_k": False, "drop_reason": None, "track": track}
-        if track is None:
+        if any(matches(seed, song["title"], song["artist"]) for seed in seed_tracks) or (
+                track and track["video_id"] in seed_ids):
+            row["drop_reason"] = "seed_repeat"
+        elif track is None:
             row["drop_reason"] = "unresolved"
         elif track["video_id"] in used:
-            row["drop_reason"] = "seed_repeat" if track["video_id"] in seed_ids else "duplicate_video"
+            row["drop_reason"] = "duplicate_video"
         else:
             used.add(track["video_id"])
             rank += 1
@@ -145,7 +153,7 @@ def main():
             results.append(result)
             continue
         result["recommendations"] = rank_suggestions(
-            songs, {t["video_id"] for t in seeds}, keep,
+            songs, seeds, keep,
             lambda title, artist: resolve_song(client, title, artist, cache))
         save_json(cache_path, cache)
         results.append(result)

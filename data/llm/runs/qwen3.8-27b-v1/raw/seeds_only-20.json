@@ -1,0 +1,86 @@
+{
+  "request_hash": "a0600dd873faf6757ec28637564a7fccc321e0f4e0ea03267989a9413ed8fd54",
+  "saved_at": "2026-10-05T02:46:30.742737+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b:free",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. 12'' Don Carlos - Mr Sun — RasDashanSound\n2. Bob Marley - Jah Live — BoBMArleySong1\n3. 12'' Vivian Jones - Red Eyes — RasDashanSound\n4. Big Youth - Keep Your Dread — dubadicious\n5. The Sound Dimension - Congo Rock — Duba Dub\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    }
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Crazy Mixed Up\",\n      \"artist\": \"The Wailers\"\n    },\n    {\n      \"title\": \"Kung Fu\",\n      \"artist\": \"The Wailers\"\n    },\n    {\n      \"title\": \"I Can See Clearly Now\",\n      \"artist\": \"Jimmy Cliff\"\n    },\n    {\n      \"title\": \"Many Rivers to Cross\",\n      \"artist\": \"Jimmy Cliff\"\n    },\n    {\n      \"title\": \"Soul Man\",\n      \"artist\": \"The Upsetters\"\n    },\n    {\n      \"title\": \"I'm Gonna Change My Way of Living\",\n      \"artist\": \"The Wailers\"\n    },\n    {\n      \"title\": \"Get Up, Stand Up\",\n      \"artist\": \"Bob Marley & The Wailers\"\n    },\n    {\n      \"title\": \"Trench Town Rock\",\n      \"artist\": \"Bob Marley & The Wailers\"\n    },\n    {\n      \"title\": \"Concrete Jungle\",\n      \"artist\": \"Bob Marley & The Wailers\"\n    },\n    {\n      \"title\": \"One Love / People Get Ready\",\n      \"artist\": \"Bob Marley & The Wailers\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791168369-1f58oFoGIkmryDLTqwFi",
+    "model": "qwen/qwen3.8-27b:free",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 336,
+      "completion_tokens": 379,
+      "total_tokens": 715,
+      "cost": 0,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0,
+        "upstream_inference_prompt_cost": 0,
+        "upstream_inference_completions_cost": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 69,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 20.979,
+    "retries": 0
+  }
+}

@@ -7,19 +7,19 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables: [baselines milestone](../milestones/b
 - **Ready:** ranked, YouTube Music–resolved recommendations from
   `qwen/qwen3.8-27b:free` (OpenRouter, ModelRun host, fp4; temperature 0, seed 0,
   one run, prompt `v1`) for all 20 prompt-only requests (20 requested, top 10
-  kept) and all 10 seeds-only examples (10 requested, top 5 kept, matching the
-  platform continuation budget). Outputs and raw responses are committed in
+  kept) and all 20 seeds-only partial examples (`partial_examples/v2`; 10
+  requested, top 5 kept, matching the platform continuation budget). Outputs and raw responses are committed in
   [`data/llm/runs/qwen3.8-27b-v1/`](../data/llm/runs/qwen3.8-27b-v1/) on branch
   `LLM_baseline`; each mode file records model, provider, prompts, tokens, and latency.
-  Cost $0; ~33 s per call.
+  Cost $0; ~30 s per call.
 - **Code:** `llm/` (OpenRouter client, prompts, parsing, title + artist resolution
   to video IDs with alternate uploads); usage in `llm/scripts/run_llm_baseline.py`.
   Needs `OPENROUTER_API_KEY` in gitignored `llm/.env`.
-- **First observations:** 68% (prompt-only) and 55% (seeds-only) of suggestions
-  resolve to catalog tracks; 13/20 prompts and 6/10 examples fill top-K.
+- **First observations:** 68% (prompt-only) and 51% (seeds-only) of suggestions
+  resolve to catalog tracks; 13/20 prompts and 9/20 examples fill top-K.
   Unresolved items are mostly invented or misattributed songs (e.g. repeated
-  invented gospel titles, wrong artists for real songs); classical/performer
-  credits rarely resolve. Temperature 0 is not reproducible on the free endpoint;
+  invented gospel titles, wrong artists for real songs); some outputs repeat
+  seeds or duplicates (Hindi indie, punk); classical/performer credits rarely resolve. Temperature 0 is not reproducible on the free endpoint;
   saved raw responses are the record.
 - **Remaining:** scoring against references/hidden songs (evaluation owner),
   validity/constraint checks, and prompt + seeds mode (deferred until the
@@ -76,7 +76,7 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables: [baselines milestone](../milestones/b
 - [x] Prepare plan for implementation and evaluation of baselines.
 
 ### 2. LLM baseline
-**Owner:** Ayush. **State:** prompt-only and seeds-only outputs generated; scoring pending.
+**Owner:** Ayush. **State:** prompt-only (20) and seeds-only (20) outputs generated; scoring pending.
 
 - [x] Implement and run prompt-only and seeds-only generation; record exact
   model/version, prompts, outputs, cost, and latency.

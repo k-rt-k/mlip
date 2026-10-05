@@ -1,0 +1,86 @@
+{
+  "request_hash": "8917c64861efdc9552c3c136732832d06dae5cb8ac46b58e076a8470b8fe3a72",
+  "saved_at": "2026-10-05T02:45:08.543407+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b:free",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. Give Me Fire — G.B.H.\n2. Selfish Few — Chaos UK\n3. Leeches (Just an American Band) — Verbal Abuse\n4. Banned in D.C. — Bad Brains\n5. The Possibility of Life's Destruction — Discharge\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    }
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Rat Race\",\n      \"artist\": \"G.B.H.\"\n    },\n    {\n      \"title\": \"No More\",\n      \"artist\": \"Chaos UK\"\n    },\n    {\n      \"title\": \"No More\",\n      \"artist\": \"Discharge\"\n    },\n    {\n      \"title\": \"War Against the Machine\",\n      \"artist\": \"Discharge\"\n    },\n    {\n      \"title\": \"Bored to Death\",\n      \"artist\": \"G.B.H.\"\n    },\n    {\n      \"title\": \"No More\",\n      \"artist\": \"Chaos UK\"\n    },\n    {\n      \"title\": \"No More\",\n      \"artist\": \"Discharge\"\n    },\n    {\n      \"title\": \"No More\",\n      \"artist\": \"Chaos UK\"\n    },\n    {\n      \"title\": \"No More\",\n      \"artist\": \"Discharge\"\n    },\n    {\n      \"title\": \"No More\",\n      \"artist\": \"Chaos UK\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791168293-jAE7GlqgibCwHdrZS0OT",
+    "model": "qwen/qwen3.8-27b:free",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 320,
+      "completion_tokens": 337,
+      "total_tokens": 657,
+      "cost": 0,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0,
+        "upstream_inference_prompt_cost": 0,
+        "upstream_inference_completions_cost": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 73,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 15.696,
+    "retries": 0
+  }
+}
