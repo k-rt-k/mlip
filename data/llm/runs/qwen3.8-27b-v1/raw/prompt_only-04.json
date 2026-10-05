@@ -1,0 +1,86 @@
+{
+  "request_hash": "b191e4eaada7e51d79f415d9fdf289a39cb9c853bc27d99ebfddf979c774bb1e",
+  "saved_at": "2026-10-04T21:46:49.532789+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b:free",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "Playlist request: \"Intense electronic music for a demanding workout.\"\n\nRecommend 20 different songs that best fit this request, ordered from best fit to weakest fit. Match the requested mood, activity, genre, era, and language where stated. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    }
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Sandstorm\",\n      \"artist\": \"Darude\"\n    },\n    {\n      \"title\": \"Firestarter\",\n      \"artist\": \"The Prodigy\"\n    },\n    {\n      \"title\": \"Breathe\",\n      \"artist\": \"The Prodigy\"\n    },\n    {\n      \"title\": \"Block/Escape\",\n      \"artist\": \"The Prodigy\"\n    },\n    {\n      \"title\": \"Titan\",\n      \"artist\": \"The Prodigy\"\n    },\n    {\n      \"title\": \"Voodoo Lady\",\n      \"artist\": \"The Prodigy\"\n    },\n    {\n      \"title\": \"Technologic\",\n      \"artist\": \"Justice\"\n    },\n    {\n      \"title\": \"Genesis\",\n      \"artist\": \"Justice\"\n    },\n    {\n      \"title\": \"D.A.N.C.E.\",\n      \"artist\": \"Justice\"\n    },\n    {\n      \"title\": \"Primary 2_2\",\n      \"artist\": \"Justice\"\n    },\n    {\n      \"title\": \"Strobe\",\n      \"artist\": \"deadmau5\"\n    },\n    {\n      \"title\": \"Ghosts 'n' Stuff\",\n      \"artist\": \"deadmau5\"\n    },\n    {\n      \"title\": \"I Don't Want\",\n      \"artist\": \"deadmau5\"\n    },\n    {\n      \"title\": \"The Veldt\",\n      \"artist\": \"deadmau5\"\n    },\n    {\n      \"title\": \"Where You Are\",\n      \"artist\": \"deadmau5\"\n    },\n    {\n      \"title\": \"Memories\",\n      \"artist\": \"deadmau5\"\n    },\n    {\n      \"title\": \"The Other Side\",\n      \"artist\": \"deadmau5\"\n    },\n    {\n      \"title\": \"Alone\",\n      \"artist\": \"deadmau5\"\n    },\n    {\n      \"title\": \"Spaceman\",\n      \"artist\": \"deadmau5\"\n    },\n    {\n      \"title\": \"Harder, Better, Faster, Stronger\",\n      \"artist\": \"Daft Punk\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791150377-YhVeojggE1NPF0swJ3rw",
+    "model": "qwen/qwen3.8-27b:free",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 259,
+      "completion_tokens": 4641,
+      "total_tokens": 4900,
+      "cost": 0,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0,
+        "upstream_inference_prompt_cost": 0,
+        "upstream_inference_completions_cost": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 4098,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 32.443,
+    "retries": 0
+  }
+}

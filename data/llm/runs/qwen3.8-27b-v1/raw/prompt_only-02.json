@@ -1,0 +1,86 @@
+{
+  "request_hash": "c78261e7f95b595c72b82fc65fcefb495a36b7545f9dc1bb1f993a36b35e4cc8",
+  "saved_at": "2026-10-04T21:45:37.584851+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b:free",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "Playlist request: \"Joyful, upbeat songs for cooking with friends.\"\n\nRecommend 20 different songs that best fit this request, ordered from best fit to weakest fit. Match the requested mood, activity, genre, era, and language where stated. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    }
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Happy\",\n      \"artist\": \"Pharrell Williams\"\n    },\n    {\n      \"title\": \"I Gotta Feeling\",\n      \"artist\": \"Black Eyed Peas\"\n    },\n    {\n      \"title\": \"Uptown Funk\",\n      \"artist\": \"Bruno Mars ft. Mark Ronson\"\n    },\n    {\n      \"title\": \"Shut Up and Dance\",\n      \"artist\": \"WALK THE MOON\"\n    },\n    {\n      \"title\": \"Dancing Queen\",\n      \"artist\": \"ABBA\"\n    },\n    {\n      \"title\": \"Mamma Mia\",\n      \"artist\": \"ABBA\"\n    },\n    {\n      \"title\": \"September\",\n      \"artist\": \"Earth, Wind & Fire\"\n    },\n    {\n      \"title\": \"Celebration\",\n      \"artist\": \"Kool & The Gang\"\n    },\n    {\n      \"title\": \"Walking on Sunshine\",\n      \"artist\": \"Katrina and the Waves\"\n    },\n    {\n      \"title\": \"Best Day of My Life\",\n      \"artist\": \"American Authors\"\n    },\n    {\n      \"title\": \"Don't Stop Me Now\",\n      \"artist\": \"Queen\"\n    },\n    {\n      \"title\": \"Good Vibrations\",\n      \"artist\": \"The Beach Boys\"\n    },\n    {\n      \"title\": \"Dancing in the Street\",\n      \"artist\": \"Martha and the Vandellas\"\n    },\n    {\n      \"title\": \"I Will Survive\",\n      \"artist\": \"Gloria Gaynor\"\n    },\n    {\n      \"title\": \"Superstition\",\n      \"artist\": \"Stevie Wonder\"\n    },\n    {\n      \"title\": \"Le Freak\",\n      \"artist\": \"Chic\"\n    },\n    {\n      \"title\": \"Y.M.C.A.\",\n      \"artist\": \"Village People\"\n    },\n    {\n      \"title\": \"Footloose\",\n      \"artist\": \"Kenny Loggins\"\n    },\n    {\n      \"title\": \"Take On Me\",\n      \"artist\": \"a-ha\"\n    },\n    {\n      \"title\": \"You Make Me Feel Like a Woman\",\n      \"artist\": \"Shania Twain\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791150306-NctVVpbOxHz3YIWrZHP8",
+    "model": "qwen/qwen3.8-27b:free",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 260,
+      "completion_tokens": 2193,
+      "total_tokens": 2453,
+      "cost": 0,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0,
+        "upstream_inference_prompt_cost": 0,
+        "upstream_inference_completions_cost": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1631,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 31.982,
+    "retries": 0
+  }
+}

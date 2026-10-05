@@ -1,0 +1,86 @@
+{
+  "request_hash": "4cbc5c5788b6f7e302f5b1cc1f2a1c3122f08e66691892a2bfd3f825d05fdf77",
+  "saved_at": "2026-10-04T21:54:08.334015+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b:free",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "Playlist request: \"Warm, romantic R&B for a quiet evening with a partner.\"\n\nRecommend 20 different songs that best fit this request, ordered from best fit to weakest fit. Match the requested mood, activity, genre, era, and language where stated. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    }
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Best Part\",\n      \"artist\": \"Daniel Caesar\"\n    },\n    {\n      \"title\": \"Un-Break My Heart\",\n      \"artist\": \"Toni Braxton\"\n    },\n    {\n      \"title\": \"I Will Always Love You\",\n      \"artist\": \"Whitney Houston\"\n    },\n    {\n      \"title\": \"Endless Love\",\n      \"artist\": \"Diana Ross & Lionel Richie\"\n    },\n    {\n      \"title\": \"Ain't No Mountain High Enough\",\n      \"artist\": \"Marvin Gaye & Tammi Terrell\"\n    },\n    {\n      \"title\": \"I Just Called to Say I Love You\",\n      \"artist\": \"Stevie Wonder\"\n    },\n    {\n      \"title\": \"Signed, Sealed, Delivered I'm Yours\",\n      \"artist\": \"Stevie Wonder\"\n    },\n    {\n      \"title\": \"You Are the Best Thing\",\n      \"artist\": \"Stevie Wonder\"\n    },\n    {\n      \"title\": \"My Girl\",\n      \"artist\": \"The Temptations\"\n    },\n    {\n      \"title\": \"You Keep Coming Back (Like a Song in My Mind)\",\n      \"artist\": \"The Temptations\"\n    },\n    {\n      \"title\": \"I Can't Help Myself\",\n      \"artist\": \"The Four Tops\"\n    },\n    {\n      \"title\": \"Reach Out I'll Be There\",\n      \"artist\": \"The Four Tops\"\n    },\n    {\n      \"title\": \"Where Did Our Love Go\",\n      \"artist\": \"The Supremes\"\n    },\n    {\n      \"title\": \"You Can't Hurry Love\",\n      \"artist\": \"The Supremes\"\n    },\n    {\n      \"title\": \"Stop! In the Name of Love\",\n      \"artist\": \"The Supremes\"\n    },\n    {\n      \"title\": \"I'll Be There\",\n      \"artist\": \"The Jackson 5\"\n    },\n    {\n      \"title\": \"Love You Inside and Out\",\n      \"artist\": \"Michael Jackson\"\n    },\n    {\n      \"title\": \"The Way You Make Me Feel\",\n      \"artist\": \"Michael Jackson\"\n    },\n    {\n      \"title\": \"When I Fall in Love\",\n      \"artist\": \"Michael Bolton\"\n    },\n    {\n      \"title\": \"Just the Way You Are\",\n      \"artist\": \"Bruno Mars\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791150807-GdQrxUMTWc424qoAzSoM",
+    "model": "qwen/qwen3.8-27b:free",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 263,
+      "completion_tokens": 4701,
+      "total_tokens": 4964,
+      "cost": 0,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0,
+        "upstream_inference_prompt_cost": 0,
+        "upstream_inference_completions_cost": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 4098,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 40.81,
+    "retries": 0
+  }
+}

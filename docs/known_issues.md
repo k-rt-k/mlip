@@ -33,9 +33,11 @@ This records the reviewed scope, not a guarantee that the project has no bugs.
 
 ## Validation
 
-- Full suite: **230 passed, 2 skipped** (`spotify/tests` and `peer/tests`).
-- CUDA and MPS tests skipped because those devices are unavailable to the test
-  process. CPU inference with a tiny model and the CPU-transfer regression pass.
+- Full suite: **231 passed, 1 skipped** (`spotify/tests` and `peer/tests`).
+- CPU and MPS inference tests with a tiny Torch model pass, as does the
+  CPU-transfer regression. Only CUDA is unavailable and skipped. The suite ran
+  outside the sandbox because sandboxed PyTorch incorrectly reports MPS as
+  unavailable on this Mac.
 - Worker tests verify manifest failures, ID/vector alignment, all-failed chunks,
   and resume. Submission tests use a fake `sbatch` from another directory,
   including a checkout path containing spaces.

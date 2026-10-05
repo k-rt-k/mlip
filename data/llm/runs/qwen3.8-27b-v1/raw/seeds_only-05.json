@@ -1,0 +1,86 @@
+{
+  "request_hash": "b6ac95c5526540dd28de28b79323022daecc41bb831c5b6ea2c5c1875a0e3b8c",
+  "saved_at": "2026-10-04T22:02:38.269393+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b:free",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. Stolen Dance (Single Version) — Milky Chance\n2. Stubborn Love — The Lumineers\n3. Missing Piece — Vance Joy\n4. Asaf Avidan, The Mojos - One Day / Reckoning Song (Videoclip Night Version) — Wankelmut\n5. Scenic World — Beirut\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    }
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"I Love You, I'm Sorry\",\n      \"artist\": \"The Head and the Heart\"\n    },\n    {\n      \"title\": \"Bloom\",\n      \"artist\": \"The Paper Kites\"\n    },\n    {\n      \"title\": \"The Night We Met\",\n      \"artist\": \"Lord Huron\"\n    },\n    {\n      \"title\": \"Holocene\",\n      \"artist\": \"Bon Iver\"\n    },\n    {\n      \"title\": \"Chasing Cars\",\n      \"artist\": \"Snow Patrol\"\n    },\n    {\n      \"title\": \"Sweet Nothing\",\n      \"artist\": \"Florence + The Machine\"\n    },\n    {\n      \"title\": \"Somebody That I Used to Know\",\n      \"artist\": \"Gotye\"\n    },\n    {\n      \"title\": \"Young and Beautiful\",\n      \"artist\": \"Lana Del Rey\"\n    },\n    {\n      \"title\": \"The Scientist\",\n      \"artist\": \"Coldplay\"\n    },\n    {\n      \"title\": \"Fool\",\n      \"artist\": \"Peter Bjorn and John\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791151322-pS2xxDsOmkpfwFFV1NxG",
+    "model": "qwen/qwen3.8-27b:free",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 331,
+      "completion_tokens": 3964,
+      "total_tokens": 4295,
+      "cost": 0,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0,
+        "upstream_inference_prompt_cost": 0,
+        "upstream_inference_completions_cost": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 3682,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 35.663,
+    "retries": 0
+  }
+}

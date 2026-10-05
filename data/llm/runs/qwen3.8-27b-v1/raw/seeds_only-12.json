@@ -1,0 +1,86 @@
+{
+  "request_hash": "ddb97a78359b799efd2d4760e87e080e5940f44a10f5f83f9680f980c0d1474f",
+  "saved_at": "2026-10-05T02:52:24.024919+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b:free",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. Samba Da Benção — Vinícius de Moraes\n2. Chega de Saudade — Stan Getz, João Gilberto\n3. Outra Vez — Nara Leão\n4. Outra Vez — Elizeth Cardoso\n5. Eu Vim Da Bahia — João Gilberto\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    }
+  },
+  "response": {
+    "text": "{\"songs\":[{\"title\":\"Garota de Ipanema\",\"artist\":\"Stan Getz & João Gilberto\"},{\"title\":\"Insensatez\",\"artist\":\"Stan Getz & João Gilberto\"},{\"title\":\"A Felicidade\",\"artist\":\"João Gilberto\"},{\"title\":\"Bem-Te-Vi\",\"artist\":\"João Gilberto\"},{\"title\":\"Corcovado (Quiet Nights of Quiet Stars)\",\"artist\":\"Stan Getz & João Gilberto\"},{\"title\":\"Desafinado\",\"artist\":\"Stan Getz & João Gilberto\"},{\"title\":\"Saudade da Bahia\",\"artist\":\"João Gilberto\"},{\"title\":\"Onde Anda\",\"artist\":\"Stan Getz & João Gilberto\"},{\"title\":\"Samba em Lua de Mel\",\"artist\":\"Stan Getz & João Gilberto\"},{\"title\":\"Samba de Uma Nota Só\",\"artist\":\"João Gilberto\"}]}",
+    "finish_reason": "stop",
+    "id": "gen-1791168712-H056WsiddRtd5EY0uPHG",
+    "model": "qwen/qwen3.8-27b:free",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 318,
+      "completion_tokens": 1849,
+      "total_tokens": 2167,
+      "cost": 0,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0,
+        "upstream_inference_prompt_cost": 0,
+        "upstream_inference_completions_cost": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1685,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 31.466,
+    "retries": 0
+  }
+}

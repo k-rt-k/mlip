@@ -1,0 +1,86 @@
+{
+  "request_hash": "c129114d6bc0c7a6b7c361202eda13ca4e7050a2ba9e0c8bb5cbf5c78f987b8b",
+  "saved_at": "2026-10-04T21:50:39.990106+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b:free",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "Playlist request: \"Dreamy, atmospheric music for a late-night drive.\"\n\nRecommend 20 different songs that best fit this request, ordered from best fit to weakest fit. Match the requested mood, activity, genre, era, and language where stated. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    }
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Nightcall\",\n      \"artist\": \"Kavinsky\"\n    },\n    {\n      \"title\": \"Midnight City\",\n      \"artist\": \"M83\"\n    },\n    {\n      \"title\": \"The Less I Know the Better\",\n      \"artist\": \"Tame Impala\"\n    },\n    {\n      \"title\": \"Sunflower, Moon\",\n      \"artist\": \"The Neighbourhood\"\n    },\n    {\n      \"title\": \"After Dark\",\n      \"artist\": \"MGMT\"\n    },\n    {\n      \"title\": \"Blue Monday\",\n      \"artist\": \"New Order\"\n    },\n    {\n      \"title\": \"Drive\",\n      \"artist\": \"The Sound\"\n    },\n    {\n      \"title\": \"A Real Young Girl\",\n      \"artist\": \"The Weeknd\"\n    },\n    {\n      \"title\": \"In the Night\",\n      \"artist\": \"The Weeknd\"\n    },\n    {\n      \"title\": \"The Night I Met You\",\n      \"artist\": \"The Weeknd\"\n    },\n    {\n      \"title\": \"Wicked Game\",\n      \"artist\": \"Chris Isaak\"\n    },\n    {\n      \"title\": \"Timeless\",\n      \"artist\": \"The Weeknd\"\n    },\n    {\n      \"title\": \"After Hours\",\n      \"artist\": \"The Weeknd\"\n    },\n    {\n      \"title\": \"Blinding Lights\",\n      \"artist\": \"The Weeknd\"\n    },\n    {\n      \"title\": \"Starboy\",\n      \"artist\": \"The Weeknd\"\n    },\n    {\n      \"title\": \"I Feel It Coming\",\n      \"artist\": \"Drake ft. The Weeknd\"\n    },\n    {\n      \"title\": \"Until You Call My Name\",\n      \"artist\": \"The Weeknd\"\n    },\n    {\n      \"title\": \"Dawn FM\",\n      \"artist\": \"The Weeknd\"\n    },\n    {\n      \"title\": \"Less Than Zero\",\n      \"artist\": \"The Weeknd\"\n    },\n    {\n      \"title\": \"I Heard That\",\n      \"artist\": \"The Weeknd\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791150612-EkqXHvmktLdR3LATMG0F",
+    "model": "qwen/qwen3.8-27b:free",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 261,
+      "completion_tokens": 4636,
+      "total_tokens": 4897,
+      "cost": 0,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0,
+        "upstream_inference_prompt_cost": 0,
+        "upstream_inference_completions_cost": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 4098,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 27.536,
+    "retries": 0
+  }
+}

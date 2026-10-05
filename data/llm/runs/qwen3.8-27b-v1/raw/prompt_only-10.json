@@ -1,0 +1,86 @@
+{
+  "request_hash": "b46470333342058cba7e23617e895615c20cb5d4d938d7cae2ecb85b3c8f396b",
+  "saved_at": "2026-10-04T21:51:14.290961+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b:free",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "Playlist request: \"Classic rock singalongs for a road trip with friends.\"\n\nRecommend 20 different songs that best fit this request, ordered from best fit to weakest fit. Match the requested mood, activity, genre, era, and language where stated. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    }
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Take It Easy\",\n      \"artist\": \"Eagles\"\n    },\n    {\n      \"title\": \"Born to Run\",\n      \"artist\": \"Bruce Springsteen\"\n    },\n    {\n      \"title\": \"Sweet Home Alabama\",\n      \"artist\": \"Lynyrd Skynyrd\"\n    },\n    {\n      \"title\": \"Free Bird\",\n      \"artist\": \"Lynyrd Skynyrd\"\n    },\n    {\n      \"title\": \"Born in the U.S.A.\",\n      \"artist\": \"Bruce Springsteen\"\n    },\n    {\n      \"title\": \"The Final Countdown\",\n      \"artist\": \"Europe\"\n    },\n    {\n      \"title\": \"Livin' on a Prayer\",\n      \"artist\": \"Bon Jovi\"\n    },\n    {\n      \"title\": \"Sweet Child O' Mine\",\n      \"artist\": \"Guns N' Roses\"\n    },\n    {\n      \"title\": \"Back in Black\",\n      \"artist\": \"AC/DC\"\n    },\n    {\n      \"title\": \"Highway to Hell\",\n      \"artist\": \"AC/DC\"\n    },\n    {\n      \"title\": \"Smoke on the Water\",\n      \"artist\": \"Deep Purple\"\n    },\n    {\n      \"title\": \"Bohemian Rhapsody\",\n      \"artist\": \"Queen\"\n    },\n    {\n      \"title\": \"We Will Rock You\",\n      \"artist\": \"Queen\"\n    },\n    {\n      \"title\": \"Don't Stop Me Now\",\n      \"artist\": \"Queen\"\n    },\n    {\n      \"title\": \"I Want to Know What Love Is\",\n      \"artist\": \"Foreigner\"\n    },\n    {\n      \"title\": \"Africa\",\n      \"artist\": \"Toto\"\n    },\n    {\n      \"title\": \"Eye of the Tiger\",\n      \"artist\": \"Survivor\"\n    },\n    {\n      \"title\": \"Center of the Universe\",\n      \"artist\": \"Journey\"\n    },\n    {\n      \"title\": \"Any Way You Want It\",\n      \"artist\": \"Journey\"\n    },\n    {\n      \"title\": \"Start Me Up\",\n      \"artist\": \"The Rolling Stones\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791150660-09K0TAVVk0Oq2iGsHcA3",
+    "model": "qwen/qwen3.8-27b:free",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 262,
+      "completion_tokens": 2256,
+      "total_tokens": 2518,
+      "cost": 0,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0,
+        "upstream_inference_prompt_cost": 0,
+        "upstream_inference_completions_cost": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1708,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 14.921,
+    "retries": 1
+  }
+}

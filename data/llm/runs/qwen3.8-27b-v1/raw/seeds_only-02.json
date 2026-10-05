@@ -1,0 +1,86 @@
+{
+  "request_hash": "be32b8114c9c2a02cbcc165e004a98201f39523206365fa6c73c0b74beaef3bb",
+  "saved_at": "2026-10-04T22:08:11.971816+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b:free",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. Fly Me To The Moon (2008 Remastered) (feat. Count Basie And His Orchestra) — Frank Sinatra\n2. I've Got a Woman (2005 Remaster) — Ray Charles\n3. Something’s Got a Hold on Me — Etta James\n4. These Arms of Mine — Otis Redding\n5. On the Sunny Side of the Street — Billie Holiday\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    }
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"At Last\",\n      \"artist\": \"Etta James\"\n    },\n    {\n      \"title\": \"What'd I Say\",\n      \"artist\": \"Ray Charles\"\n    },\n    {\n      \"title\": \"Sitting on the Dock of the Bay\",\n      \"artist\": \"Otis Redding\"\n    },\n    {\n      \"title\": \"Unforgettable\",\n      \"artist\": \"Nat King Cole\"\n    },\n    {\n      \"title\": \"The Man I Love\",\n      \"artist\": \"Ella Fitzgerald\"\n    },\n    {\n      \"title\": \"I've Got You Under My Skin\",\n      \"artist\": \"Frank Sinatra\"\n    },\n    {\n      \"title\": \"I Got a Bad Case of Loving You (Can't Nobody Cure Me)\",\n      \"artist\": \"Etta James\"\n    },\n    {\n      \"title\": \"I'd Rather Go Blind\",\n      \"artist\": \"B.B. King\"\n    },\n    {\n      \"title\": \"Hoochie Coochie Man\",\n      \"artist\": \"Muddy Waters\"\n    },\n    {\n      \"title\": \"Smokestack Lightning\",\n      \"artist\": \"Howlin' Wolf\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791151647-9ShCEdzVrU5ZKZwlvzVb",
+    "model": "qwen/qwen3.8-27b:free",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 346,
+      "completion_tokens": 4398,
+      "total_tokens": 4744,
+      "cost": 0,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0,
+        "upstream_inference_prompt_cost": 0,
+        "upstream_inference_completions_cost": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 4098,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 44.964,
+    "retries": 0
+  }
+}

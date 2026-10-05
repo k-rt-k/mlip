@@ -1,0 +1,86 @@
+{
+  "request_hash": "63c7a79c65b7a65013669a5803d680fb943a5293e4dfadb2c47cde07852f2c22",
+  "saved_at": "2026-10-04T22:03:42.503567+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b:free",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. Passin' Me By (Official HD Music Video) — The Pharcyde\n2. Hip 2 Da Game — Lord Finesse\n3. Hypnotize — The Notorious B.I.G.\n4. Gotta Get Mine — MC Breed\n5. Juice (Know The Ledge) — Eric B. & Rakim\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    }
+  },
+  "response": {
+    "text": "{\"songs\":[{\"title\":\"100 Miles and Runnin'\",\"artist\":\"The Pharcyde\"},{\"title\":\"Buggin' Out\",\"artist\":\"Nas\"},{\"title\":\"It Was a Good Day\",\"artist\":\"Ice Cube\"},{\"title\":\"Gin and Juice\",\"artist\":\"Snoop Dogg\"},{\"title\":\"The Next Episode\",\"artist\":\"Dr. Dre\"},{\"title\":\"No One Can Stop Me\",\"artist\":\"KRS-One\"},{\"title\":\"Ghetto D\",\"artist\":\"Kool G Rap\"},{\"title\":\"Me at the Zoo\",\"artist\":\"A Tribe Called Quest\"},{\"title\":\"It's Like That\",\"artist\":\"Mobb Deep\"},{\"title\":\"Check the Technique\",\"artist\":\"De La Soul\"}]}",
+    "finish_reason": "stop",
+    "id": "gen-1791151402-yNuaeIHBwU7FYYcuh03v",
+    "model": "qwen/qwen3.8-27b:free",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 331,
+      "completion_tokens": 4239,
+      "total_tokens": 4570,
+      "cost": 0,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0,
+        "upstream_inference_prompt_cost": 0,
+        "upstream_inference_completions_cost": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 4098,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 20.662,
+    "retries": 0
+  }
+}
