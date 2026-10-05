@@ -92,7 +92,7 @@ def download_previews(tracks, out_dir=PREVIEW_DIR, pause=MIN_INTERVAL):
                 continue
         part = dest.with_suffix(".mp3.part")
         try:
-            url = preview_url(meta["isrc"], session)
+            url = meta.get("preview_url") or preview_url(meta["isrc"], session)
             if not url:
                 unavailable.append(tid)
                 continue

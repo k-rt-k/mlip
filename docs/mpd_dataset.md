@@ -1,7 +1,7 @@
 # Spotify Million Playlist Dataset (MPD)
 
-Reference only — **not obtained, not used yet**. Looked up 2026-09-23 as the
-candidate source of collaborative signal and of held-out similarity labels for
+**Downloaded 2026-09-29** from the Kaggle mirror; all 1,000 slices pass the
+bundled MD5 manifest. Originally looked up 2026-09-23 as the candidate source of collaborative signal and of held-out similarity labels for
 evaluating the audio embedders (see `docs/eda_workflow.md`).
 
 ## Access — no longer self-service ⚠️
@@ -80,3 +80,38 @@ ids we already pulled — no name matching, unlike every metadata source in
 
 Caveat: it ends in 2017, so it says nothing about post-2017 tracks — the same
 recency wall as the other frozen sources, and ~46% of one user's library here.
+
+## Local preparation (2026-09-29)
+
+Checkout: `/home/ksnair/mlip` (reviewed at `6292316`). Home has a limited
+quota; keep bulk data and environments outside it.
+
+- `data/` in this checkout links to `/data/user_data/ksnair/mlip/data`.
+- Persistent MPD data, track catalogs and feature tables belong beneath that
+  data directory; embeddings use `/data/user_data/ksnair/mlip/embeddings`.
+- Regenerable previews: `/scratch/ksnair/mlip/previews`; temporary processing:
+  `/scratch/ksnair/mlip/tmp`. Scratch is node-local, not durable storage.
+- Explicitly redirect model/package caches and environments outside home when
+  installing the embedding stack; current setup defaults include home paths.
+
+AIcrowd still reports downloads unavailable on this date. The public
+[Hugging Face mirror](https://huggingface.co/datasets/jaxliu/Spotify_Million_Playlist_Dataset_Challenge)
+contains only 100 JSON slices (checked via its repository file listing), so it
+is not the complete million-playlist dataset. The complete Kaggle archive has since been downloaded to
+`/data/user_data/ksnair/mlip/data/mpd/archive.zip`; all 1,000 bundled MD5 hashes
+passed. Preview-embedding integration is in worktree
+`/home/ksnair/worktrees/mlip-mpd` (`feat/mpd-embeddings`); see that worktree's
+`docs/mpd_embedding.md` for commands and run status.
+
+Original integration gap (addressed by the new MPD worker): `spotify/scripts/embed.py` obtains inputs through
+`previews.track_isrcs(user)`, which reads personal inventory JSON. MPD supplies
+Spotify track IDs but no ISRCs or audio. Building preview embeddings requires
+an MPD catalog reader and a recorded track-resolution step before reusing the
+existing downloader and embedders. Published numeric Spotify features would
+instead require a separate exact-ID join and a coverage report.
+
+Full MPD catalog validation passed (1M playlists, 66,346,428 entries,
+2,262,292 unique tracks). Full CLAP shards submitted as SLURM jobs
+10605985 and 10605986; run manifest: `/data/user_data/ksnair/mlip/full-run.json`.
+The validated pilot contains 22 embeddings from 51 tracks; 29 had no strict
+metadata match. Full embedding generation is pending/running, not complete.

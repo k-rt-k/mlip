@@ -152,3 +152,10 @@ def test_network_failure_does_not_stop_other_tracks(monkeypatch, tmp_path):
     session.get.side_effect = [previews.requests.Timeout("timeout"), response, response]
     have, missing = download_previews({"a": {"isrc": "A"}, "b": {"isrc": "B"}}, tmp_path, pause=0)
     assert list(have) == ["b"] and missing == ["a"]
+
+
+def test_resolved_preview_url_avoids_isrc_lookup(monkeypatch, tmp_path):
+    session = TestDownloadPreviews().fake_session(monkeypatch)
+    have, missing = download_previews({'t': {'preview_url': 'https://cdn/resolved.mp3'}}, tmp_path, pause=0)
+    assert set(have) == {'t'} and not missing
+    session.get.assert_called_once_with('https://cdn/resolved.mp3', timeout=30)
