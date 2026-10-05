@@ -7,6 +7,8 @@ existing_example (reuse an earlier copy). Existing per-example checkpoints are
 verified, never recreated. model_inputs.json contains only seeds and copy IDs;
 examples and dataset.json contain evaluator-only hidden answers/source metadata.
 Five random seeds and random state 42 default to the existing pilot convention.
+Use browser credentials copied from mlip.team0@gmail.com. Authentication and
+ownership of all existing copies are checked before any playlist creation.
 """
 
 import argparse
@@ -35,6 +37,20 @@ def main():
     if len(set(ids)) != len(ids) or any(not isinstance(i, int) or i < 1 for i in ids):
         parser.error("example_id must be unique positive integers")
     client = make_client(args.auth) if args.create else None
+    if client:
+        account = client.get_account_info()
+        print(f"✅ Authenticated as {account['accountName']}; checking existing copies before creation.", flush=True)
+        for row in manifest["examples"]:
+            path = args.output_dir / f'example-{row["example_id"]:02d}.json'
+            existing = path if path.exists() else Path(row["existing_example"]) if row.get("existing_example") else None
+            if existing is not None:
+                checkpoint = json.loads(existing.read_text())
+                if checkpoint.get("created_playlist_id"):
+                    raw = client.get_playlist(checkpoint["created_playlist_id"], limit=None)
+                    if raw.get("owned") is not True or raw.get("privacy") != "PRIVATE":
+                        raise RuntimeError("❌ Existing copy is not private and owned by this account; no playlists created.")
+                    verify_seed_playlist(client, checkpoint)
+        print("✅ Existing copy ownership and seeds verified.", flush=True)
     examples = []
     for row in manifest["examples"]:
         path = args.output_dir / f'example-{row["example_id"]:02d}.json'

@@ -11,7 +11,7 @@ continuation using public **YouTube Music** playlists (reference dataset v2
 assembled for twenty prompts; evaluation decisions belong to the baseline owners).
 The LLM also takes prompt + partial inputs; evaluation for that mode remains TBD.
 
-As of **2026-10-04**: the music proposal is documented; Spotify authentication,
+As of **2026-10-05**: the music proposal is documented; Spotify authentication,
 inventory, and metadata-enrichment code exists from earlier feasibility work.
 The **current stage is dataset handoff to baseline owners**; the four-part milestone
 checklist is in `docs/STATUS.md`. Harsh's pipelines/dataset work is complete for
@@ -21,8 +21,8 @@ continuation suggestions have passed live pilot checks. Twenty prompts now have
 three cached reference playlists each (60 playlists, 4,475 distinct video IDs),
 with tracks, provenance, selection caveats, and available displayed view metadata.
 Twenty partial examples have five seeds each and hidden songs saved separately
-from model inputs. Ten have verified private seed-only copies; the ten additional
-copies await browser-auth refresh. The current partial dataset is under
+from model inputs. All twenty have verified private seed-only copies owned by
+`mlip.team0@gmail.com`, with copy IDs included in the shared dataset. The current partial dataset is under
 `data/youtube_music/partial_examples/v2/`. A credential-free
 dataset handoff ZIP and checksum manifest are committed under `datasets/`;
 extract the ZIP from the repository root as described in `README.md`.
@@ -50,6 +50,7 @@ team changes direction. Do not treat historical docs as current requirements.
 - `spotify/` — existing music API/authentication and feasibility tooling
 - `youtube_music/` — public playlist collection, seed-only copies, suggestions,
   browser-auth setup, and tests; script docstrings contain usage
+- `youtube_music/scripts/setup_auth.py` — paste Copy as fetch (Node.js) input from `mlip.team0@gmail.com` to refresh browser credentials and test authentication; usage is in the file.
 - `prompts.txt` — twenty synthetic prompts explicitly requested by the user
 - `datasets/` — explicitly approved, credential-free baseline ZIP and checksum manifest
 - `data/` — extracted datasets and local artifacts (gitignored)
@@ -61,6 +62,7 @@ team changes direction. Do not treat historical docs as current requirements.
 
 ## Code Conventions
 
+- Flag missing credentials, access, inputs, or unfinished requirements immediately; stop dependent work and ask for what is needed rather than substitute assumptions or present incomplete work as ready.
 - **Reuse first.** When writing experiments, use existing code functions. Before
   writing any new function, search the codebase for an existing implementation
   and call that instead.
