@@ -36,7 +36,7 @@ def load_dataset_ground_truth(dataset_path: Path) -> dict:
 
 def run_evaluation(dataset_path: Path, predictions_path: Path, output_path: Path = None):
     """Executes full benchmark evaluation."""
-    k = [1, 5, 10, 20, 30]
+    k = [1, 5, 10]
 
     ground_truth = load_dataset_ground_truth(dataset_path)
     predictions = json.loads(predictions_path.read_text(encoding="utf-8"))
@@ -47,36 +47,46 @@ def run_evaluation(dataset_path: Path, predictions_path: Path, output_path: Path
 
     print(f"\nEvaluating: {predictions_path.name}")
     print(f"Ground Truth: {dataset_path.name} ({num_examples} examples)\n")
-    
-    # Table Header
-    header = f"{'Example ID':<12} | {'P@' + str(k):<8} | {'R@' + str(k):<8} | {'Hit@' + str(k):<8} | {'R-Prec':<8}"
+
+    # Sample metric calculation to dynamically discover result keys and column widths
+    first_eid = next(iter(ground_truth))
+    sample_recs = predictions.get(first_eid, [])
+    sample_metrics = calculate_all_metrics(recommended=sample_recs, ground_truth=ground_truth[first_eid], k=k)
+    metric_keys = list(sample_metrics.keys())
+
+    # Build metric-agnostic table header
+    col_width = 12
+    header_cols = [f"{'Example ID':<{col_width}}"] + [f"{m:<{col_width}}" for m in metric_keys]
+    header = " | ".join(header_cols)
     print(header)
     print("-" * len(header))
 
+    # Evaluation Loop
     for eid, gt_tracks in ground_truth.items():
         recs = predictions.get(eid, [])
         
-        # Calculate metrics using metrics.py
+        # Calculate metrics dynamically
+        if len(recs) == 0:
+            continue
         metrics = calculate_all_metrics(recommended=recs, ground_truth=gt_tracks, k=k)
         results_per_example[eid] = metrics
 
-        for key, val in metrics.items():
+        row_str = f"{eid:<{col_width}}"
+        for key in metric_keys:
+            val = metrics.get(key, 0.0)
             metric_sums[key] += val
-
-        p_val = metrics[f"precision@{k}"]
-        r_val = metrics[f"recall@{k}"]
-        hit_val = metrics[f"hit_rate@{k}"]
-        r_prec = metrics["r_precision"]
-
-        print(f"{eid:<12} | {p_val:<8.4f} | {r_val:<8.4f} | {hit_val:<8.4f} | {r_prec:<8.4f}")
+            row_str += f" | {val:<{col_width}.4f}"
+            
+        print(row_str)
 
     # Compute Means
-    means = {key: val / num_examples for key, val in metric_sums.items()}
+    means = {key: metric_sums[key] / num_examples for key in metric_keys}
 
     print("=" * len(header))
     print("MEAN AGGREGATED METRICS:")
+    max_key_len = max(len(k) for k in metric_keys) if metric_keys else 15
     for key, val in means.items():
-        print(f"  {key:<15}: {val:.4f}")
+        print(f"  {key:<{max_key_len}} : {val:.4f}")
     print("=" * len(header) + "\n")
 
     # Save results to disk if requested
@@ -95,7 +105,7 @@ def run_evaluation(dataset_path: Path, predictions_path: Path, output_path: Path
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate baseline recommendation outputs.")
-    parser.add_argument("--dataset", type=Path, default="data/youtube_music/partial_examples/v1/dataset.json", help="Path to dataset.json file")
+    parser.add_argument("--dataset", type=Path, default="data/youtube_music/partial_examples/v2/dataset.json", help="Path to dataset.json file")
     parser.add_argument("--predictions", type=Path, required=True, help="Path to predictions JSON mapping example_id to video_ids")
     parser.add_argument("--output", type=Path, default=None, help="Optional path to save evaluation summary JSON")
 

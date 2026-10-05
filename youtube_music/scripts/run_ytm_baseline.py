@@ -42,7 +42,7 @@ def run_ytm_baseline(dataset_path: Path, auth_path: Path, output_path: Path, sug
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate YTM baseline predictions for dataset")
-    parser.add_argument("--dataset", type=Path, default="data/youtube_music/partial_examples/v1/dataset.json")
+    parser.add_argument("--dataset", type=Path, default="data/youtube_music/partial_examples/v2/dataset.json")
     parser.add_argument("--auth", type=Path, default="data/youtube_music/browser.json")
     parser.add_argument("--output", type=Path, default="data/youtube_music/predictions/ytm_native.json")
     parser.add_argument("--suggestions", type=int, default=30)
