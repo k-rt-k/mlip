@@ -151,19 +151,25 @@ def verify_seed_playlist(client, example):
     created = example["created_playlist_id"]
     example["creation_verified"] = False
     ids = [t["video_id"] for t in example["seed_tracks"]]
+    expected = Counter(ids)
     for attempt in range(4):
         try:
             actual = client.get_playlist(created, limit=None)
-            break
         except KeyError as exc:
             # Newly created playlists can temporarily return no contents renderer.
             if "contents" not in str(exc) or attempt == 3:
                 raise
             time.sleep(2 ** attempt)
-    actual_ids = [t.get("videoId") for t in actual.get("tracks", [])]
-    if Counter(actual_ids) != Counter(ids):
+            continue
+        actual_ids = Counter(t.get("videoId") for t in actual.get("tracks", []))
+        if actual_ids == expected:
+            example["creation_verified"] = True
+            return
+        # Song additions can propagate after the playlist itself becomes readable.
+        if actual_ids < expected and attempt < 3:
+            time.sleep(2 ** attempt)
+            continue
         raise RuntimeError(f"Created playlist {created} contents do not match the selected seeds.")
-    example["creation_verified"] = True
 
 
 def get_suggestions(client, value, count=5, max_duration_seconds=900):

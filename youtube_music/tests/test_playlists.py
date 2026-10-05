@@ -150,6 +150,20 @@ def test_browser_auth_path_is_forwarded_without_network(tmp_path, monkeypatch):
     assert "oauth_credentials" not in factory.call_args.kwargs
 
 
+def test_new_copy_read_retries_incomplete_songs_without_recreating(monkeypatch):
+    client = MagicMock()
+    client.create_playlist.return_value = "PLnew"
+    example = {"seed_tracks": [{"video_id": "a"}, {"video_id": "b"}]}
+    client.get_playlist.side_effect = [{"tracks": [track("a")]}, {"tracks": [track("a"), track("b")]}]
+    sleep = MagicMock()
+    monkeypatch.setattr("playlists.time.sleep", sleep)
+    assert create_seed_playlist(client, example, "Baseline sample") == "PLnew"
+    client.create_playlist.assert_called_once()
+    assert client.get_playlist.call_count == 2
+    assert example["creation_verified"] is True
+    sleep.assert_called_once_with(1)
+
+
 def test_oauth_tokens_are_rejected_without_echoing_contents(tmp_path):
     path = tmp_path / "oauth.json"
     path.write_text('{"access_token": "sensitive-value"}')
