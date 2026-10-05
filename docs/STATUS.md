@@ -15,12 +15,13 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables: [baselines milestone](../milestones/b
 - **Code:** `llm/` (OpenRouter client, prompts, parsing, title + artist resolution
   to video IDs with alternate uploads); usage in `llm/scripts/run_llm_baseline.py`.
   Needs `OPENROUTER_API_KEY` in gitignored `llm/.env`.
-- **First observations:** 68% (prompt-only) and 51% (seeds-only) of suggestions
-  resolve to catalog tracks; 13/20 prompts and 9/20 examples fill top-K.
+- **First observations:** 68% (prompt-only) and 49% (seeds-only) of suggestions
+  resolve to catalog tracks; 13/20 prompts and 10/20 examples fill top-K.
   Unresolved items are mostly invented or misattributed songs (e.g. repeated
   invented gospel titles, wrong artists for real songs); some outputs repeat
-  seeds or duplicates (Hindi indie, punk); classical/performer credits rarely resolve. Temperature 0 is not reproducible on the free endpoint;
-  saved raw responses are the record.
+  seeds or duplicates (Hindi indie, punk); classical/performer credits rarely resolve. Temperature 0 is not reproducible on the free endpoint: a repeat of
+  examples 11–20 shared only 0–4 of 10 songs per example and reasoning length
+  varied ~10x, so single-run numbers are noisy; saved raw responses are the record.
 - **Remaining:** scoring against references/hidden songs (evaluation owner),
   validity/constraint checks, and prompt + seeds mode (deferred until the
   partial-example request source is agreed; a discovery prompt is recoverable

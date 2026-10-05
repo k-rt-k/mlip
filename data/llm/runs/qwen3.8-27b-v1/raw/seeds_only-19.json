@@ -1,6 +1,6 @@
 {
   "request_hash": "83ed82e0e49c8b0b274871e844fa37fe13cf514a8f45fff485b05f121ef8fbbd",
-  "saved_at": "2026-10-05T02:46:00.897097+00:00",
+  "saved_at": "2026-10-05T02:55:46.627475+00:00",
   "request": {
     "model": "qwen/qwen3.8-27b:free",
     "messages": [
@@ -52,15 +52,15 @@
     }
   },
   "response": {
-    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Victory\",\n      \"artist\": \"Two Steps From Hell\"\n    },\n    {\n      \"title\": \"Heart of Courage\",\n      \"artist\": \"Two Steps From Hell\"\n    },\n    {\n      \"title\": \"Protectors of Earth\",\n      \"artist\": \"Two Steps From Hell\"\n    },\n    {\n      \"title\": \"Wars of Faith\",\n      \"artist\": \"Two Steps From Hell\"\n    },\n    {\n      \"title\": \"Firebird\",\n      \"artist\": \"Two Steps From Hell\"\n    },\n    {\n      \"title\": \"Star Sky\",\n      \"artist\": \"Two Steps From Hell\"\n    },\n    {\n      \"title\": \"The Age of Kings\",\n      \"artist\": \"Two Steps From Hell\"\n    },\n    {\n      \"title\": \"Battle of the Gods\",\n      \"artist\": \"Two Steps From Hell\"\n    },\n    {\n      \"title\": \"Empire\",\n      \"artist\": \"Audiomachine\"\n    },\n    {\n      \"title\": \"Legionnaire\",\n      \"artist\": \"Audiomachine\"\n    }\n  ]\n}",
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Epic Battle Music - \\\"Warriors of the World\\\"\",\n      \"artist\": \"Epic Score\"\n    },\n    {\n      \"title\": \"Epic Cinematic - \\\"Rise of the Titans\\\"\",\n      \"artist\": \"Tom Evans\"\n    },\n    {\n      \"title\": \"Epic Orchestral - \\\"The Last Stand\\\"\",\n      \"artist\": \"ADN Compositions\"\n    },\n    {\n      \"title\": \"Epic Powerful - \\\"Storm of Steel\\\"\",\n      \"artist\": \"InfraSound\"\n    },\n    {\n      \"title\": \"Epic Uplifting - \\\"Path of Honor\\\"\",\n      \"artist\": \"Iliya Zaki\"\n    },\n    {\n      \"title\": \"Epic Action - \\\"Champions of Dawn\\\"\",\n      \"artist\": \"Epic Music VN\"\n    },\n    {\n      \"title\": \"Epic Cinematic - \\\"Beyond the Horizon\\\"\",\n      \"artist\": \"Tom Evans\"\n    },\n    {\n      \"title\": \"Epic Battle - \\\"Iron Resolve\\\"\",\n      \"artist\": \"ADN Compositions\"\n    },\n    {\n      \"title\": \"Epic Orchestral - \\\"Victory March\\\"\",\n      \"artist\": \"Epic Score\"\n    },\n    {\n      \"title\": \"Epic Powerful - \\\"Thunder of War\\\"\",\n      \"artist\": \"InfraSound\"\n    }\n  ]\n}",
     "finish_reason": "stop",
-    "id": "gen-1791168329-u1h11APFk2nJIGqLqR2S",
+    "id": "gen-1791168939-S47ITIYeYFLxSk84lkXs",
     "model": "qwen/qwen3.8-27b:free",
     "provider": "ModelRun",
     "usage": {
       "prompt_tokens": 374,
-      "completion_tokens": 785,
-      "total_tokens": 1159,
+      "completion_tokens": 614,
+      "total_tokens": 988,
       "cost": 0,
       "is_byok": false,
       "prompt_tokens_details": {
@@ -75,12 +75,12 @@
         "upstream_inference_completions_cost": 0
       },
       "completion_tokens_details": {
-        "reasoning_tokens": 503,
+        "reasoning_tokens": 275,
         "image_tokens": 0,
         "audio_tokens": 0
       }
     },
-    "latency_s": 31.508,
+    "latency_s": 7.157,
     "retries": 0
   }
 }

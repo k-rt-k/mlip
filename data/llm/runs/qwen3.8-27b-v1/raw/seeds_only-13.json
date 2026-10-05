@@ -1,6 +1,6 @@
 {
   "request_hash": "e57ac6fa2daefef35e8b3fa03ea47f330b3f0ac98c93bbfaf40e7c260a7fda94",
-  "saved_at": "2026-10-05T02:43:50.210037+00:00",
+  "saved_at": "2026-10-05T02:52:36.732817+00:00",
   "request": {
     "model": "qwen/qwen3.8-27b:free",
     "messages": [
@@ -52,15 +52,15 @@
     }
   },
   "response": {
-    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"I Will Survive\",\n      \"artist\": \"Fall Out Boy\"\n    },\n    {\n      \"title\": \"The Only Exception\",\n      \"artist\": \"Paramore\"\n    },\n    {\n      \"title\": \"All the Small Things\",\n      \"artist\": \"The All-American Rejects\"\n    },\n    {\n      \"title\": \"Misery\",\n      \"artist\": \"Saosin\"\n    },\n    {\n      \"title\": \"I'm Not Sorry\",\n      \"artist\": \"The Red Jumpsuit Apparatus\"\n    },\n    {\n      \"title\": \"Stuck with U\",\n      \"artist\": \"Fall Out Boy\"\n    },\n    {\n      \"title\": \"Decode\",\n      \"artist\": \"Paramore\"\n    },\n    {\n      \"title\": \"The Pretender\",\n      \"artist\": \"Foo Fighters\"\n    },\n    {\n      \"title\": \"I Won't Be Home\",\n      \"artist\": \"The All-American Rejects\"\n    },\n    {\n      \"title\": \"A Little More Love\",\n      \"artist\": \"Saosin\"\n    }\n  ]\n}",
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"I Will Survive\",\n      \"artist\": \"The Used\"\n    },\n    {\n      \"title\": \"The Only Exception\",\n      \"artist\": \"Paramore\"\n    },\n    {\n      \"title\": \"I'm Not There\",\n      \"artist\": \"The All-American Rejects\"\n    },\n    {\n      \"title\": \"All the Small Things\",\n      \"artist\": \"Blink-182\"\n    },\n    {\n      \"title\": \"The Pretender\",\n      \"artist\": \"Foo Fighters\"\n    },\n    {\n      \"title\": \"Misery Business\",\n      \"artist\": \"Paramore\"\n    },\n    {\n      \"title\": \"Dance, Dance\",\n      \"artist\": \"Fall Out Boy\"\n    },\n    {\n      \"title\": \"Your Guardian Angel\",\n      \"artist\": \"The Red Jumpsuit Apparatus\"\n    },\n    {\n      \"title\": \"Ready, Set, Go!\",\n      \"artist\": \"Tokio Hotel\"\n    },\n    {\n      \"title\": \"Bury Your Head\",\n      \"artist\": \"Saosin\"\n    }\n  ]\n}",
     "finish_reason": "stop",
-    "id": "gen-1791168215-r83y4bzBgXHriZtZ5wIw",
+    "id": "gen-1791168749-gsFWnGJAM4Ym8hDl9FxS",
     "model": "qwen/qwen3.8-27b:free",
     "provider": "ModelRun",
     "usage": {
       "prompt_tokens": 322,
-      "completion_tokens": 285,
-      "total_tokens": 607,
+      "completion_tokens": 715,
+      "total_tokens": 1037,
       "cost": 0,
       "is_byok": false,
       "prompt_tokens_details": {
@@ -75,12 +75,12 @@
         "upstream_inference_completions_cost": 0
       },
       "completion_tokens_details": {
-        "reasoning_tokens": 3,
+        "reasoning_tokens": 430,
         "image_tokens": 0,
         "audio_tokens": 0
       }
     },
-    "latency_s": 14.656,
+    "latency_s": 7.099,
     "retries": 0
   }
 }

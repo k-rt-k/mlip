@@ -1,6 +1,6 @@
 {
   "request_hash": "b4dc7ebf354705dc5caae0511d49dba7b2d6c039a199ac93f93850c3c6fdca1a",
-  "saved_at": "2026-10-05T02:43:12.987739+00:00",
+  "saved_at": "2026-10-05T02:51:41.276886+00:00",
   "request": {
     "model": "qwen/qwen3.8-27b:free",
     "messages": [
@@ -52,15 +52,15 @@
     }
   },
   "response": {
-    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"An Ending (Ascent)\",\n      \"artist\": \"Brian Eno\"\n    },\n    {\n      \"title\": \"The Garden\",\n      \"artist\": \"Brian Eno\"\n    },\n    {\n      \"title\": \"Discreet Music\",\n      \"artist\": \"Brian Eno\"\n    },\n    {\n      \"title\": \"1/1 (Tunnel)\",\n      \"artist\": \"Brian Eno\"\n    },\n    {\n      \"title\": \"Music for Airports\",\n      \"artist\": \"Brian Eno\"\n    },\n    {\n      \"title\": \"The Ship\",\n      \"artist\": \"Carbon Based Lifeforms\"\n    },\n    {\n      \"title\": \"The Sea\",\n      \"artist\": \"Carbon Based Lifeforms\"\n    },\n    {\n      \"title\": \"The Moon\",\n      \"artist\": \"Carbon Based Lifeforms\"\n    },\n    {\n      \"title\": \"The Sun\",\n      \"artist\": \"Carbon Based Lifeforms\"\n    },\n    {\n      \"title\": \"The Stars\",\n      \"artist\": \"Carbon Based Lifeforms\"\n    }\n  ]\n}",
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"The Garden\",\n      \"artist\": \"Carbon Based Lifeforms\"\n    },\n    {\n      \"title\": \"The Last Days of the World\",\n      \"artist\": \"Brian Eno\"\n    },\n    {\n      \"title\": \"The Great Fire\",\n      \"artist\": \"Trent Reznor\"\n    },\n    {\n      \"title\": \"The End\",\n      \"artist\": \"Mogwai\"\n    },\n    {\n      \"title\": \"The Lighthouse\",\n      \"artist\": \"Nils Frahm\"\n    },\n    {\n      \"title\": \"The Longest Day\",\n      \"artist\": \"Hildur Guðnadóttir\"\n    },\n    {\n      \"title\": \"The End of the World\",\n      \"artist\": \"Moby\"\n    },\n    {\n      \"title\": \"The Last Time\",\n      \"artist\": \"Sigur Rós\"\n    },\n    {\n      \"title\": \"The End of the World\",\n      \"artist\": \"Burial\"\n    },\n    {\n      \"title\": \"The End\",\n      \"artist\": \"Boards of Canada\"\n    }\n  ]\n}",
     "finish_reason": "stop",
-    "id": "gen-1791168185-xJWbsZ6NzZ649Y6IVgBx",
+    "id": "gen-1791168686-LSpXFsEu0AuX0XDUsoSX",
     "model": "qwen/qwen3.8-27b:free",
     "provider": "ModelRun",
     "usage": {
       "prompt_tokens": 366,
-      "completion_tokens": 823,
-      "total_tokens": 1189,
+      "completion_tokens": 599,
+      "total_tokens": 965,
       "cost": 0,
       "is_byok": false,
       "prompt_tokens_details": {
@@ -75,12 +75,12 @@
         "upstream_inference_completions_cost": 0
       },
       "completion_tokens_details": {
-        "reasoning_tokens": 544,
+        "reasoning_tokens": 311,
         "image_tokens": 0,
         "audio_tokens": 0
       }
     },
-    "latency_s": 7.725,
+    "latency_s": 15.454,
     "retries": 0
   }
 }

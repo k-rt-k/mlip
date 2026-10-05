@@ -1,6 +1,6 @@
 {
   "request_hash": "025845215703042ff6c8e2eb10bcef32215698f36ea26e9a48cb8f8f2ed0203e",
-  "saved_at": "2026-10-05T02:44:51.905669+00:00",
+  "saved_at": "2026-10-05T02:54:12.675226+00:00",
   "request": {
     "model": "qwen/qwen3.8-27b:free",
     "messages": [
@@ -52,15 +52,15 @@
     }
   },
   "response": {
-    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Khat\",\n      \"artist\": \"Navjot Ahuja\"\n    },\n    {\n      \"title\": \"Kaahe Mose\",\n      \"artist\": \"Garvit Soni, Priyansh Srivastava\"\n    },\n    {\n      \"title\": \"Choo Lo\",\n      \"artist\": \"The Local Train\"\n    },\n    {\n      \"title\": \"Finding Her\",\n      \"artist\": \"Kushagra, Bharath\"\n    },\n    {\n      \"title\": \"Bye\",\n      \"artist\": \"Aditya Bhardwaj\"\n    },\n    {\n      \"title\": \"Khat\",\n      \"artist\": \"Navjot Ahuja\"\n    },\n    {\n      \"title\": \"Kaahe Mose\",\n      \"artist\": \"Garvit Soni, Priyansh Srivastava\"\n    },\n    {\n      \"title\": \"Choo Lo\",\n      \"artist\": \"The Local Train\"\n    },\n    {\n      \"title\": \"Finding Her\",\n      \"artist\": \"Kushagra, Bharath\"\n    },\n    {\n      \"title\": \"Bye\",\n      \"artist\": \"Aditya Bhardwaj\"\n    }\n  ]\n}",
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Tera Yaar Hoon Main\",\n      \"artist\": \"The Local Train\"\n    },\n    {\n      \"title\": \"Kuchh Bhi Ho Jaaye\",\n      \"artist\": \"The Local Train\"\n    },\n    {\n      \"title\": \"Tujhe Sochta Hoon\",\n      \"artist\": \"The Local Train\"\n    },\n    {\n      \"title\": \"Kaho Na\",\n      \"artist\": \"The Local Train\"\n    },\n    {\n      \"title\": \"Kun Fada Kun\",\n      \"artist\": \"Navjot Ahuja\"\n    },\n    {\n      \"title\": \"Kaho Na\",\n      \"artist\": \"Navjot Ahuja\"\n    },\n    {\n      \"title\": \"Kaahe Mose\",\n      \"artist\": \"Garvit Soni\"\n    },\n    {\n      \"title\": \"Kaho Na\",\n      \"artist\": \"Garvit Soni\"\n    },\n    {\n      \"title\": \"Kuchh Bhi Ho Jaaye\",\n      \"artist\": \"Aditya Bhardwaj\"\n    },\n    {\n      \"title\": \"Bye\",\n      \"artist\": \"Aditya Bhardwaj\"\n    }\n  ]\n}",
     "finish_reason": "stop",
-    "id": "gen-1791168283-rV2MyznvNc4JqVudRg2p",
+    "id": "gen-1791168818-BJJYERxnsOGOFEERTIqY",
     "model": "qwen/qwen3.8-27b:free",
     "provider": "ModelRun",
     "usage": {
       "prompt_tokens": 324,
-      "completion_tokens": 424,
-      "total_tokens": 748,
+      "completion_tokens": 2703,
+      "total_tokens": 3027,
       "cost": 0,
       "is_byok": false,
       "prompt_tokens_details": {
@@ -75,12 +75,12 @@
         "upstream_inference_completions_cost": 0
       },
       "completion_tokens_details": {
-        "reasoning_tokens": 115,
+        "reasoning_tokens": 2394,
         "image_tokens": 0,
         "audio_tokens": 0
       }
     },
-    "latency_s": 8.592,
+    "latency_s": 34.094,
     "retries": 0
   }
 }

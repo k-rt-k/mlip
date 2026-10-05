@@ -1,6 +1,6 @@
 {
   "request_hash": "8e410c9c4568782ab0d12a992c02065f332759bed522ff646a2d69377aba1257",
-  "saved_at": "2026-10-05T02:44:07.095442+00:00",
+  "saved_at": "2026-10-05T02:52:47.185657+00:00",
   "request": {
     "model": "qwen/qwen3.8-27b:free",
     "messages": [
@@ -52,15 +52,15 @@
     }
   },
   "response": {
-    "text": "{\"songs\":[{\"title\":\"Let's Get It On\",\"artist\":\"Marvin Gaye\"},{\"title\":\"I Heard It Through the Grapevine\",\"artist\":\"Marvin Gaye\"},{\"title\":\"Sexual Healing\",\"artist\":\"Marvin Gaye\"},{\"title\":\"Ain't No Mountain High Enough\",\"artist\":\"Marvin Gaye & Tammi Terrell\"},{\"title\":\"I'll Be Waiting\",\"artist\":\"The Temptations\"},{\"title\":\"My Guy\",\"artist\":\"Mary Wells\"},{\"title\":\"Where Did Our Love Go\",\"artist\":\"The Supremes\"},{\"title\":\"You Keep Me Hangin' On\",\"artist\":\"The Supremes\"},{\"title\":\"Proud Mary\",\"artist\":\"Ike & Tina Turner\"},{\"title\":\"I Want You Back\",\"artist\":\"The Jackson 5\"}]}",
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"I'll Be Yours\",\n      \"artist\": \"The Deele\"\n    },\n    {\n      \"title\": \"You're So Sweet\",\n      \"artist\": \"The Deele\"\n    },\n    {\n      \"title\": \"I'm in Love\",\n      \"artist\": \"The Deele\"\n    },\n    {\n      \"title\": \"I Can't Help Myself\",\n      \"artist\": \"The Four Tops\"\n    },\n    {\n      \"title\": \"Reach Out I'll Be There\",\n      \"artist\": \"The Four Tops\"\n    },\n    {\n      \"title\": \"I'll Be There\",\n      \"artist\": \"The Jackson 5\"\n    },\n    {\n      \"title\": \"Ain't No Mountain High Enough\",\n      \"artist\": \"Marvin Gaye & Tammi Terrell\"\n    },\n    {\n      \"title\": \"I Heard It Through the Grapevine\",\n      \"artist\": \"Marvin Gaye\"\n    },\n    {\n      \"title\": \"Sexual Healing\",\n      \"artist\": \"Marvin Gaye\"\n    },\n    {\n      \"title\": \"You Make the World Go Round\",\n      \"artist\": \"The Temptations\"\n    }\n  ]\n}",
     "finish_reason": "stop",
-    "id": "gen-1791168239-ZeZ1fs7vHb7XurPHvIkd",
+    "id": "gen-1791168760-TdG1aw1fvOtLjkJUkxlC",
     "model": "qwen/qwen3.8-27b:free",
     "provider": "ModelRun",
     "usage": {
       "prompt_tokens": 344,
-      "completion_tokens": 675,
-      "total_tokens": 1019,
+      "completion_tokens": 862,
+      "total_tokens": 1206,
       "cost": 0,
       "is_byok": false,
       "prompt_tokens_details": {
@@ -75,12 +75,12 @@
         "upstream_inference_completions_cost": 0
       },
       "completion_tokens_details": {
-        "reasoning_tokens": 519,
+        "reasoning_tokens": 558,
         "image_tokens": 0,
         "audio_tokens": 0
       }
     },
-    "latency_s": 7.836,
+    "latency_s": 7.124,
     "retries": 0
   }
 }

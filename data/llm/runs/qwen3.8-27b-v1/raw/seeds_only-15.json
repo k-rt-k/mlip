@@ -1,6 +1,6 @@
 {
   "request_hash": "d73bee4d3dfcb71923f7e3950fecff0085cb71e755c5aa9960eb617724d597ec",
-  "saved_at": "2026-10-05T02:44:41.333918+00:00",
+  "saved_at": "2026-10-05T02:53:35.218187+00:00",
   "request": {
     "model": "qwen/qwen3.8-27b:free",
     "messages": [
@@ -52,15 +52,15 @@
     }
   },
   "response": {
-    "text": "{\"songs\":[{\"title\":\"Love's Comin' At Ya\",\"artist\":\"Melba Moore\"},{\"title\":\"High Hopes\",\"artist\":\"S.O.S. Band\"},{\"title\":\"I'm In Love\",\"artist\":\"Evelyn \\\"Champagne\\\" King\"},{\"title\":\"Operator\",\"artist\":\"Solar Records\"},{\"title\":\"Last Night a DJ Saved My Life\",\"artist\":\"Indeep\"},{\"title\":\"I'm Coming Out\",\"artist\":\"Diana Ross\"},{\"title\":\"I Feel Love\",\"artist\":\"Donna Summer\"},{\"title\":\"I'm Every Woman\",\"artist\":\"Chaka Khan\"},{\"title\":\"Let's Groove\",\"artist\":\"Earth, Wind & Fire\"},{\"title\":\"September\",\"artist\":\"Earth, Wind & Fire\"}]}",
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Let's Groove\",\n      \"artist\": \"Earth, Wind & Fire\"\n    },\n    {\n      \"title\": \"Ain't Nobody\",\n      \"artist\": \"Chaka Khan\"\n    },\n    {\n      \"title\": \"I'm Every Woman\",\n      \"artist\": \"Chaka Khan\"\n    },\n    {\n      \"title\": \"Funkytown\",\n      \"artist\": \"Lipps Inc\"\n    },\n    {\n      \"title\": \"Celebration\",\n      \"artist\": \"Kool & the Gang\"\n    },\n    {\n      \"title\": \"He's So Shy\",\n      \"artist\": \"The Pointer Sisters\"\n    },\n    {\n      \"title\": \"Automatic\",\n      \"artist\": \"The Pointer Sisters\"\n    },\n    {\n      \"title\": \"Upside Down\",\n      \"artist\": \"Diana Ross\"\n    },\n    {\n      \"title\": \"I'm Coming Out\",\n      \"artist\": \"Diana Ross\"\n    },\n    {\n      \"title\": \"I Feel Love\",\n      \"artist\": \"Donna Summer\"\n    }\n  ]\n}",
     "finish_reason": "stop",
-    "id": "gen-1791168251-QnBP7vLmJoyOaSUg0Vv7",
+    "id": "gen-1791168787-HQoFHVBJjWjWt52M7lAB",
     "model": "qwen/qwen3.8-27b:free",
     "provider": "ModelRun",
     "usage": {
       "prompt_tokens": 346,
-      "completion_tokens": 146,
-      "total_tokens": 492,
+      "completion_tokens": 2254,
+      "total_tokens": 2600,
       "cost": 0,
       "is_byok": false,
       "prompt_tokens_details": {
@@ -75,12 +75,12 @@
         "upstream_inference_completions_cost": 0
       },
       "completion_tokens_details": {
-        "reasoning_tokens": 3,
+        "reasoning_tokens": 1973,
         "image_tokens": 0,
         "audio_tokens": 0
       }
     },
-    "latency_s": 29.793,
-    "retries": 0
+    "latency_s": 28.33,
+    "retries": 2
   }
 }

@@ -1,6 +1,6 @@
 {
   "request_hash": "a0600dd873faf6757ec28637564a7fccc321e0f4e0ea03267989a9413ed8fd54",
-  "saved_at": "2026-10-05T02:46:30.742737+00:00",
+  "saved_at": "2026-10-05T02:56:29.963509+00:00",
   "request": {
     "model": "qwen/qwen3.8-27b:free",
     "messages": [
@@ -52,15 +52,15 @@
     }
   },
   "response": {
-    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Crazy Mixed Up\",\n      \"artist\": \"The Wailers\"\n    },\n    {\n      \"title\": \"Kung Fu\",\n      \"artist\": \"The Wailers\"\n    },\n    {\n      \"title\": \"I Can See Clearly Now\",\n      \"artist\": \"Jimmy Cliff\"\n    },\n    {\n      \"title\": \"Many Rivers to Cross\",\n      \"artist\": \"Jimmy Cliff\"\n    },\n    {\n      \"title\": \"Soul Man\",\n      \"artist\": \"The Upsetters\"\n    },\n    {\n      \"title\": \"I'm Gonna Change My Way of Living\",\n      \"artist\": \"The Wailers\"\n    },\n    {\n      \"title\": \"Get Up, Stand Up\",\n      \"artist\": \"Bob Marley & The Wailers\"\n    },\n    {\n      \"title\": \"Trench Town Rock\",\n      \"artist\": \"Bob Marley & The Wailers\"\n    },\n    {\n      \"title\": \"Concrete Jungle\",\n      \"artist\": \"Bob Marley & The Wailers\"\n    },\n    {\n      \"title\": \"One Love / People Get Ready\",\n      \"artist\": \"Bob Marley & The Wailers\"\n    }\n  ]\n}",
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Clementine\",\n      \"artist\": \"Bob Marley & The Wailers\"\n    },\n    {\n      \"title\": \"Get Up, Stand Up\",\n      \"artist\": \"Bob Marley & The Wailers\"\n    },\n    {\n      \"title\": \"Trench Town Rock\",\n      \"artist\": \"Bob Marley & The Wailers\"\n    },\n    {\n      \"title\": \"I Can See It Now\",\n      \"artist\": \"The Wailers\"\n    },\n    {\n      \"title\": \"Soul Decalogue\",\n      \"artist\": \"The Wailers\"\n    },\n    {\n      \"title\": \"Kaya\",\n      \"artist\": \"The Wailers\"\n    },\n    {\n      \"title\": \"I Shot the Sheriff\",\n      \"artist\": \"Bob Marley & The Wailers\"\n    },\n    {\n      \"title\": \"So Much Love\",\n      \"artist\": \"Bob Marley & The Wailers\"\n    },\n    {\n      \"title\": \"One Love\",\n      \"artist\": \"Bob Marley & The Wailers\"\n    },\n    {\n      \"title\": \"No Woman, No Cry\",\n      \"artist\": \"Bob Marley & The Wailers\"\n    }\n  ]\n}",
     "finish_reason": "stop",
-    "id": "gen-1791168369-1f58oFoGIkmryDLTqwFi",
+    "id": "gen-1791168956-uEDA8LH0r76SP2psnUSf",
     "model": "qwen/qwen3.8-27b:free",
     "provider": "ModelRun",
     "usage": {
       "prompt_tokens": 336,
-      "completion_tokens": 379,
-      "total_tokens": 715,
+      "completion_tokens": 685,
+      "total_tokens": 1021,
       "cost": 0,
       "is_byok": false,
       "prompt_tokens_details": {
@@ -75,12 +75,12 @@
         "upstream_inference_completions_cost": 0
       },
       "completion_tokens_details": {
-        "reasoning_tokens": 69,
+        "reasoning_tokens": 366,
         "image_tokens": 0,
         "audio_tokens": 0
       }
     },
-    "latency_s": 20.979,
+    "latency_s": 33.68,
     "retries": 0
   }
 }

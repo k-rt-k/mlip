@@ -1,6 +1,6 @@
 {
   "request_hash": "a7f70318fa3f3ead44cc51e8dac55220a93e753b1be9bf74e556c8224d8b3c24",
-  "saved_at": "2026-10-05T02:45:23.022517+00:00",
+  "saved_at": "2026-10-05T02:55:39.456523+00:00",
   "request": {
     "model": "qwen/qwen3.8-27b:free",
     "messages": [
@@ -52,15 +52,15 @@
     }
   },
   "response": {
-    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"I'm So Glad\",\n      \"artist\": \"Kirk Franklin\"\n    },\n    {\n      \"title\": \"I Believe\",\n      \"artist\": \"Mary Mary\"\n    },\n    {\n      \"title\": \"Praise You\",\n      \"artist\": \"Hezekiah Walker\"\n    },\n    {\n      \"title\": \"I'm Still Here\",\n      \"artist\": \"Tasha Cobbs Leonard\"\n    },\n    {\n      \"title\": \"I'm Good\",\n      \"artist\": \"Tasha Cobbs Leonard\"\n    },\n    {\n      \"title\": \"I'm Not Gonna Let You Down\",\n      \"artist\": \"Tasha Cobbs Leonard\"\n    },\n    {\n      \"title\": \"I'm Not Gonna Let You Down\",\n      \"artist\": \"Tasha Cobbs Leonard\"\n    },\n    {\n      \"title\": \"I'm Not Gonna Let You Down\",\n      \"artist\": \"Tasha Cobbs Leonard\"\n    },\n    {\n      \"title\": \"I'm Not Gonna Let You Down\",\n      \"artist\": \"Tasha Cobbs Leonard\"\n    },\n    {\n      \"title\": \"I'm Not Gonna Let You Down\",\n      \"artist\": \"Tasha Cobbs Leonard\"\n    }\n  ]\n}",
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"I Believe in You\",\n      \"artist\": \"Tasha Cobbs Leonard\"\n    },\n    {\n      \"title\": \"I Can Do All Things\",\n      \"artist\": \"Tasha Cobbs Leonard\"\n    },\n    {\n      \"title\": \"I'm Not Gonna Let You Down\",\n      \"artist\": \"Tasha Cobbs Leonard\"\n    },\n    {\n      \"title\": \"I'm Not Gonna Let You Down\",\n      \"artist\": \"Tasha Cobbs Leonard\"\n    },\n    {\n      \"title\": \"I'm Not Gonna Let You Down\",\n      \"artist\": \"Tasha Cobbs Leonard\"\n    },\n    {\n      \"title\": \"I'm Not Gonna Let You Down\",\n      \"artist\": \"Tasha Cobbs Leonard\"\n    },\n    {\n      \"title\": \"I'm Not Gonna Let You Down\",\n      \"artist\": \"Tasha Cobbs Leonard\"\n    },\n    {\n      \"title\": \"I'm Not Gonna Let You Down\",\n      \"artist\": \"Tasha Cobbs Leonard\"\n    },\n    {\n      \"title\": \"I'm Not Gonna Let You Down\",\n      \"artist\": \"Tasha Cobbs Leonard\"\n    },\n    {\n      \"title\": \"I'm Not Gonna Let You Down\",\n      \"artist\": \"Tasha Cobbs Leonard\"\n    }\n  ]\n}",
     "finish_reason": "stop",
-    "id": "gen-1791168314-Ts7uPu0Bi9lXjdd3B6VU",
+    "id": "gen-1791168894-lgAg5nCaegDNUecYukQb",
     "model": "qwen/qwen3.8-27b:free",
     "provider": "ModelRun",
     "usage": {
       "prompt_tokens": 332,
-      "completion_tokens": 655,
-      "total_tokens": 987,
+      "completion_tokens": 709,
+      "total_tokens": 1041,
       "cost": 0,
       "is_byok": false,
       "prompt_tokens_details": {
@@ -75,12 +75,12 @@
         "upstream_inference_completions_cost": 0
       },
       "completion_tokens_details": {
-        "reasoning_tokens": 342,
+        "reasoning_tokens": 373,
         "image_tokens": 0,
         "audio_tokens": 0
       }
     },
-    "latency_s": 8.744,
+    "latency_s": 45.607,
     "retries": 0
   }
 }

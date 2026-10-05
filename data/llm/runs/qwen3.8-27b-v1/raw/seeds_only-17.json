@@ -1,6 +1,6 @@
 {
   "request_hash": "8917c64861efdc9552c3c136732832d06dae5cb8ac46b58e076a8470b8fe3a72",
-  "saved_at": "2026-10-05T02:45:08.543407+00:00",
+  "saved_at": "2026-10-05T02:54:44.934058+00:00",
   "request": {
     "model": "qwen/qwen3.8-27b:free",
     "messages": [
@@ -52,15 +52,15 @@
     }
   },
   "response": {
-    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Rat Race\",\n      \"artist\": \"G.B.H.\"\n    },\n    {\n      \"title\": \"No More\",\n      \"artist\": \"Chaos UK\"\n    },\n    {\n      \"title\": \"No More\",\n      \"artist\": \"Discharge\"\n    },\n    {\n      \"title\": \"War Against the Machine\",\n      \"artist\": \"Discharge\"\n    },\n    {\n      \"title\": \"Bored to Death\",\n      \"artist\": \"G.B.H.\"\n    },\n    {\n      \"title\": \"No More\",\n      \"artist\": \"Chaos UK\"\n    },\n    {\n      \"title\": \"No More\",\n      \"artist\": \"Discharge\"\n    },\n    {\n      \"title\": \"No More\",\n      \"artist\": \"Chaos UK\"\n    },\n    {\n      \"title\": \"No More\",\n      \"artist\": \"Discharge\"\n    },\n    {\n      \"title\": \"No More\",\n      \"artist\": \"Chaos UK\"\n    }\n  ]\n}",
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Anarchy\",\n      \"artist\": \"G.B.H.\"\n    },\n    {\n      \"title\": \"No More\",\n      \"artist\": \"G.B.H.\"\n    },\n    {\n      \"title\": \"No Future\",\n      \"artist\": \"Crass\"\n    },\n    {\n      \"title\": \"TV Party\",\n      \"artist\": \"Black Flag\"\n    },\n    {\n      \"title\": \"Scream\",\n      \"artist\": \"Black Flag\"\n    },\n    {\n      \"title\": \"Gangster\",\n      \"artist\": \"Black Flag\"\n    },\n    {\n      \"title\": \"Rat Trap\",\n      \"artist\": \"Black Flag\"\n    },\n    {\n      \"title\": \"Police State\",\n      \"artist\": \"Dead Kennedys\"\n    },\n    {\n      \"title\": \"California Über Alles\",\n      \"artist\": \"Dead Kennedys\"\n    },\n    {\n      \"title\": \"I Kill Therefore I Am\",\n      \"artist\": \"Dead Kennedys\"\n    }\n  ]\n}",
     "finish_reason": "stop",
-    "id": "gen-1791168293-jAE7GlqgibCwHdrZS0OT",
+    "id": "gen-1791168860-pyrcGi17lj9VXacj1tCu",
     "model": "qwen/qwen3.8-27b:free",
     "provider": "ModelRun",
     "usage": {
       "prompt_tokens": 320,
-      "completion_tokens": 337,
-      "total_tokens": 657,
+      "completion_tokens": 4365,
+      "total_tokens": 4685,
       "cost": 0,
       "is_byok": false,
       "prompt_tokens_details": {
@@ -75,12 +75,12 @@
         "upstream_inference_completions_cost": 0
       },
       "completion_tokens_details": {
-        "reasoning_tokens": 73,
+        "reasoning_tokens": 4098,
         "image_tokens": 0,
         "audio_tokens": 0
       }
     },
-    "latency_s": 15.696,
+    "latency_s": 24.899,
     "retries": 0
   }
 }
