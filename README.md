@@ -26,7 +26,7 @@ The shared baseline dataset is committed in
 extract it from the repository root:
 
 ```sh
-unzip -n datasets/baselines-v3.zip -d .
+unzip -o datasets/baselines-v3.zip 'data/*' dataset-manifest.json -d .
 ```
 
 This restores the 20-prompt reference dataset, twenty partial examples, selection
@@ -36,8 +36,9 @@ and `data/youtube_music/partial_examples/v2/model_inputs.json` for the twenty pa
 `dataset.json` in the same partial directory contains the hidden answers.
 The archive contains no credentials. Reading the saved datasets needs no login;
 live operations on private playlist copies require their owning account.
-Ten partial examples have existing private copies; the other ten have complete
-local seed/hidden splits but their private copies are pending browser-auth refresh.
+All twenty partial examples have verified private seed-only copies owned by
+`mlip.team0@gmail.com`. Re-extract after pulling updates to replace stale local
+dataset IDs; extraction leaves tracked prompts and code unchanged.
 
 After cloning, activate the secret-guard git hooks (once per machine):
 
