@@ -33,11 +33,15 @@ def run_cooccurrence_experiment(
     print(f"\n[Runner] Generating top-{count} co-occurrence predictions for {len(examples)} test cases...")
 
     for idx, ex in enumerate(examples, start=1):
+        # 1. Check for explicit example_id, otherwise generate a unique key using prompt/source ID and seed size
         raw_eid = ex.get("example_id")
         if raw_eid is not None:
             eid = str(raw_eid).lower().replace("example-", "").lstrip("0") or "1"
         else:
-            eid = str(idx)
+            # Construct unique key for v2 multi-seed sizes (e.g. "1_5" or "1_20" or fallback to index)
+            source_id = ex.get("prompt_id") or ex.get("source_playlist_id") or f"ex_{idx}"
+            seed_size = ex.get("selection", {}).get("seed_count", "default")
+            eid = f"{source_id}_{seed_size}"
 
         # Extract seed track video_ids
         seed_tracks = ex.get("seed_tracks", [])
@@ -58,7 +62,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--dataset",
         type=Path,
-        default=Path("data/youtube_music/partial_examples/v2/dataset.json"),
+        default=Path("data/youtube_music/partial_examples/v3/dataset.json"),
         help="Path to dataset.json",
     )
     parser.add_argument(
