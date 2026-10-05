@@ -1,0 +1,86 @@
+{
+  "request_hash": "3c09d4dd10a626e203d8547a2d1c7d018069de516f313fbd33db17553d29fdbd",
+  "saved_at": "2026-10-04T21:53:17.323532+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b:free",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "Playlist request: \"Nostalgic 2000s pop songs for a reunion with old friends.\"\n\nRecommend 20 different songs that best fit this request, ordered from best fit to weakest fit. Match the requested mood, activity, genre, era, and language where stated. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    }
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"I Gotta Feeling\",\n      \"artist\": \"The Black Eyed Peas\"\n    },\n    {\n      \"title\": \"Bye Bye Bye\",\n      \"artist\": \"*NSYNC\"\n    },\n    {\n      \"title\": \"Hey Ya!\",\n      \"artist\": \"OutKast\"\n    },\n    {\n      \"title\": \"Since U Been Gone\",\n      \"artist\": \"Kelly Clarkson\"\n    },\n    {\n      \"title\": \"Unwritten\",\n      \"artist\": \"Natasha Bedingfield\"\n    },\n    {\n      \"title\": \"Beautiful\",\n      \"artist\": \"Christina Aguilera\"\n    },\n    {\n      \"title\": \"Complicated\",\n      \"artist\": \"Avril Lavigne\"\n    },\n    {\n      \"title\": \"Hollaback Girl\",\n      \"artist\": \"Gwen Stefani\"\n    },\n    {\n      \"title\": \"Crazy in Love\",\n      \"artist\": \"Beyoncé\"\n    },\n    {\n      \"title\": \"Toxic\",\n      \"artist\": \"Britney Spears\"\n    },\n    {\n      \"title\": \"Poker Face\",\n      \"artist\": \"Lady Gaga\"\n    },\n    {\n      \"title\": \"Just the Way You Are\",\n      \"artist\": \"Bruno Mars\"\n    },\n    {\n      \"title\": \"Halo\",\n      \"artist\": \"Beyoncé\"\n    },\n    {\n      \"title\": \"Bleeding Love\",\n      \"artist\": \"Leona Lewis\"\n    },\n    {\n      \"title\": \"Chasing Cars\",\n      \"artist\": \"Snow Patrol\"\n    },\n    {\n      \"title\": \"You're Beautiful\",\n      \"artist\": \"James Blunt\"\n    },\n    {\n      \"title\": \"I'm Yours\",\n      \"artist\": \"Jason Mraz\"\n    },\n    {\n      \"title\": \"Dynamite\",\n      \"artist\": \"Taio Cruz\"\n    },\n    {\n      \"title\": \"Umbrella\",\n      \"artist\": \"Rihanna\"\n    },\n    {\n      \"title\": \"Hips Don't Lie\",\n      \"artist\": \"Wyclef Jean\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791150781-UcfF1N0jU3EPcGAjkSkK",
+    "model": "qwen/qwen3.8-27b:free",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 269,
+      "completion_tokens": 3364,
+      "total_tokens": 3633,
+      "cost": 0,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0,
+        "upstream_inference_prompt_cost": 0,
+        "upstream_inference_completions_cost": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 2822,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 16.856,
+    "retries": 1
+  }
+}

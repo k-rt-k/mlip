@@ -1,0 +1,86 @@
+{
+  "request_hash": "f48bc18f399288864e08c55bf99efefe7a2ede04c56d941f76b6897788f8e4c7",
+  "saved_at": "2026-10-04T22:05:48.041876+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b:free",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. End of Beginning — Djo\n2. Tonight You Are Mine — The Technicolors\n3. Starlight (feat. Mr Gabriel) — Jai Wolf\n4. Oh No (Official Video) — Bring Me The Horizon\n5. Snoop Dogg - Riders on the Storm — Rebel Music Studios\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    }
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"The Emptiness Machine\",\n      \"artist\": \"Bring Me The Horizon\"\n    },\n    {\n      \"title\": \"Cherry Wine\",\n      \"artist\": \"Bring Me The Horizon\"\n    },\n    {\n      \"title\": \"Lose Control\",\n      \"artist\": \"Teddy Swims\"\n    },\n    {\n      \"title\": \"Beautiful Things\",\n      \"artist\": \"Benson Boone\"\n    },\n    {\n      \"title\": \"Snooze\",\n      \"artist\": \"Benson Boone\"\n    },\n    {\n      \"title\": \"Luther\",\n      \"artist\": \"Kendrick Lamar\"\n    },\n    {\n      \"title\": \"Not Like Us\",\n      \"artist\": \"Kendrick Lamar\"\n    },\n    {\n      \"title\": \"I'm Good (Blue)\",\n      \"artist\": \"Charli XCX\"\n    },\n    {\n      \"title\": \"The Less I Know The Better\",\n      \"artist\": \"Tame Impala\"\n    },\n    {\n      \"title\": \"Sweater Weather\",\n      \"artist\": \"The Neighbourhood\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791151503-Rz7ECr2stXfid83zRxye",
+    "model": "qwen/qwen3.8-27b:free",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 324,
+      "completion_tokens": 4385,
+      "total_tokens": 4709,
+      "cost": 0,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0,
+        "upstream_inference_prompt_cost": 0,
+        "upstream_inference_completions_cost": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 4098,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 44.611,
+    "retries": 1
+  }
+}

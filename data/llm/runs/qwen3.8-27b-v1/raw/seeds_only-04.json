@@ -1,0 +1,86 @@
+{
+  "request_hash": "06d31d8caa2cadb2873ec5df87a5258849244b2ef22dc01ff1629348f9d0868a",
+  "saved_at": "2026-10-04T22:01:54.500381+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b:free",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. Can't Decide — Max Dean, Luke Dean, Locky\n2. APT. — ROSÉ, Bruno Mars\n3. Darin - Hit Me Up (Visualizer) — Darin Music\n4. Dance The Night (From Barbie The Album) — Dua Lipa\n5. CHANEL — Tyla\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    }
+  },
+  "response": {
+    "text": "{\"songs\":[{\"title\":\"Water\",\"artist\":\"Tyla\"},{\"title\":\"365\",\"artist\":\"ROSÉ\"},{\"title\":\"Super Shy\",\"artist\":\"NewJeans\"},{\"title\":\"How Sweet\",\"artist\":\"aespa\"},{\"title\":\"LALALALA\",\"artist\":\"IVE\"},{\"title\":\"Espresso\",\"artist\":\"Sabrina Carpenter\"},{\"title\":\"Houdini\",\"artist\":\"Dua Lipa\"},{\"title\":\"Paint The Town Red\",\"artist\":\"Doja Cat\"},{\"title\":\"MILLION DOLLAR BABY\",\"artist\":\"Megan Thee Stallion\"},{\"title\":\"Cupid (Twin Version)\",\"artist\":\"FIFTY FIFTY\"}]}",
+    "finish_reason": "stop",
+    "id": "gen-1791151268-fxf3CIt2359wDyeuevGU",
+    "model": "qwen/qwen3.8-27b:free",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 326,
+      "completion_tokens": 4231,
+      "total_tokens": 4557,
+      "cost": 0,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0,
+        "upstream_inference_prompt_cost": 0,
+        "upstream_inference_completions_cost": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 4098,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 46.04,
+    "retries": 0
+  }
+}

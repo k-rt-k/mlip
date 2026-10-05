@@ -2,6 +2,50 @@
 
 Scope: [SCOPE.md](SCOPE.md). Deliverables: [baselines milestone](../milestones/baselines.md).
 
+## 2026-10-05 — Evaluation pipeline and continuation baselines scored (Spandan)
+
+- **Ready:** `evaluation/evaluate.py` + `evaluation/metrics.py` score predictions
+  (`{example_id: [video_ids]}`) against hidden songs in
+  `partial_examples/v3/dataset.json` by exact video ID: precision, recall, hit
+  rate, MAP, NDCG at K = 1 and 5, plus R-precision, reported per seed count.
+- **Baselines:** non-ML seed co-occurrence over the reference-pool playlists
+  (`baselines/`) and native YouTube Music suggestions
+  (`youtube_music/scripts/run_ytm_baseline.py`), both on all 40 inputs.
+- **Results (@5, five seeds / twenty seeds):** YouTube Music precision 0.13 / 0.08,
+  hit rate 0.40 / 0.30, NDCG 0.15 / 0.08; co-occurrence precision 0.06 / 0.08,
+  hit rate 0.15 / 0.20, NDCG 0.07 / 0.08. Full tables:
+  `ytm_baseline_result2.txt`, `cooccurrence_baseline_result2.txt`.
+- **Limitations:** recall is near zero because hidden sets are large (8–264
+  songs); exact-ID matching misses alternate uploads; co-occurrence only knows
+  songs in the 60 reference playlists.
+
+## 2026-10-04 — Zero-shot LLM baseline generated, unscored (Ayush)
+
+- **Ready:** ranked, YouTube Music–resolved recommendations from
+  `qwen/qwen3.8-27b:free` (OpenRouter, ModelRun host, fp4; temperature 0, seed 0,
+  one run, prompt `v1`) for all 20 prompt-only requests (20 requested, top 10
+  kept) and all 20 five-seed partial examples (`partial_examples/v2`, ids 1–20; 10
+  requested, top 5 kept, matching the platform continuation budget). Outputs and
+  raw responses are committed in
+  [`data/llm/runs/qwen3.8-27b-v1/`](../data/llm/runs/qwen3.8-27b-v1/); each mode
+  file records model, provider, prompts, tokens, and latency.
+  Cost $0; ~30 s per call.
+- **Code:** `llm/` (OpenRouter client, prompts, parsing, title + artist resolution
+  to video IDs with alternate uploads); usage in `llm/scripts/run_llm_baseline.py`.
+  Needs `OPENROUTER_API_KEY` in gitignored `llm/.env`.
+- **First observations:** 68% (prompt-only) and 49% (seeds-only) of suggestions
+  resolve to catalog tracks; 13/20 prompts and 10/20 examples fill top-K.
+  Unresolved items are mostly invented or misattributed songs (e.g. repeated
+  invented gospel titles, wrong artists for real songs); some outputs repeat
+  seeds or duplicates (Hindi indie, punk); classical/performer credits rarely
+  resolve. Temperature 0 is not reproducible on the free endpoint: a repeat of
+  examples 11–20 shared only 0–4 of 10 songs per example and reasoning length
+  varied ~10x, so single-run numbers are noisy; saved raw responses are the record.
+- **Remaining:** scoring seeds-only with `evaluation/evaluate.py` (five-seed
+  half) and prompt-only against reference playlists, validity/constraint checks, the twenty-seed inputs (`partial_examples/v3`, ids 21–40), and prompt + seeds mode (deferred until the
+  partial-example request source is agreed; a discovery prompt is recoverable
+  for 9/10 examples from `source_snapshot`).
+
 ## 2026-10-05 — Datasets and collection pipelines ready (Harsh)
 
 - **Prompt-only dataset:** 20 prompts, 60 reference playlists (three per prompt),
@@ -48,38 +92,39 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables: [baselines milestone](../milestones/b
   songs. Curation uses metadata/track listings; individual audio suitability and
   release years are not verified. Matching currently uses exact video IDs,
   leaving alternate uploads, covers, and recording versions unresolved.
-- **Baseline state:** five continuation suggestions per example are saved in
-  `data/youtube_music/baseline_runs/continuation-v1/`, unscored. No LLM results or
-  evaluation harness exist. Earlier Spotify API/metadata tooling remains in
+- **Other tooling:** earlier Spotify API/metadata tooling remains in
   `spotify/`; no embedding pipeline or interactive prototype is implemented.
 
 ## Baselines milestone — current checklist
 
 ### 1. Dataset and shared evaluation setup
 
-**Owner:** Harsh (datasets/pipelines complete); evaluation owner unassigned.
+**Owner:** Harsh (datasets/pipelines); Spandan (evaluation pipeline).
 
 - [x] Collect prompt reference playlists and save reproducible snapshots.
 - [x] Prepare partial examples, hidden answers, verified seed-only copies, and handoff.
 - [x] Prepare plan for implementation and evaluation of baselines.
+- [x] Shared evaluation pipeline for partial-playlist continuation (`evaluation/`).
+- [ ] Agree the reported split and constrained metric (e.g. hit rate/precision@5).
 
 ### 2. LLM baseline
-**Owner:** unassigned. **State:** not started.
+**Owner:** Ayush. **State:** prompt-only (20) and seeds-only (20) outputs generated; scoring pending.
 
-- [ ] Implement and run prompt-only and prompt + partial generation; record exact
-  model/version, prompts, outputs, cost, and latency. Web search comparison is optional.
+- [x] Implement and run prompt-only and seeds-only generation; record exact
+  model/version, prompts, outputs, cost, and latency.
+- [ ] Prompt + partial generation (deferred; request source TBD). Web search comparison is optional.
 - [ ] Implement and report prompt-only proxy evaluation with validity/constraint checks.
 - [ ] Resolve prompt + partial evaluation (**TBD**) or justify deferring performance claims.
 
 ### 3. Playlist-continuation baselines
 
-**Owner:** unassigned. **State:** platform outputs collected; evaluation pending.
+**Owner:** Spandan. **State:** YouTube Music and co-occurrence scored on all 40 inputs.
 
-- [ ] Complete the YouTube Music continuation experiment on seed-only copies.
-- [ ] Implement and run the required non-ML baseline; seed-song co-occurrence is
-  a candidate. Prompt-based retrieval and LLM reranking are optional.
-- [ ] Evaluate comparable methods on the same examples and fixed recommendation
-  budget; report results, failures, and proxy limitations.
+- [x] Complete the YouTube Music continuation experiment on seed-only copies.
+- [x] Implement and run the required non-ML baseline (seed-song co-occurrence).
+  Prompt-based retrieval and LLM reranking are optional.
+- [ ] Evaluate all comparable methods (including the LLM) on the same examples and
+  fixed recommendation budget; report results, failures, and proxy limitations.
 
 ### 4. Writeup and submission
 

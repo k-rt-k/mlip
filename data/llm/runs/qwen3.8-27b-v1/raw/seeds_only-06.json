@@ -1,0 +1,86 @@
+{
+  "request_hash": "2021ce6409439d549f4502fa2fc16c103d43917b1246d7ad64324f1e6c281205",
+  "saved_at": "2026-10-04T22:03:16.947966+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b:free",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. Miles Davis - Smoke gets in your eyes — TheLittletan\n2. Sonny Rollins Quartet - St. Thomas — 60otaku4\n3. Sophie Milman - I can't make you love me — charlyei\n4. Sophie Milman - So Long, You Fool — The Cool Jazz Music Channel\n5. Elizabeth Shepherd - Lonely House — The Cool Jazz Music Channel\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    }
+  },
+  "response": {
+    "text": "{\"songs\":[{\"title\":\"My Funny Valentine\",\"artist\":\"Chet Baker\"},{\"title\":\"Misty\",\"artist\":\"Ella Fitzgerald\"},{\"title\":\"Body and Soul\",\"artist\":\"Bill Evans Trio\"},{\"title\":\"Stella by Starlight\",\"artist\":\"Chet Baker\"},{\"title\":\"Take Five\",\"artist\":\"Dave Brubeck Quartet\"},{\"title\":\"I Can't Get Start\",\"artist\":\"Billie Holiday\"},{\"title\":\"Fly Me to the Moon\",\"artist\":\"Frank Sinatra\"},{\"title\":\"In a Sentimental Mood\",\"artist\":\"Duke Ellington\"},{\"title\":\"Perdido\",\"artist\":\"Duke Ellington\"},{\"title\":\"Manteca\",\"artist\":\"Dizzy Gillespie\"}]}",
+    "finish_reason": "stop",
+    "id": "gen-1791151363-GDe5Vh5iUTTYuIZPbn50",
+    "model": "qwen/qwen3.8-27b:free",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 345,
+      "completion_tokens": 4235,
+      "total_tokens": 4580,
+      "cost": 0,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0,
+        "upstream_inference_prompt_cost": 0,
+        "upstream_inference_completions_cost": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 4098,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 33.879,
+    "retries": 0
+  }
+}

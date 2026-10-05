@@ -1,0 +1,86 @@
+{
+  "request_hash": "8cc629b1a22961a8952f7cafd0b5f0aada832793c6e2bbe3a6698d8bd8d3950d",
+  "saved_at": "2026-10-04T21:52:38.351654+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b:free",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "Playlist request: \"Gentle bossa nova for a slow Sunday morning with coffee.\"\n\nRecommend 20 different songs that best fit this request, ordered from best fit to weakest fit. Match the requested mood, activity, genre, era, and language where stated. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    }
+  },
+  "response": {
+    "text": "{\"songs\":[{\"title\":\"The Girl from Ipanema\",\"artist\":\"Stan Getz & Astrud Gilberto\"},{\"title\":\"Corcovado (Quiet Nights)\",\"artist\":\"Stan Getz & João Gilberto\"},{\"title\":\"Desafinado\",\"artist\":\"João Gilberto\"},{\"title\":\"Chega de Saude\",\"artist\":\"João Gilberto\"},{\"title\":\"A Felicidade\",\"artist\":\"João Gilberto\"},{\"title\":\"Bom Dia\",\"artist\":\"João Gilberto\"},{\"title\":\"Ela e Eu\",\"artist\":\"João Gilberto\"},{\"title\":\"Samba de uma Nota Só\",\"artist\":\"João Gilberto\"},{\"title\":\"Insensatez\",\"artist\":\"João Gilberto\"},{\"title\":\"Onde Anda Você\",\"artist\":\"João Gilberto\"},{\"title\":\"Só em Teu Braço\",\"artist\":\"João Gilberto\"},{\"title\":\"Estrangeiro\",\"artist\":\"João Gilberto\"},{\"title\":\"Samba de Verão\",\"artist\":\"João Gilberto\"},{\"title\":\"Águas de Março\",\"artist\":\"Elis Regina\"},{\"title\":\"Luiza\",\"artist\":\"Tom Jobim\"},{\"title\":\"Trem das Onze\",\"artist\":\"Tom Jobim\"},{\"title\":\"Garota de Ipanema\",\"artist\":\"Nara Leão\"},{\"title\":\"Saudade da Minha Gente\",\"artist\":\"Nara Leão\"},{\"title\":\"Bossa Nova\",\"artist\":\"Walter Wanderley\"},{\"title\":\"Samba de uma Nota Só\",\"artist\":\"Sérgio Mendes\"}]}",
+    "finish_reason": "stop",
+    "id": "gen-1791150727-nlQ2VvRcTlWAVHj0gMTn",
+    "model": "qwen/qwen3.8-27b:free",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 264,
+      "completion_tokens": 4386,
+      "total_tokens": 4650,
+      "cost": 0,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0,
+        "upstream_inference_prompt_cost": 0,
+        "upstream_inference_completions_cost": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 4098,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 31.574,
+    "retries": 0
+  }
+}
