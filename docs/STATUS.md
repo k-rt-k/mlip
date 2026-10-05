@@ -15,9 +15,14 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables: [baselines milestone](../milestones/b
   hit rate 0.40 / 0.30, NDCG 0.15 / 0.08; co-occurrence precision 0.06 / 0.08,
   hit rate 0.15 / 0.20, NDCG 0.07 / 0.08. Full tables:
   `ytm_baseline_result2.txt`, `cooccurrence_baseline_result2.txt`.
+  `cooccurence_baseline_result.txt` is an earlier twenty-input result, retained
+  for reference rather than the current comparison.
 - **Limitations:** recall is near zero because hidden sets are large (8–264
   songs); exact-ID matching misses alternate uploads; co-occurrence only knows
   songs in the 60 reference playlists.
+  Before LLM scoring, handle short/empty outputs: the current evaluator rejects
+  lists shorter than five and skips empty ones. Co-occurrence still needs a final
+  deterministic tie-breaker; saved predictions preserve the reported run.
 
 ## 2026-10-04 — Zero-shot LLM baseline generated, unscored (Ayush)
 
@@ -41,10 +46,11 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables: [baselines milestone](../milestones/b
   resolve. Temperature 0 is not reproducible on the free endpoint: a repeat of
   examples 11–20 shared only 0–4 of 10 songs per example and reasoning length
   varied ~10x, so single-run numbers are noisy; saved raw responses are the record.
-- **Remaining:** scoring seeds-only with `evaluation/evaluate.py` (five-seed
-  half) and prompt-only against reference playlists, validity/constraint checks, the twenty-seed inputs (`partial_examples/v3`, ids 21–40), and prompt + seeds mode (deferred until the
-  partial-example request source is agreed; a discovery prompt is recoverable
-  for 9/10 examples from `source_snapshot`).
+- **Remaining:** convert saved seeds-only outputs to the evaluator's prediction
+  format and score the five-seed half after handling incomplete outputs; evaluate
+  prompt-only against reference playlists with validity/constraint checks; run the
+  twenty-seed inputs (`partial_examples/v3`, ids 21–40). Prompt + seeds generation
+  remains deferred until the request source is agreed.
 
 ## 2026-10-05 — Datasets and collection pipelines ready (Harsh)
 

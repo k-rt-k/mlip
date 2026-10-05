@@ -44,6 +44,8 @@ hidden for that size, so hidden counts vary and are smaller for the 20-song inpu
 The generating script is `youtube_music/scripts/prepare_nested_partials.py`;
 its docstring includes the reproducible command and complete setup.
 Re-extract after pulling updates to replace stale local dataset IDs; extraction leaves tracked prompts and code unchanged.
+The extracted root `dataset-manifest.json` is generated and gitignored; the
+checked-in checksum manifest under `datasets/` is the shared reference.
 
 After cloning, activate the secret-guard git hooks (once per machine):
 

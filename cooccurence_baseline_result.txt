@@ -1,3 +1,5 @@
+Historical result: twenty-input run. Current forty-input results are in
+cooccurrence_baseline_result2.txt; the original table below is preserved.
 
 Evaluating: cooccurrence.json
 Ground Truth: dataset.json (20 examples)
