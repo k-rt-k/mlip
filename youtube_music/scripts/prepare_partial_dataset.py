@@ -65,8 +65,9 @@ def main():
     rows = []
     for e in examples:
         link = f'https://music.youtube.com/playlist?list={e["created_playlist_id"]}' if e.get("created_playlist_id") else ""
-        rows.append(f'<tr><td>{e["example_id"]}</td><td>{escape(e["source_title"] or "")}</td><td>{len(e["seed_tracks"])}</td><td>{len(e["held_out_tracks"])}</td><td><a href="{escape(link, quote=True)}">Private seed copy</a></td></tr>')
-    (args.output_dir / "review.html").write_text('<!doctype html><meta charset="utf-8"><title>Partial playlists v1</title><style>body{font:16px system-ui;max-width:1100px;margin:40px auto}td,th{padding:12px;text-align:left}table{border-collapse:collapse}tr{border-bottom:1px solid #ccc}</style><h1>Partial playlist dataset v1</h1><p>Five random seeds per source; all other eligible songs hidden. Original titles shown here are evaluator metadata: never send them to the partial-only model. Private copies have neutral titles and empty descriptions.</p><table><tr><th>Example</th><th>Original playlist</th><th>Seeds</th><th>Hidden</th><th>Copy</th></tr>' + ''.join(rows) + '</table>')
+        copy_cell = f'<a href="{escape(link, quote=True)}">Private seed copy</a>' if link else 'Not created'
+        rows.append(f'<tr><td>{e["example_id"]}</td><td>{escape(e["source_title"] or "")}</td><td>{len(e["seed_tracks"])}</td><td>{len(e["held_out_tracks"])}</td><td>{copy_cell}</td></tr>')
+    (args.output_dir / "review.html").write_text('<!doctype html><meta charset="utf-8"><title>Partial playlists</title><style>body{font:16px system-ui;max-width:1100px;margin:40px auto}td,th{padding:12px;text-align:left}table{border-collapse:collapse}tr{border-bottom:1px solid #ccc}</style><h1>Partial playlist dataset</h1><p>Five random seeds per source; all other eligible songs hidden. Original titles shown here are evaluator metadata: never send them to the partial-only model. Created copies have neutral titles and empty descriptions; missing copies are marked below.</p><table><tr><th>Example</th><th>Original playlist</th><th>Seeds</th><th>Hidden</th><th>Copy</th></tr>' + ''.join(rows) + '</table>')
 
 
 if __name__ == "__main__":

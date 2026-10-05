@@ -20,8 +20,10 @@ Public search/fetch, local seed/hidden splits, private seed-only creation, and
 continuation suggestions have passed live pilot checks. Twenty prompts now have
 three cached reference playlists each (60 playlists, 4,475 distinct video IDs),
 with tracks, provenance, selection caveats, and available displayed view metadata.
-Ten partial examples have verified private seed-only copies, five seeds each,
-and hidden songs saved separately from model inputs. A local credential-free
+Twenty partial examples have five seeds each and hidden songs saved separately
+from model inputs. Ten have verified private seed-only copies; the ten additional
+copies await browser-auth refresh. The current partial dataset is under
+`data/youtube_music/partial_examples/v2/`. A credential-free
 dataset handoff ZIP and checksum manifest are committed under `datasets/`;
 extract the ZIP from the repository root as described in `README.md`.
 Development/test splits and scoring conventions remain pending;
