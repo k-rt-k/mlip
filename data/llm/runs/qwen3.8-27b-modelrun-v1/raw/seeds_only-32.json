@@ -1,0 +1,87 @@
+{
+  "request_hash": "6741abc940030bd054662c9c4ecf60e8d1e77296e8d4accfac96f2a796d6fa82",
+  "saved_at": "2026-10-06T03:00:45.398390+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. Samba Da Benção — Vinícius de Moraes\n2. Chega de Saudade — Stan Getz, João Gilberto\n3. Outra Vez — Nara Leão\n4. Outra Vez — Elizeth Cardoso\n5. Eu Vim Da Bahia — João Gilberto\n6. Garota de Ipanema — Paulo Sergio\n7. Só Tinha De Ser Com Voce (Com Tom) — Elis Regina\n8. Insensatez — Toquinho\n9. Desde que o samba e samba — Caetano Veloso\n10. O Pato (Ao Vivo) — Gilberto Gil\n11. Águas De Marco — Elis Regina\n12. Tristeza — Toquinho, Vinícius de Moraes\n13. Aquarela Do Brasil (feat. Gilberto Gil, Caetano Veloso & Maria Bethânia) — João Gilberto\n14. Wave — Antonio Carlos Jobim\n15. Rio (feat. Roberto Menescal) — Quarteto do Rio\n16. Corcovado — Antonio Carlos Jobim\n17. Corcovado (Quiet Nights Of Quiet Stars) (Mono Version) (feat. Astrud Gilberto & Antonio Carlos Jobim) — Stan Getz, João Gilberto\n18. Doralice — João GIlberto\n19. Children's Games — Alan Pasqua, Ernie Watts\n20. Saudade Vem Correndo (feat. Maria Toledo) — Stan Getz, Luiz Bonfá\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    },
+    "provider": "ModelRun"
+  },
+  "response": {
+    "text": "{\"songs\":[{\"title\":\"Desafinado\",\"artist\":\"João Gilberto\"},{\"title\":\"O Barão\",\"artist\":\"João Gilberto\"},{\"title\":\"A Felicidade\",\"artist\":\"Elis Regina\"},{\"title\":\"Samba da Minha Terra\",\"artist\":\"Roberto Carlos\"},{\"title\":\"O Sol Nascerá\",\"artist\":\"Roberto Carlos\"},{\"title\":\"Saudosa Maloca\",\"artist\":\"Roberto Carlos\"},{\"title\":\"Samba de Verão\",\"artist\":\"Roberto Carlos\"},{\"title\":\"Trem das Onze\",\"artist\":\"Cartola\"},{\"title\":\"Ponteio\",\"artist\":\"Cartola\"},{\"title\":\"Bom Dia Tristeza\",\"artist\":\"Elis Regina\"}]}",
+    "finish_reason": "stop",
+    "id": "gen-1791255639-X0V2YJTY0wDp4ucYQq8M",
+    "model": "qwen/qwen3.8-27b",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 569,
+      "completion_tokens": 1527,
+      "total_tokens": 2096,
+      "cost": 0.00483705,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.00483705,
+        "upstream_inference_prompt_cost": 0.00025605,
+        "upstream_inference_completions_cost": 0.004581
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1392,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 5.697,
+    "retries": 0
+  }
+}

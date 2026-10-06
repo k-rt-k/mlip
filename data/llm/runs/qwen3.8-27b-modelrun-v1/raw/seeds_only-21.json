@@ -1,0 +1,87 @@
+{
+  "request_hash": "9a1cb16b96bf1213c65e47c0cf748f80cc12304008ab901344b4fcdfff594960",
+  "saved_at": "2026-10-06T02:58:31.390710+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. Scriabin - Etude Op. 8 No. 12 — Rousseau\n2. Chopin - Raindrop Prelude (Op. 28 No. 15) — Rousseau\n3. Mozart - Piano Sonata No. 16 in C Major, K.545 (1st Mvt) — Rousseau\n4. J.S. Bach - Air — Rousseau\n5. Chopin - Etude Op. 10 No. 3 (Tristesse) — Rousseau\n6. Liszt - Mazeppa (Transcendental Étude No. 4) — Rousseau\n7. Chopin - Etude Op. 25 No. 9 (Butterfly) — Rousseau\n8. Debussy - Clair de Lune — Rousseau\n9. Ravel - Pavane for a Dead Princess (Pavane pour une infante défunte) — Rousseau\n10. Bach - Toccata and Fugue in D Minor — Rousseau\n11. Liebesleid (Love's Sorrow) - Kreisler (arr. Rachmaninoff) — Rousseau\n12. Ravel - Scarbo (Gaspard de la nuit) — Rousseau\n13. Liszt - Hungarian Rhapsody No.  2 — Rousseau\n14. Chopin - Revolutionary Etude (Op. 10 No. 12) — Rousseau\n15. Chopin - Nocturne in C Sharp Minor (No. 20) — Rousseau\n16. Chopin - Ballade No. 1 in G Minor (1M special) — Rousseau\n17. Chopin - Prelude in B Minor (Op. 28 No. 6) — Rousseau\n18. Beethoven - Moonlight Sonata (3rd Movement) — Rousseau\n19. Beethoven - Moonlight Sonata (1st Movement) — Rousseau\n20. Debussy - Clair de Lune — Rousseau\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    },
+    "provider": "ModelRun"
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Chopin - Nocturne in E-flat Major, Op. 9 No. 2\",\n      \"artist\": \"Martha Argerich\"\n    },\n    {\n      \"title\": \"Chopin - Prelude in A Minor, Op. 28 No. 2\",\n      \"artist\": \"Martha Argerich\"\n    },\n    {\n      \"title\": \"Chopin - Waltz in A Minor, B. 150\",\n      \"artist\": \"Martha Argerich\"\n    },\n    {\n      \"title\": \"Debussy - Arabesque No. 1 in G Major\",\n      \"artist\": \"Martha Argerich\"\n    },\n    {\n      \"title\": \"Rachmaninoff - Prelude in C-sharp Minor, Op. 3 No. 2\",\n      \"artist\": \"Martha Argerich\"\n    },\n    {\n      \"title\": \"Bach - Prelude and Fugue in C Major, BWV 846\",\n      \"artist\": \"Martha Argerich\"\n    },\n    {\n      \"title\": \"Mozart - Piano Sonata No. 11 in A Major, K. 331: Andante\",\n      \"artist\": \"Martha Argerich\"\n    },\n    {\n      \"title\": \"Beethoven - Piano Sonata No. 14 in C-sharp Minor, Op. 27 No. 2: 2nd Mvt. Adagio sostenuto\",\n      \"artist\": \"Martha Argerich\"\n    },\n    {\n      \"title\": \"Liszt - Liebestraum No. 3 in A-flat Major\",\n      \"artist\": \"Martha Argerich\"\n    },\n    {\n      \"title\": \"Scriabin - Prelude in F-sharp Minor, Op. 33 No. 1\",\n      \"artist\": \"Martha Argerich\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791255504-JGbcW8rKPL9Ntig5A0f8",
+    "model": "qwen/qwen3.8-27b",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 689,
+      "completion_tokens": 1773,
+      "total_tokens": 2462,
+      "cost": 0.00562905,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.00562905,
+        "upstream_inference_prompt_cost": 0.00031005,
+        "upstream_inference_completions_cost": 0.005319
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1312,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 6.916,
+    "retries": 0
+  }
+}

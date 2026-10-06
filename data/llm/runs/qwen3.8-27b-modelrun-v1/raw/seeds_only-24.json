@@ -1,0 +1,87 @@
+{
+  "request_hash": "d783dd03e96934f4938c0ddc2ec410ec71079dbafe04ed0e5f99a3b788c7fdeb",
+  "saved_at": "2026-10-06T02:59:15.675304+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. Can't Decide — Max Dean, Luke Dean, Locky\n2. APT. — ROSÉ, Bruno Mars\n3. Darin - Hit Me Up (Visualizer) — Darin Music\n4. Dance The Night (From Barbie The Album) — Dua Lipa\n5. CHANEL — Tyla\n6. Hugel, SOLTO (FR) - Jamaican (Bam Bam) — MoBlack Records\n7. New Religion — Bebe Rexha, Faithless\n8. ZLATA OGNEVICH - FIGHTER (Official Music Video) — ZLATA OGNEVICH\n9. Beautiful People — David Guetta, Sia\n10. Wait So Long - Extended Mix — Swedish House Mafia\n11. [TikTok] Kato feat. Jon - Turn The Lights Off | Jon Hamm — lol\n12. KEHLANI (slowed & reverb) — Jordan Adetunji\n13. The Heat — Jazzy, Alok\n14. Good Luck, Babe! — Chappell Roan\n15. Active — Asake, Travis Scott\n16. I'm Good (Blue) — David Guetta, Bebe Rexha\n17. LET'S GET FKD UP (feat. Tribbs) — Alok, Mondello'G, CERES\n18. Take Me Home — Makar\n19. Cupid (Twin Version) — FIFTY FIFTY\n20. The Sun, The Wine and You (Official Music Video) — IurisEkero\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    },
+    "provider": "ModelRun"
+  },
+  "response": {
+    "text": "{\"songs\":[{\"title\":\"Calm Down\",\"artist\":\"Rema, Selena Gomez\"},{\"title\":\"Levitating\",\"artist\":\"Dua Lipa\"},{\"title\":\"Blinding Lights\",\"artist\":\"The Weeknd\"},{\"title\":\"Super Shy\",\"artist\":\"NewJeans\"},{\"title\":\"Paint The Town Red\",\"artist\":\"Doja Cat\"},{\"title\":\"Last Last\",\"artist\":\"Burna Boy\"},{\"title\":\"One Kiss\",\"artist\":\"Calvin Harris, Dua Lipa\"},{\"title\":\"LALALALA\",\"artist\":\"ILLIT\"},{\"title\":\"Water\",\"artist\":\"Tyla\"},{\"title\":\"Head & Heart\",\"artist\":\"Avicii, Aloe Blacc\"}]}",
+    "finish_reason": "stop",
+    "id": "gen-1791255550-UMdR8ScUakaMTpeQpNW9",
+    "model": "qwen/qwen3.8-27b",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 592,
+      "completion_tokens": 1303,
+      "total_tokens": 1895,
+      "cost": 0.0041754,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.0041754,
+        "upstream_inference_prompt_cost": 0.0002664,
+        "upstream_inference_completions_cost": 0.003909
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1171,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 5.802,
+    "retries": 0
+  }
+}

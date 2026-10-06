@@ -1,0 +1,87 @@
+{
+  "request_hash": "6e41be5a5d36ac30d11ea04c5a7fb1ce6c6ffdcdbec322e1e8271bdef32cf2fa",
+  "saved_at": "2026-10-06T03:02:01.296509+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. I Smile (Official Video) — Kirk Franklin\n2. Go Get It (Official Video) — Mary Mary\n3. Hezekiah Walker New Video \"Every Praise\" — Hezekiah Walker\n4. Let Go,Let God — Xania Monet\n5. It's All God (feat. Marvin Winans) — Soul Seekers\n6. Something About the Name Jesus — The Rance Allen Group\n7. I WON'T COMPLAIN - REV. PAUL JONES (Extended Version) Praise Break — Gospel Tunes\n8. Encourage Yourself By: Donald Lawrence — GospelMusicTV\n9. IT'S WORKING — davistbyrd16\n10. Tamela Mann - Take Me To The King — John Momon\n11. Open Your Mouth and Say Something (Radio Edit) — Brent Jones\n12. Safe in His Arms — A&M Studios inc\n13. The Center Of My Joy (Live) — Gaither, Richard Smallwood\n14. Let Go,Let God — Xania Monet\n15. Well Done — Deitrick Haddon\n16. Don't Do It Without Me — Bishop Paul S. Morton, Sr.\n17. The Clark Sisters-You Brought The Sunshine — Old School Church Music \n18. Jesus Is Love — Commodores\n19. BeBe & CeCe Winans - Addictive Love -  (Music Video) — Jules Kain Music\n20. He's Able - Deitrick Haddon featuring Darwin Hobbs — Gospel Sounds of Young America\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    },
+    "provider": "ModelRun"
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"I Can Only Imagine\",\n      \"artist\": \"MercyMe\"\n    },\n    {\n      \"title\": \"I Surrender All\",\n      \"artist\": \"The Clark Sisters\"\n    },\n    {\n      \"title\": \"I'll Praise Him\",\n      \"artist\": \"Kirk Franklin\"\n    },\n    {\n      \"title\": \"I Love You Lord\",\n      \"artist\": \"The Winans\"\n    },\n    {\n      \"title\": \"I'm So Glad\",\n      \"artist\": \"Tasha Cobbs Leonard\"\n    },\n    {\n      \"title\": \"I Believe in You\",\n      \"artist\": \"Hezekiah Walker\"\n    },\n    {\n      \"title\": \"I'm Not Ashamed\",\n      \"artist\": \"Bishop Paul S. Morton, Sr.\"\n    },\n    {\n      \"title\": \"I'm Not Ashamed\",\n      \"artist\": \"Deitrick Haddon\"\n    },\n    {\n      \"title\": \"I'm Not Ashamed\",\n      \"artist\": \"Bishop T.D. Jakes\"\n    },\n    {\n      \"title\": \"I'm Not Ashamed\",\n      \"artist\": \"The Clark Sisters\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791255715-qnasA1BeKoiCQYfgzw8l",
+    "model": "qwen/qwen3.8-27b",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 588,
+      "completion_tokens": 1807,
+      "total_tokens": 2395,
+      "cost": 0.0056856,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.0056856,
+        "upstream_inference_prompt_cost": 0.0002646,
+        "upstream_inference_completions_cost": 0.005421
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1505,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 6.409,
+    "retries": 0
+  }
+}

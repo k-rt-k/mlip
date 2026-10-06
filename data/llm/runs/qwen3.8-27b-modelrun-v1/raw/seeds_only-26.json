@@ -1,0 +1,87 @@
+{
+  "request_hash": "2a1c2cf867628d7b44736f28c6f17557ca712f08710165fc09fff47891d43f23",
+  "saved_at": "2026-10-06T02:59:38.158272+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. Miles Davis - Smoke gets in your eyes — TheLittletan\n2. Sonny Rollins Quartet - St. Thomas — 60otaku4\n3. Sophie Milman - I can't make you love me — charlyei\n4. Sophie Milman - So Long, You Fool — The Cool Jazz Music Channel\n5. Elizabeth Shepherd - Lonely House — The Cool Jazz Music Channel\n6. Clifford Brown & Max Roach - Joy Spring — Santoszzz\n7. Sophie Milman - La Vie En Rose — The Cool Jazz Music Channel\n8. Mr. Miller — Yissy Garcia\n9. Peter Appleyard - Georgia On My Mind — The Cool Jazz Music Channel\n10. Peter Appleyard  - After You're Gone — The Cool Jazz Music Channel\n11. Oscar Peterson - C Jam Blues — dgbailey777\n12. Elizabeth Shepherd - Feeling Good — The Cool Jazz Music Channel\n13. Esbjörn Svensson Trio - Eighthundred Streets by Feet — Amaelwen\n14. SOPHIE MILMAN  I´m on fire — Sirens Meadow\n15. Oscar Peterson - Summertime — zranney2\n16. Bill Evans - Waltz For Debby — jane8948\n17. Marc Jordan - Walk On The Wild Side — The Cool Jazz Music Channel\n18. Jane Bunnett & Maqueque - La Linea — The Cool Jazz Music Channel\n19. Marc Jordan - Coltrane Plays The Blues (Official Video) — Best Playlists Ever\n20. Jane Bunnett & Maqueque - Tomorrow — The Cool Jazz Music Channel\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    },
+    "provider": "ModelRun"
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"So What\",\n      \"artist\": \"Miles Davis\"\n    },\n    {\n      \"title\": \"Blue in Green\",\n      \"artist\": \"Miles Davis\"\n    },\n    {\n      \"title\": \"Naima\",\n      \"artist\": \"John Coltrane\"\n    },\n    {\n      \"title\": \"Autumn Leaves\",\n      \"artist\": \"Chet Baker\"\n    },\n    {\n      \"title\": \"The Girl from Ipanema\",\n      \"artist\": \"Stan Getz & João Gilberto\"\n    },\n    {\n      \"title\": \"My Funny Valentine\",\n      \"artist\": \"Bill Evans\"\n    },\n    {\n      \"title\": \"Body and Soul\",\n      \"artist\": \"Bill Evans\"\n    },\n    {\n      \"title\": \"Take the 'A' Train\",\n      \"artist\": \"Duke Ellington\"\n    },\n    {\n      \"title\": \"Stella by Starlight\",\n      \"artist\": \"Bill Evans\"\n    },\n    {\n      \"title\": \"Round Midnight\",\n      \"artist\": \"Miles Davis\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791255572-9BZyelbdRCCzRlgG2zwb",
+    "model": "qwen/qwen3.8-27b",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 611,
+      "completion_tokens": 1600,
+      "total_tokens": 2211,
+      "cost": 0.00507495,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.00507495,
+        "upstream_inference_prompt_cost": 0.00027495,
+        "upstream_inference_completions_cost": 0.0048
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1319,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 6.275,
+    "retries": 0
+  }
+}

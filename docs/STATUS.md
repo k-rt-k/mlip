@@ -49,33 +49,34 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables: [baselines milestone](../milestones/b
   lists shorter than five and skips empty ones. Co-occurrence still needs a final
   deterministic tie-breaker; saved predictions preserve the reported run.
 
-## 2026-10-04 — Zero-shot LLM baseline generated, unscored (Ayush)
+## 2026-10-05 — Zero-shot LLM baseline scored (Ayush)
 
-- **Ready:** ranked, YouTube Music–resolved recommendations from
-  `qwen/qwen3.8-27b:free` (OpenRouter, ModelRun host, fp4; temperature 0, seed 0,
-  one run, prompt `v1`) for all 20 prompt-only requests (20 requested, top 10
-  kept) and all 20 five-seed partial examples (`partial_examples/v2`, ids 1–20; 10
-  requested, top 5 kept, matching the platform continuation budget). Outputs and
-  raw responses are committed in
-  [`data/llm/runs/qwen3.8-27b-v1/`](../data/llm/runs/qwen3.8-27b-v1/); each mode
-  file records model, provider, prompts, tokens, and latency.
-  Cost $0; ~30 s per call.
-- **Code:** `llm/` (OpenRouter client, prompts, parsing, title + artist resolution
-  to video IDs with alternate uploads); usage in `llm/scripts/run_llm_baseline.py`.
-  Needs `OPENROUTER_API_KEY` in gitignored `llm/.env`.
-- **First observations:** 68% (prompt-only) and 49% (seeds-only) of suggestions
-  resolve to catalog tracks; 13/20 prompts and 10/20 examples fill top-K.
-  Unresolved items are mostly invented or misattributed songs (e.g. repeated
-  invented gospel titles, wrong artists for real songs); some outputs repeat
-  seeds or duplicates (Hindi indie, punk); classical/performer credits rarely
-  resolve. Temperature 0 is not reproducible on the free endpoint: a repeat of
-  examples 11–20 shared only 0–4 of 10 songs per example and reasoning length
-  varied ~10x, so single-run numbers are noisy; saved raw responses are the record.
-- **Remaining:** convert saved seeds-only outputs to the evaluator's prediction
-  format and score the five-seed half after handling incomplete outputs; evaluate
-  prompt-only against reference playlists with validity/constraint checks; run the
-  twenty-seed inputs (`partial_examples/v3`, ids 21–40). Prompt + seeds generation
-  remains deferred until the request source is agreed.
+- **Ready:** Qwen3.8 27B via OpenRouter on the ModelRun host (fp4; temperature 0,
+  structured JSON, prompt `v1`, one run). Prompt-only requests and five-seed
+  inputs used the free tier (`qwen/qwen3.8-27b:free`); the free tier was gone
+  before the twenty-seed run, so ids 21–40 used the paid model pinned to ModelRun
+  (`--provider ModelRun`, $0.11). The model returns titles/artists, resolved to
+  video IDs by public YouTube Music search (title + artist match). 20 songs are
+  requested per prompt (top 10 kept) and 10 per partial input (top 5 kept).
+- **Artifacts:** raw responses and run files in `data/llm/runs/qwen3.8-27b-v1/`
+  (free) and `data/llm/runs/qwen3.8-27b-modelrun-v1/` (paid);
+  [`predictions/llm_qwen.json`](../predictions/llm_qwen.json) (all 40 partial
+  inputs) and [`predictions/llm_qwen_prompt_only.json`](../predictions/llm_qwen_prompt_only.json),
+  built by `llm/scripts/export_predictions.py`, which pads short or empty lists
+  so missing places score as misses. Prompt-only scoring:
+  `evaluation/evaluate_prompt_only.py` (relevant = in any of the prompt's three
+  reference playlists).
+- **Results (@5, five/twenty seeds):** precision **0.02 / 0.02**, hit rate
+  **0.10 / 0.05**, NDCG **0.0158 / 0.0173** (4 hits in 200 places). Prompt-only:
+  precision 0.04, hit rate 0.15, NDCG 0.0330; counting any matching upload as a
+  hit raises prompt-only NDCG to 0.069 (continuation unchanged).
+- **Limitations:** 68% (prompt-only) and 49% / 52% (five/twenty seeds) of
+  suggestions resolve; 9 of 40 partial inputs end with no usable song. Failures
+  are invented or misattributed songs, duplicates, and repeated seeds; classical
+  credits rarely resolve. Temperature 0 is not repeatable on these endpoints (a
+  rerun of examples 11–20 shared 0–4 of 10 songs), so single-run scores are noisy.
+- **Remaining:** prompt + seeds generation (needs a written request per partial
+  input); prompt constraint/validity checks.
 
 ## 2026-10-05 — Datasets and collection pipelines ready (Harsh)
 
@@ -139,12 +140,13 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables: [baselines milestone](../milestones/b
 - [ ] Agree the reported split and constrained metric (e.g. hit rate/precision@5).
 
 ### 2. LLM baseline
-**Owner:** Ayush. **State:** prompt-only (20) and seeds-only (20) outputs generated; scoring pending.
+**Owner:** Ayush. **State:** prompt-only (20) and seeds-only (all 40 partial inputs) generated and scored.
 
 - [x] Implement and run prompt-only and seeds-only generation; record exact
   model/version, prompts, outputs, cost, and latency.
 - [ ] Prompt + partial generation (deferred; request source TBD). Web search comparison is optional.
-- [ ] Implement and report prompt-only proxy evaluation with validity/constraint checks.
+- [x] Implement and report prompt-only proxy evaluation (reference-playlist overlap).
+- [ ] Prompt validity/constraint checks (e.g. instrumental, language, era).
 - [ ] Resolve prompt + partial evaluation (**TBD**) or justify deferring performance claims.
 
 ### 3. Playlist-continuation baselines
@@ -158,8 +160,8 @@ on all 40 inputs.
 - [x] Collect, freeze, and score Radio Pool on all 40 inputs; share its cached
   radios, pools, predictions, and evaluation.
 - [ ] LLM Rerank over the same candidates (deferred, separate baseline).
-- [ ] Evaluate all comparable methods (including the LLM) on the same examples and
-  fixed recommendation budget; report results, failures, and proxy limitations.
+- [x] Score all comparable methods (including the LLM) on the same 40 inputs at K = 5.
+- [ ] Report results, failures, and proxy limitations in the writeup.
 
 ### 4. Writeup and submission
 

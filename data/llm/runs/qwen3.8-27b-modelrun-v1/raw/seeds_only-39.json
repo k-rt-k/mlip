@@ -1,0 +1,87 @@
+{
+  "request_hash": "e658a3a57ce702c51e74a68397ad7932d558113f6d073ad4322ea48a572e3592",
+  "saved_at": "2026-10-06T03:02:16.672546+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. InfraSound - SKYSCREAM | Epic Powerful Massive Battle Music — Epic Music VN\n2. Epic Cinematic | World Without End - Music by Tom Evans | Epic Action — Epic Music VN\n3. Epic Triumphant Orchestral Music: \"Victory Is In Our Grasp\" by Epic Score — Epic Music VN\n4. HINOMARU - Iliya Zaki | Powerful Emotional Uplifting Music — Epic Music VN\n5. Powerful Epic Battle Music: \"Here Be Dragons\" by ADN Compositions — Epic Music VN\n6. Heroes I Epic Cinematic — Epic Music VN\n7. Two Steps From Hell - SkyWorld | Epic Action Cinematic — Epic Music VN\n8. Epic Powerful Music: \"Equilibrium\" by Colossal Trailer Music — Epic Music VN\n9. Epic Action | Heavy Hitters Music - Hope And Redemption — Epic Music VN\n10. Marvel Studios’ Avengers: Endgame | Special Look Music (Mark Petrie - Torsion) — Epic Music VN\n11. Epic Action | Position Music - Raising The Damned — Epic Music VN\n12. Daniel James - The Angel | Most Beautiful Epic Choral Music Ever — Epic Music VN\n13. Disney's Frozen 2 Fanmade Trailer | Avengers Endgame style — Epic Music VN\n14. Powerful Epic Action Music: \"Alexandrea\" by J.T. Peterson — Epic Music VN\n15. Epic Action | Marvin Allen - Warrior From Heaven — Epic Music VN\n16. Dirk Ehlert - BURNING SKY (ft. Uyanga Bold) — Epic Music VN\n17. Epic Action | Position Music - Children of The Gods — Epic Music VN\n18. IMAscore - A Story Untold (Epic Dramatic Powerful Choral) — Epic Music VN\n19. Epic Action | Heavy Melody (Dos Brains) - Running Haunted — Epic Music VN\n20. Epic Action | Audiomachine - Mission To The Unknown — Epic Music VN\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    },
+    "provider": "ModelRun"
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Star Sky\",\n      \"artist\": \"Two Steps From Hell\"\n    },\n    {\n      \"title\": \"Victory\",\n      \"artist\": \"Two Steps From Hell\"\n    },\n    {\n      \"title\": \"Heart of Courage\",\n      \"artist\": \"Two Steps From Hell\"\n    },\n    {\n      \"title\": \"Protectors of the Earth\",\n      \"artist\": \"Two Steps From Hell\"\n    },\n    {\n      \"title\": \"Wars of Faith\",\n      \"artist\": \"Two Steps From Hell\"\n    },\n    {\n      \"title\": \"Defender\",\n      \"artist\": \"Audiomachine\"\n    },\n    {\n      \"title\": \"The Great Passage\",\n      \"artist\": \"Audiomachine\"\n    },\n    {\n      \"title\": \"The Great Passage\",\n      \"artist\": \"Audiomachine\"\n    },\n    {\n      \"title\": \"The Great Passage\",\n      \"artist\": \"Audiomachine\"\n    },\n    {\n      \"title\": \"The Great Passage\",\n      \"artist\": \"Audiomachine\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791255730-0ufrWaKvHiAI9aAYKBNB",
+    "model": "qwen/qwen3.8-27b",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 682,
+      "completion_tokens": 1876,
+      "total_tokens": 2558,
+      "cost": 0.0059349,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.0059349,
+        "upstream_inference_prompt_cost": 0.0003069,
+        "upstream_inference_completions_cost": 0.005628
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1594,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 6.454,
+    "retries": 0
+  }
+}

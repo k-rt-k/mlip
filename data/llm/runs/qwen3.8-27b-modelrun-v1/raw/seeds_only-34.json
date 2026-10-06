@@ -1,0 +1,87 @@
+{
+  "request_hash": "7cb4630d8f072f516ebbf839a8981e898a915a5f56f110ba904eada46e954bbc",
+  "saved_at": "2026-10-06T03:01:13.270529+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. Delegation - Oh Honey — Soulverse\n2. The Temptations - Just My Imagination (Running Away with Me) HD — Reyes Music Group\n3. Enchantment - It's You That I Need — Soulverse\n4. Al Green - For The Good Times — lolfox99\n5. Isley Brothers-Sensuality Part 1 & 2 — fsuforlife21\n6. The Chi-lites - Have You Seen Her — The Marathon 2800\n7. Rose Royce - I Wanna Get Next To You — Adagiosoulb4flesh\n8. GQ-I do love you — pailleuz\n9. L.T.D.-love ballad — DerrickB502222\n10. Freddie Jackson-You Are My Lady — ESPN4U\n11. The Persuaders - Thin Line between Love & Hate - Video (High Quality) — Bigln139\n12. The Stylistics You Make Me Feel Brand New — Kleber Eduardo Senes\n13. Billy Stewart - Sitting In The Park — Reyes Music Group\n14. Al green-How Can You Mend A Broken Heart.wmv — bastien Red\n15. The Spinners - Could It Be I'm Falling In Love (1973) (HDTV) — Slo917\n16. -The Three Degrees- -When will I  see you again- — EasyMusic36\n17. L.T.D.-We Both Deserve each Other's Love — strawberryone\n18. If you ever need to cry - Brainstorm — David Payne \n19. Smokey Robinson - The Agony And The Ecstasy — Grown Folks\n20. Gladys Knight & The Pips - Where Peaceful Waters Flow — koollatter\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    },
+    "provider": "ModelRun"
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Let's Stay Together\",\n      \"artist\": \"Al Green\"\n    },\n    {\n      \"title\": \"I'll Be There\",\n      \"artist\": \"The Spinners\"\n    },\n    {\n      \"title\": \"I Can't Get Next to You\",\n      \"artist\": \"The Temptations\"\n    },\n    {\n      \"title\": \"For the Strength of Love\",\n      \"artist\": \"The Isley Brothers\"\n    },\n    {\n      \"title\": \"Machinations\",\n      \"artist\": \"The Spinners\"\n    },\n    {\n      \"title\": \"Ain't Too Proud to Beg\",\n      \"artist\": \"The Temptations\"\n    },\n    {\n      \"title\": \"I'm Still in Love with You\",\n      \"artist\": \"Al Green\"\n    },\n    {\n      \"title\": \"I Wish It Would Rain Down\",\n      \"artist\": \"The Temptations\"\n    },\n    {\n      \"title\": \"I Can't Help Myself\",\n      \"artist\": \"The Four Tops\"\n    },\n    {\n      \"title\": \"I'll Never Leave You\",\n      \"artist\": \"Al Green\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791255667-SMeK0E4yiirhdl4VLTVe",
+    "model": "qwen/qwen3.8-27b",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 646,
+      "completion_tokens": 1844,
+      "total_tokens": 2490,
+      "cost": 0.0058227,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.0058227,
+        "upstream_inference_prompt_cost": 0.0002907,
+        "upstream_inference_completions_cost": 0.005532
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1546,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 6.266,
+    "retries": 0
+  }
+}

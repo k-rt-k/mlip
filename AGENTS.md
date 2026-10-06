@@ -16,9 +16,9 @@ inventory, and metadata-enrichment code exists from earlier feasibility work.
 The **current stage is baseline comparison and remaining LLM evaluation**; the
 four-part milestone checklist is in `docs/STATUS.md`. Harsh's datasets/pipelines
 are ready. Spandan's evaluation pipeline, YouTube Music continuation, and
-co-occurrence baseline have results on all 40 partial inputs. Ayush's LLM outputs
-cover 20 prompts and 20 five-song inputs; scoring and twenty-song coverage remain
-pending, as does prompt + partial generation.
+co-occurrence baseline have results on all 40 partial inputs. Ayush's zero-shot
+LLM is scored on 20 prompts and all 40 partial inputs; prompt + partial generation
+remains pending.
 Public search/fetch, local seed/hidden splits, private seed-only creation, and
 continuation suggestions have passed live pilot checks. Twenty prompts now have
 three cached reference playlists each (60 playlists, 4,475 distinct video IDs),
@@ -56,7 +56,7 @@ team changes direction. Do not treat historical docs as current requirements.
 - `llm/` — zero-shot generation, catalog resolution, and tests
 - `evaluation/` — partial-playlist metrics and evaluation runner
 - `baselines/` — co-occurrence and Radio Pool baselines, candidate collection, and runners
-- `predictions/` — saved co-occurrence, YouTube Music, and Radio Pool predictions for all 40 inputs
+- `predictions/` — saved co-occurrence, YouTube Music, Radio Pool, and LLM predictions for all 40 inputs (plus LLM prompt-only)
 - `youtube_music/` — public playlist collection, seed-only copies, suggestions,
   browser-auth setup, and tests; script docstrings contain usage
 - `youtube_music/scripts/setup_auth.py` — paste Copy as fetch (Node.js) input from `mlip.team0@gmail.com` to refresh browser credentials and test authentication; usage is in the file.

@@ -1,0 +1,87 @@
+{
+  "request_hash": "6c421251296d5ccc2db61da0d19981e76f1cbb94cb3abec49430b8fcc4cdb990",
+  "saved_at": "2026-10-06T02:58:52.268439+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. Fly Me To The Moon (2008 Remastered) (feat. Count Basie And His Orchestra) — Frank Sinatra\n2. I've Got a Woman (2005 Remaster) — Ray Charles\n3. Something’s Got a Hold on Me — Etta James\n4. These Arms of Mine — Otis Redding\n5. On the Sunny Side of the Street — Billie Holiday\n6. My Way (2008 Remastered) — Frank Sinatra\n7. Volare (Nel Blu Di Pinto Di Blu) (Remastered 1998) — Dean Martin\n8. Pennies From Heaven — Louis Prima\n9. A Sunday Kind Of Love — Etta James\n10. Ave Maria -Schubert — Claudionei Penha\n11. Something's Gotta Give — Sammy Davis Jr.\n12. I Left My Heart in San Francisco — Tony Bennett\n13. I Just Want To Make Love To You (Single Version) — Etta James\n14. More (Theme From Mondo Cane) — Frank Sinatra, Count Basie\n15. Into Each Life Some Rain Must Fall — Ella Fitzgerald, Count Basie\n16. What a Wonderful World (In the Style of Louis Armstrong) (Demo Vocal Version) — ProSource Karaoke\n17. A Kiss to Build a Dream On — Louis Armstrong\n18. Lazy Mary — Lou Monte\n19. Chicago — Frank Sinatra\n20. Blue Moon (1999 Remastered) — Frank Sinatra\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    },
+    "provider": "ModelRun"
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"At Last\",\n      \"artist\": \"Etta James\"\n    },\n    {\n      \"title\": \"Unforgettable\",\n      \"artist\": \"Nat King Cole\"\n    },\n    {\n      \"title\": \"The Way You Look Tonight\",\n      \"artist\": \"Frank Sinatra\"\n    },\n    {\n      \"title\": \"Mona Lisa\",\n      \"artist\": \"Nat King Cole\"\n    },\n    {\n      \"title\": \"I'll Be Seeing You\",\n      \"artist\": \"Billie Holiday\"\n    },\n    {\n      \"title\": \"Body and Soul\",\n      \"artist\": \"Billie Holiday\"\n    },\n    {\n      \"title\": \"L-O-V-E\",\n      \"artist\": \"Nat King Cole\"\n    },\n    {\n      \"title\": \"Mack the Knife\",\n      \"artist\": \"Louis Armstrong\"\n    },\n    {\n      \"title\": \"Moon River\",\n      \"artist\": \"Andy Williams\"\n    },\n    {\n      \"title\": \"The Best Is Yet to Come\",\n      \"artist\": \"Etta James\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791255526-QLQtwbxeu2OzEoos46kd",
+    "model": "qwen/qwen3.8-27b",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 584,
+      "completion_tokens": 1537,
+      "total_tokens": 2121,
+      "cost": 0.0048738,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.0048738,
+        "upstream_inference_prompt_cost": 0.0002628,
+        "upstream_inference_completions_cost": 0.004611
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1261,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 6.224,
+    "retries": 0
+  }
+}

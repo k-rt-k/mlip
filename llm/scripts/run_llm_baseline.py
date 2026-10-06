@@ -96,7 +96,7 @@ def summarize(examples, keep):
             "examples_short_of_k": sum(sum(r["in_top_k"] for r in e["recommendations"]) < keep for e in done),
             "total_tokens": sum((c.get("usage") or {}).get("total_tokens", 0) for c in calls),
             "mean_latency_s": round(sum(c["latency_s"] for c in calls) / len(calls), 2) if calls else None,
-            "cost_usd": 0.0}
+            "cost_usd": round(sum((c.get("usage") or {}).get("cost") or 0 for c in calls), 4)}
 
 
 def main():
@@ -109,6 +109,8 @@ def main():
     parser.add_argument("--temperature", type=float, default=0)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--limit", type=int, help="first N examples only (dry run)")
+    parser.add_argument("--ids", help="example ids to run, e.g. 21-40 or 1,3,5")
+    parser.add_argument("--provider", help="pin one OpenRouter host with no fallback, e.g. ModelRun")
     parser.add_argument("--min-interval", type=float, default=4.0, help="seconds between live calls (free tier ~20/min)")
     parser.add_argument("--input", type=Path)
     parser.add_argument("--out-root", type=Path, default=ROOT / "data" / "llm")
@@ -120,7 +122,14 @@ def main():
     cache_path = args.out_root / "resolve_cache.json"
     cache = json.loads(cache_path.read_text(encoding="utf-8")) if cache_path.is_file() else {}
     client = make_client()
-    examples = load_examples(args.mode, input_path)[:args.limit]
+    examples = load_examples(args.mode, input_path)
+    if args.ids:
+        wanted = set()
+        for part in args.ids.split(","):
+            lo, _, hi = part.partition("-")
+            wanted.update(range(int(lo), int(hi or lo) + 1))
+        examples = [e for e in examples if e["id"] in wanted]
+    examples = examples[:args.limit]
     key = openrouter.api_key()
     results, last_call = [], 0.0
 
@@ -128,6 +137,8 @@ def main():
         messages = build_messages(args.mode, example, count)
         request = {"model": args.model, "messages": messages, "temperature": args.temperature,
                    "seed": args.seed, "response_format": song_schema()}
+        if args.provider:  # only when set, so cache hashes of earlier runs stay valid
+            request["provider"] = args.provider
         result = {k: v for k, v in example.items() if k != "seed_tracks"}
         result.update(status="ok", parse_stats=None, call=None, recommendations=[])
 
@@ -135,7 +146,8 @@ def main():
             nonlocal last_call
             time.sleep(max(0.0, args.min_interval - (time.monotonic() - last_call)))
             last_call = time.monotonic()
-            return openrouter.complete(messages, args.model, args.temperature, args.seed, song_schema(), key=key)
+            return openrouter.complete(messages, args.model, args.temperature, args.seed, song_schema(),
+                                       key=key, provider=args.provider)
 
         try:
             response, cached = cached_complete(run_dir / "raw" / f"{args.mode}-{example['id']:02d}.json", request, call)
@@ -166,6 +178,7 @@ def main():
            "model_requested": args.model,
            "models_returned": sorted({c.get("model") for c in calls if c.get("model")}),
            "providers": sorted({c.get("provider") for c in calls if c.get("provider")}),
+           "provider_pinned": args.provider, "ids": args.ids,
            "temperature": args.temperature, "seed": args.seed, "requested_count": count, "top_k": keep,
            "prompt_version": PROMPT_VERSION, "system_prompt": SYSTEM,
            "example_user_prompt": build_messages(args.mode, examples[0], count)[1]["content"] if examples else None,
