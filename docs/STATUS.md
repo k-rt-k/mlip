@@ -65,7 +65,8 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables: [baselines milestone](../milestones/b
   built by `llm/scripts/export_predictions.py`, which pads short or empty lists
   so missing places score as misses. Prompt-only scoring:
   `evaluation/evaluate_prompt_only.py` (relevant = in any of the prompt's three
-  reference playlists).
+  reference playlists). Result tables: `llm_baseline_result.txt`,
+  `llm_prompt_only_result.txt`.
 - **Results (@5, five/twenty seeds):** precision **0.02 / 0.02**, hit rate
   **0.10 / 0.05**, NDCG **0.0158 / 0.0173** (4 hits in 200 places). Prompt-only:
   precision 0.04, hit rate 0.15, NDCG 0.0330; counting any matching upload as a
