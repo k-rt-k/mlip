@@ -2,6 +2,31 @@
 
 Scope: [SCOPE.md](SCOPE.md). Deliverables: [baselines milestone](../milestones/baselines.md).
 
+## 2026-10-05 — Radio Pool baseline scored
+
+- **Ready:** public song-radio aggregation (`baselines/candidates.py`,
+  `build_candidate_pools.py`, `run_radio_pool.py`) and
+  [Radio Pool predictions](../predictions/radio_pool.json) for all 40 paired
+  five/twenty-seed inputs. Continuation comparison owner: Spandan.
+- **Method:** collect up to 50 cleaned radio tracks per seed, union with
+  reference-corpus co-occurrence candidates (no popularity fallback), exclude
+  seeds, and rank by number of supporting seed radios, first-seen radio position,
+  then video ID. Retain 60 candidates and recommend the first five. Hidden songs
+  enter only downstream ceiling/scoring, never candidate construction.
+- **Results (@5, five/twenty seeds):** precision **0.23 / 0.20**, hit rate
+  **0.45 / 0.60**, NDCG **0.2250 / 0.1921**. Pool ceilings: **0.85 / 1.00**.
+  All 40 lists contain five unique non-seed IDs; 399 unique seed radios were
+  cached with zero collection errors.
+- **Handoff:** [radio data ZIP](../datasets/radio-pool-v1.zip) and
+  [checksum/provenance manifest](../datasets/radio-pool-v1.manifest.json)
+  supplement the existing v4 dataset. They contain normalized radio tracks,
+  frozen pools/settings, and the full evaluation, with no credentials.
+  Extraction: [README](../README.md); commands and comparison: [evaluation](evaluation.md).
+- **Limitations:** this is our aggregation heuristic over YouTube Music's own
+  radio algorithm, distinct from native playlist suggestions. Exact-ID recovery
+  remains an offline proxy; paired inputs are not independent playlists. LLM
+  Rerank is deferred and is not part of this completed baseline.
+
 ## 2026-10-05 — Evaluation pipeline and continuation baselines scored (Spandan)
 
 - **Ready:** `evaluation/evaluate.py` + `evaluation/metrics.py` score predictions
@@ -124,11 +149,15 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables: [baselines milestone](../milestones/b
 
 ### 3. Playlist-continuation baselines
 
-**Owner:** Spandan. **State:** YouTube Music and co-occurrence scored on all 40 inputs.
+**Owner:** Spandan. **State:** YouTube Music, co-occurrence, and Radio Pool scored
+on all 40 inputs.
 
 - [x] Complete the YouTube Music continuation experiment on seed-only copies.
 - [x] Implement and run the required non-ML baseline (seed-song co-occurrence).
   Prompt-based retrieval and LLM reranking are optional.
+- [x] Collect, freeze, and score Radio Pool on all 40 inputs; share its cached
+  radios, pools, predictions, and evaluation.
+- [ ] LLM Rerank over the same candidates (deferred, separate baseline).
 - [ ] Evaluate all comparable methods (including the LLM) on the same examples and
   fixed recommendation budget; report results, failures, and proxy limitations.
 

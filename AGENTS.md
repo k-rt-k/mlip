@@ -32,7 +32,9 @@ A credential-free dataset handoff ZIP and checksum manifest are committed under 
 extract the ZIP from the repository root as described in `README.md`.
 The reported split and primary constrained metric still need agreement;
 see `docs/STATUS.md` for artifacts and review caveats. Browser headers are the only
-supported account-auth method.
+supported account-auth method. Radio Pool is also scored on all 40 inputs; its
+399 cached public seed radios, frozen pools, and evaluation are shared in
+`datasets/radio-pool-v1.zip`. LLM reranking is a separate deferred experiment.
 No embedding pipeline has been completed. Read `docs/STATUS.md` for the latest
 results, remaining evaluation work, and open issues.
 
@@ -53,13 +55,13 @@ team changes direction. Do not treat historical docs as current requirements.
 - `spotify/` — existing music API/authentication and feasibility tooling
 - `llm/` — zero-shot generation, catalog resolution, and tests
 - `evaluation/` — partial-playlist metrics and evaluation runner
-- `baselines/` — non-ML co-occurrence baseline and runner
-- `predictions/` — saved co-occurrence and YouTube Music predictions for all 40 inputs
+- `baselines/` — co-occurrence and Radio Pool baselines, candidate collection, and runners
+- `predictions/` — saved co-occurrence, YouTube Music, and Radio Pool predictions for all 40 inputs
 - `youtube_music/` — public playlist collection, seed-only copies, suggestions,
   browser-auth setup, and tests; script docstrings contain usage
 - `youtube_music/scripts/setup_auth.py` — paste Copy as fetch (Node.js) input from `mlip.team0@gmail.com` to refresh browser credentials and test authentication; usage is in the file.
 - `prompts.txt` — twenty synthetic prompts explicitly requested by the user
-- `datasets/` — explicitly approved, credential-free baseline ZIP and checksum manifest
+- `datasets/` — approved, credential-free baseline and Radio Pool ZIPs with checksum manifests
 - `data/` — extracted datasets/local artifacts (gitignored), plus explicitly committed LLM run outputs
 - `docs/` — `SCOPE.md`, `STATUS.md`, and existing API/feasibility references
 - `milestones/` — descriptions of project milestone deliverables; see `milestones/baselines.md`.

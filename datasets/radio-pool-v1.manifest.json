@@ -1,0 +1,42 @@
+{
+  "dataset_version": "radio-pool-v1",
+  "requires": "datasets/baselines-v4.zip",
+  "collected_at": "2026-10-05T23:17:48.107933+00:00",
+  "examples": 40,
+  "seed_sizes": [
+    5,
+    20
+  ],
+  "unique_seed_radios": 399,
+  "candidates_per_example": 60,
+  "predictions_per_example": 5,
+  "collection_errors": 0,
+  "settings": {
+    "per_seed": 50,
+    "max_size": 60,
+    "delay": 1.0,
+    "cooccurrence_popularity_fallback": false
+  },
+  "track_filter": {
+    "max_duration_seconds": 900,
+    "unknown_duration_eligible": true
+  },
+  "order": [
+    "radio_seed_count descending",
+    "first_seen (seed_order, radio_position) ascending",
+    "video_id ascending"
+  ],
+  "cache_content": "normalized public radio tracks, not raw API responses",
+  "files": {
+    "data/youtube_music/candidates/v1/pools.json": "513549517208e6736f06d175bb7669f9de1167c3c43f58629190446861e0410b",
+    "data/youtube_music/candidates/v1/radio_cache.json": "38e40e72935eea686221ddcde58613e5cae28ea8f81cd02bdc9239e7b9a81c59",
+    "data/youtube_music/candidates/v1/radio_pool_evaluation.json": "7ff179821837dc180fa95f5f8cd725a104fbe5c6932c622a7c36635fbe5f96d7"
+  },
+  "input_sha256": {
+    "data/youtube_music/partial_examples/v3/model_inputs.json": "501ecb68d03fd670629c81203a7dca9e3311233f9a946019ec225c30364baf6e",
+    "data/youtube_music/partial_examples/v3/dataset.json": "434533ad393796d4e2020f8cb1535c16de775c179937fb7cca75b218fe496fb8",
+    "data/youtube_music/references/v2/reference_pools.json": "8092f6b99058eb9d29b32699e4628e21d0ed17f2d270d4aecbd4eaa8ed31532b"
+  },
+  "predictions_sha256": "060112e7c6a9901d4b273bc86c30da8e8635ce6541923a93128ecec9b410d202",
+  "archive_sha256": "bf181bbdcd3441dc9ca38d365842e99ffbea0337c4c469d7d7f95e4f40bf5032"
+}

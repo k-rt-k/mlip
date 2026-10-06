@@ -47,6 +47,22 @@ Re-extract after pulling updates to replace stale local dataset IDs; extraction 
 The extracted root `dataset-manifest.json` is generated and gitignored; the
 checked-in checksum manifest under `datasets/` is the shared reference.
 
+The completed **Radio Pool** baseline adds public per-seed radio aggregation.
+Its saved predictions are in `predictions/radio_pool.json`. Extract the
+[radio data supplement](datasets/radio-pool-v1.zip) after the v4 dataset to
+reproduce them offline:
+
+```sh
+unzip -n datasets/radio-pool-v1.zip -d .
+uv run python evaluation/evaluate.py --predictions predictions/radio_pool.json
+```
+
+The supplement contains all 399 normalized seed-radio caches, 40 candidate pools,
+and the evaluation results; [its manifest](datasets/radio-pool-v1.manifest.json)
+records SHA-256 hashes and generation settings. No credentials or LLM responses
+are included. Method, results, and fresh-collection commands are in
+[docs/evaluation.md](docs/evaluation.md#radio-pool).
+
 After cloning, activate the secret-guard git hooks (once per machine):
 
 ```sh
