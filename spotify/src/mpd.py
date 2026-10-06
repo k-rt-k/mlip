@@ -78,3 +78,50 @@ def choose_candidate(track, candidates):
     if not matches or len({c['isrc'] for c in matches}) != 1:
         return None
     return min(matches, key=lambda c: (abs(c['duration']*1000-track['duration_ms']), c['id']))
+
+
+_FEAT = r'(?:feat|ft|featuring)\.?'
+
+
+def canonical(text):
+    """Equate Spotify/Deezer formatting while keeping version markers.
+
+    'X - Remastered 2014' == 'X (Remastered 2014)'; feat. credits and
+    punctuation are ignored; 'X (Live)' still differs from 'X'.
+    """
+    s = normalise(text)
+    s = re.sub(r'\s+-\s+(.+)$', r' (\1)', s)
+    s = re.sub(rf'[\(\[]\s*{_FEAT}\s[^\)\]]*[\)\]]', ' ', s)
+    s = re.sub(rf'\s{_FEAT}\s[^\(\[]*', ' ', s)
+    return ' '.join(re.sub(r'[^\w\s]|_', ' ', s).split())
+
+
+def choose_canonical(track, candidates, tolerance_ms=3000):
+    """v2 policy: canonical artist/title, duration within Deezer's whole-second rounding.
+
+    Conflicting ISRCs remain ambiguous; the closest duration wins otherwise.
+    """
+    artist, title = canonical(track['artist']), canonical(track['title'])
+    matches = [c for c in candidates if c.get('readable') and c.get('preview') and c.get('isrc')
+               and canonical(c.get('artist', {}).get('name', '')) == artist
+               and canonical(c.get('title', '')) == title
+               and abs(c.get('duration', 0) * 1000 - track['duration_ms']) <= tolerance_ms]
+    if not matches or len({c['isrc'] for c in matches}) != 1:
+        return None
+    return min(matches, key=lambda c: (abs(c['duration']*1000-track['duration_ms']), c['id']))
+
+
+def search_queries(track):
+    """Deezer free-text search fails on version suffixes; add a core-title fallback."""
+    title = track['title']
+    core = re.sub(r'\s*[\(\[][^\)\]]*[\)\]]', '', re.sub(r'\s+-\s+.*$', '', title)).strip()
+    queries = [f'{track["artist"]} {title}']
+    if core and core != title:
+        queries.append(f'{track["artist"]} {core}')
+    return queries
+
+
+MATCH_POLICIES = {
+    'full-title-artist-duration2s-v1': choose_candidate,
+    'canonical-title-artist-duration3s-v2': choose_canonical,
+}

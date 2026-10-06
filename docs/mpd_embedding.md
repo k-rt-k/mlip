@@ -29,6 +29,25 @@ will be lower than the personal-inventory ISRC pipeline. Remixes, live versions,
 and other version suffixes are intentionally preserved. Match evidence is saved
 for auditing; no-match does not prove the track is absent from Deezer.
 
+### v2 matching policy (`feat/mpd-match-fix`, not yet run)
+
+A 250-track sample of v1 `no_strict_match` outcomes (2026-10-05) showed v1 rejects
+format differences, not different recordings: 44% no search results, 32% title
+mismatch, 13% artist, 9% duration. Spotify writes `X - Original Mix`; Deezer writes
+`X (Original Mix)`, and Deezer's free-text search returns nothing for the dashed
+form. `spotify/src/mpd.py` adds, alongside the unchanged v1 `choose_candidate`:
+
+- `canonical()` — dash suffix → parenthetical, `feat.` credits and punctuation
+  dropped; version markers (`Live`, `Remix`, `Remastered`) still distinguish.
+- `choose_canonical()` — canonical artist/title, duration ≤ 3 s (Deezer reports
+  whole seconds), conflicting ISRCs still ambiguous.
+- `search_queries()` — adds an artist + core-title fallback query.
+- `MATCH_POLICIES` — policy name → matcher, recorded with each match.
+
+On the sample, v2 recovered 48/250 (19%) at ~1.25 requests/track, i.e. roughly
++230k tracks. It will run as a second pass over v1 `no_strict_match` IDs into a
+separate output directory after the v1 run finishes.
+
 The fresh candidate preview URL is passed directly to the downloader, avoiding
 a second ISRC lookup that could select another catalog entry.
 
