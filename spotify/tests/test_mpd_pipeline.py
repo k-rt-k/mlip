@@ -114,6 +114,19 @@ def test_live_consumer_is_not_replaced_for_stale_heartbeat(tmp_path, monkeypatch
     assert pipeline.consumer_active({'job_id': '123'})
 
 
+def test_purged_consumer_job_is_not_active(monkeypatch):
+    # squeue errors on IDs SLURM has purged (here: a GPU job finished 16 days earlier).
+    from types import SimpleNamespace
+    import pytest
+    monkeypatch.setattr(pipeline.subprocess, 'run', lambda *a, **k: SimpleNamespace(
+        returncode=1, stdout='', stderr='slurm_load_jobs error: Invalid job id specified\n'))
+    assert not pipeline.consumer_active({'job_id': '10709265'})
+    monkeypatch.setattr(pipeline.subprocess, 'run', lambda *a, **k: SimpleNamespace(
+        returncode=1, stdout='', stderr='slurm_load_jobs error: Unable to contact slurm controller\n'))
+    with pytest.raises(RuntimeError, match='cannot check GPU job'):
+        pipeline.consumer_active({'job_id': '10709265'})
+
+
 def test_submit_consumer_passes_custom_paths(tmp_path, monkeypatch):
     from types import SimpleNamespace
     args = SimpleNamespace(catalog=tmp_path / 'catalog', output=tmp_path / 'out',

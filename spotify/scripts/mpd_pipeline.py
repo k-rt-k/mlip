@@ -290,6 +290,8 @@ def consumer_active(job):
     result = subprocess.run(['squeue', '-h', '-j', str(job['job_id']), '-o', '%T'],
                             capture_output=True, text=True, timeout=30)
     if result.returncode != 0:
+        if 'Invalid job id' in result.stderr:  # finished long ago and purged by SLURM
+            return False
         raise RuntimeError(f'cannot check GPU job: {result.stderr}')
     return bool(result.stdout.strip())
 
