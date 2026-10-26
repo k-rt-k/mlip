@@ -30,7 +30,12 @@ and other version suffixes are intentionally preserved. Match evidence is saved
 for auditing; no-match does not prove the track is absent from Deezer.
 
 The fresh candidate preview URL is passed directly to the downloader, avoiding
-a second ISRC lookup that could select another catalog entry.
+a second ISRC lookup that could select another catalog entry. The decoupled
+producer retries each preview download 3 times (5/10/20 s backoff) and records
+the failure reason (`http <code>`, `not mp3`, exception name) as the track's
+`error`. The full run (finished 2026-10-09) left 42,537 `download_failed`
+tracks that downloaded fine when retried slowly; a low-rate producer pass
+retries them.
 
 The downloader and CLAP embedder are reused from `previews.py` and
 `embeddings.py`. The first run uses CLAP's deterministic multi-window 512-D

@@ -159,3 +159,48 @@ def test_resolved_preview_url_avoids_isrc_lookup(monkeypatch, tmp_path):
     have, missing = download_previews({'t': {'preview_url': 'https://cdn/resolved.mp3'}}, tmp_path, pause=0)
     assert set(have) == {'t'} and not missing
     session.get.assert_called_once_with('https://cdn/resolved.mp3', timeout=30)
+
+
+def ok_response():
+    response = MagicMock(status_code=200, content=b"ID3audio")
+    return response
+
+
+def test_retries_recover_transient_failures(monkeypatch, tmp_path):
+    session = TestDownloadPreviews().fake_session(monkeypatch)
+    sleeps = []
+    monkeypatch.setattr(previews.time, "sleep", sleeps.append)
+    session.get.side_effect = [previews.requests.Timeout("t"), MagicMock(status_code=503, content=b""),
+                               ok_response()]
+    have, missing = download_previews({"t": {"preview_url": "https://cdn/x.mp3"}}, tmp_path,
+                                      pause=0, retries=2, backoff=1)
+    assert set(have) == {"t"} and not missing
+    assert [s for s in sleeps if s] == [1, 2]  # exponential backoff between attempts
+
+
+def test_exhausted_retries_record_reason(monkeypatch, tmp_path):
+    session = TestDownloadPreviews().fake_session(monkeypatch)
+    session.get.return_value.status_code = 403
+    errors = {}
+    have, missing = download_previews({"t": {"preview_url": "https://cdn/x.mp3"}}, tmp_path,
+                                      pause=0, retries=2, backoff=0, errors=errors)
+    assert have == {} and missing == ["t"]
+    assert session.get.call_count == 3
+    assert errors == {"t": "http 403"}
+
+
+def test_errors_distinguish_missing_preview_and_bad_audio(monkeypatch, tmp_path):
+    session = TestDownloadPreviews().fake_session(monkeypatch, preview="")
+    errors = {}
+    download_previews({"a": {"isrc": "A"}}, tmp_path, pause=0, retries=2, backoff=0, errors=errors)
+    assert errors == {"a": "no preview"} and session.get.call_count == 1  # not retried
+    session.get.return_value.content = b"<html>"
+    download_previews({"b": {"preview_url": "https://cdn/b.mp3"}}, tmp_path, pause=0, errors=errors)
+    assert errors["b"] == "not mp3"
+
+
+def test_default_is_single_attempt(monkeypatch, tmp_path):
+    session = TestDownloadPreviews().fake_session(monkeypatch)
+    session.get.return_value.status_code = 503
+    download_previews({"t": {"preview_url": "https://cdn/x.mp3"}}, tmp_path, pause=0)
+    assert session.get.call_count == 1

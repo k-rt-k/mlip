@@ -199,9 +199,11 @@ def producer(args):
             status = dict(id=tid, status='ready', deezer_id=match['id'], isrc=match['isrc'],
                           artist=match['artist']['name'], title=match['title'], duration=match['duration'],
                           match_method='metadata_full_title_artist_duration_2s')
-            _, missing = download_previews({tid: {'preview_url': match['preview']}}, args.scratch, pause=0)
+            errors = {}
+            _, missing = download_previews({tid: {'preview_url': match['preview']}}, args.scratch, pause=0,
+                                           retries=3, backoff=5, errors=errors)
             if missing:
-                status['status'] = 'download_failed'
+                status.update(status='download_failed', error=errors.get(tid))
             return status
         except requests.RequestException as exc:
             return {'id': tid, 'status': 'request_failed', 'error': str(exc)}
