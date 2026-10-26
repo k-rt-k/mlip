@@ -1,0 +1,87 @@
+{
+  "request_hash": "ca44a1ec795ac6432f68332ada283711f32bba703568b0eef0597722cc7fc6a7",
+  "saved_at": "2026-10-06T03:00:00.708938+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. Pan y mantequilla — Efecto Pasillo\n2. Marta, Sebas, Guille y los demás — Amaral\n3. Complicidad — Vanesa Martín\n4. No puedo vivir sin ti — Anni B Sweet, Coque Malla\n5. Años 80 — Los Piratas\n6. Soldadito marinero (Directo 2004) — Fito y Fitipaldis\n7. Tu jardín con enanitos — Melendi\n8. Física o química — Despistaos\n9. Colgando en Tus Manos — Carlos Baute, Marta Sánchez\n10. La vereda de la puerta de atras extremoduro — R22\n11. Pero A Tu Lado (En Directo / WiZink Center / Madrid / 17-11-2... — Los Secretos\n12. Te necesito — Amaral\n13. ¿Y Si Fuera Ella? — Alejandro Sanz\n14. Me Rehúso — Danny Ocean\n15. So Payaso — Extremoduro\n16. Caminando por la vida — Melendi\n17. Salir — Extremoduro\n18. Los delincuentes - El aire de la calle — Hector Ortiz\n19. Uno Más Uno Son Siete — Fran Perea\n20. Me Gustas Tu — Manu Chao\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    },
+    "provider": "ModelRun"
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"La chica de ayer\",\n      \"artist\": \"Los Secretos\"\n    },\n    {\n      \"title\": \"Amanecer\",\n      \"artist\": \"Los Secretos\"\n    },\n    {\n      \"title\": \"No me dejes\",\n      \"artist\": \"Los Secretos\"\n    },\n    {\n      \"title\": \"Bailando\",\n      \"artist\": \"Los Secretos\"\n    },\n    {\n      \"title\": \"La fuerza de la vida\",\n      \"artist\": \"Melendi\"\n    },\n    {\n      \"title\": \"Canción de cuna\",\n      \"artist\": \"Amaral\"\n    },\n    {\n      \"title\": \"No me dejes\",\n      \"artist\": \"Vanesa Martín\"\n    },\n    {\n      \"title\": \"Amanecer\",\n      \"artist\": \"Vanesa Martín\"\n    },\n    {\n      \"title\": \"Canción de cuna\",\n      \"artist\": \"Vanesa Martín\"\n    },\n    {\n      \"title\": \"No me dejes\",\n      \"artist\": \"Fito y Fitipaldis\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791255594-5z0txPpXMt5wx5E9Wj1n",
+    "model": "qwen/qwen3.8-27b",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 558,
+      "completion_tokens": 1661,
+      "total_tokens": 2219,
+      "cost": 0.0052341,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.0052341,
+        "upstream_inference_prompt_cost": 0.0002511,
+        "upstream_inference_completions_cost": 0.004983
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1370,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 6.218,
+    "retries": 0
+  }
+}

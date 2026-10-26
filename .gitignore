@@ -1,4 +1,5 @@
 data
+/dataset-manifest.json
 .claude
 .claude-flow/
 ruvector.db

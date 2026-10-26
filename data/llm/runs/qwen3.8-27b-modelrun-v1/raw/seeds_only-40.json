@@ -1,0 +1,87 @@
+{
+  "request_hash": "e3a21849336c2e1adbb99911bae7a4c70ee45728f2e6c49d8123d44ebf3d2920",
+  "saved_at": "2026-10-06T03:02:25.205102+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. 12'' Don Carlos - Mr Sun — RasDashanSound\n2. Bob Marley - Jah Live — BoBMArleySong1\n3. 12'' Vivian Jones - Red Eyes — RasDashanSound\n4. Big Youth - Keep Your Dread — dubadicious\n5. The Sound Dimension - Congo Rock — Duba Dub\n6. Barrington Levy - Be Strong — Tatiana Franco\n7. Barrington Levy - Black Roses — Mariela\n8. Bob Marley - Misty Morning — shygurl78\n9. Jacob Miller - Tenement Yard — scottthrees\n10. Alton Ellis - You've Made Me So Very Happy (Sub Español) — Camila “Miss Reggaefull” Castillo\n11. Dennis Brown - Revolution — Roy\n12. Barrington Levy    Hypocrites — Coolysounds Reggae music\n13. AUGUSTUS PABLO JAVA  LIVE 1986 — rasorder\n14. Ijahman - Jah Heavy Load — klaxonklaxon\n15. Third World - 1865 (96 Degrees In The Shade)(1977) — Erick Zen\n16. Wailing Souls- Jah give us life (Greensleeves 1978) — J Slanti\n17. Linval Thompson - Just Another Girl. — Patrick Buchot\n18. Joe Higgs - There's a Reward - Legendado — Roots and Message\n19. Sound Dimension Real Rock — purevibemusic\n20. dennis brown Run Too tuff — mwafrika20\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    },
+    "provider": "ModelRun"
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Legalize It\",\n      \"artist\": \"Peter Tosh\"\n    },\n    {\n      \"title\": \"Mellow\",\n      \"artist\": \"Peter Tosh\"\n    },\n    {\n      \"title\": \"Equal Rights\",\n      \"artist\": \"Peter Tosh\"\n    },\n    {\n      \"title\": \"Get Up, Stand Up\",\n      \"artist\": \"Bob Marley & The Wailers\"\n    },\n    {\n      \"title\": \"Trench Town Rock\",\n      \"artist\": \"Bob Marley & The Wailers\"\n    },\n    {\n      \"title\": \"I Shot the Sheriff\",\n      \"artist\": \"Bob Marley & The Wailers\"\n    },\n    {\n      \"title\": \"Clementine\",\n      \"artist\": \"The Wailers\"\n    },\n    {\n      \"title\": \"Simmer Down\",\n      \"artist\": \"The Wailers\"\n    },\n    {\n      \"title\": \"I Can See\",\n      \"artist\": \"The Wailers\"\n    },\n    {\n      \"title\": \"African Herbsman\",\n      \"artist\": \"Peter Tosh\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791255739-mmKinnN9oXeuKrvxF1kR",
+    "model": "qwen/qwen3.8-27b",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 607,
+      "completion_tokens": 1664,
+      "total_tokens": 2271,
+      "cost": 0.00526515,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.00526515,
+        "upstream_inference_prompt_cost": 0.00027315,
+        "upstream_inference_completions_cost": 0.004992
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1373,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 6.065,
+    "retries": 0
+  }
+}

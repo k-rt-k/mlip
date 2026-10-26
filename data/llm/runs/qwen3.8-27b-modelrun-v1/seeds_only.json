@@ -1,0 +1,4821 @@
+{
+  "run": {
+    "schema_version": 1,
+    "run_id": "qwen3.8-27b-modelrun-v1",
+    "mode": "seeds_only",
+    "collected_at": "2026-10-06T03:02:52.510392+00:00",
+    "model_requested": "qwen/qwen3.8-27b",
+    "models_returned": [
+      "qwen/qwen3.8-27b"
+    ],
+    "providers": [
+      "ModelRun"
+    ],
+    "provider_pinned": "ModelRun",
+    "ids": "21-40",
+    "temperature": 0,
+    "seed": 0,
+    "requested_count": 10,
+    "top_k": 5,
+    "prompt_version": "v1",
+    "system_prompt": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema.",
+    "example_user_prompt": "These songs are already in a playlist:\n1. Scriabin - Etude Op. 8 No. 12 — Rousseau\n2. Chopin - Raindrop Prelude (Op. 28 No. 15) — Rousseau\n3. Mozart - Piano Sonata No. 16 in C Major, K.545 (1st Mvt) — Rousseau\n4. J.S. Bach - Air — Rousseau\n5. Chopin - Etude Op. 10 No. 3 (Tristesse) — Rousseau\n6. Liszt - Mazeppa (Transcendental Étude No. 4) — Rousseau\n7. Chopin - Etude Op. 25 No. 9 (Butterfly) — Rousseau\n8. Debussy - Clair de Lune — Rousseau\n9. Ravel - Pavane for a Dead Princess (Pavane pour une infante défunte) — Rousseau\n10. Bach - Toccata and Fugue in D Minor — Rousseau\n11. Liebesleid (Love's Sorrow) - Kreisler (arr. Rachmaninoff) — Rousseau\n12. Ravel - Scarbo (Gaspard de la nuit) — Rousseau\n13. Liszt - Hungarian Rhapsody No.  2 — Rousseau\n14. Chopin - Revolutionary Etude (Op. 10 No. 12) — Rousseau\n15. Chopin - Nocturne in C Sharp Minor (No. 20) — Rousseau\n16. Chopin - Ballade No. 1 in G Minor (1M special) — Rousseau\n17. Chopin - Prelude in B Minor (Op. 28 No. 6) — Rousseau\n18. Beethoven - Moonlight Sonata (3rd Movement) — Rousseau\n19. Beethoven - Moonlight Sonata (1st Movement) — Rousseau\n20. Debussy - Clair de Lune — Rousseau\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}.",
+    "input_file": "data/youtube_music/partial_examples/v3/model_inputs.json",
+    "limit": null,
+    "identity_note": "video_id from public search; alt_video_ids lists other matching uploads"
+  },
+  "summary": {
+    "examples": 20,
+    "ok": 20,
+    "failed": {
+      "call_failed": 0,
+      "parse_failed": 0
+    },
+    "suggestions_parsed": 181,
+    "resolution_rate": 0.519,
+    "examples_short_of_k": 8,
+    "total_tokens": 44948,
+    "mean_latency_s": 6.21,
+    "cost_usd": 0.1052
+  },
+  "examples": [
+    {
+      "id": 21,
+      "seed_playlist_id": "PLfT1ffmyX-68",
+      "status": "ok",
+      "parse_stats": {
+        "returned": 10,
+        "kept": 8,
+        "malformed": 0,
+        "duplicates": 2,
+        "seed_repeats": 0
+      },
+      "call": {
+        "finish_reason": "stop",
+        "id": "gen-1791255504-JGbcW8rKPL9Ntig5A0f8",
+        "model": "qwen/qwen3.8-27b",
+        "provider": "ModelRun",
+        "usage": {
+          "prompt_tokens": 689,
+          "completion_tokens": 1773,
+          "total_tokens": 2462,
+          "cost": 0.00562905,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.00562905,
+            "upstream_inference_prompt_cost": 0.00031005,
+            "upstream_inference_completions_cost": 0.005319
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1312,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "latency_s": 6.916,
+        "retries": 0,
+        "cached": true
+      },
+      "recommendations": [
+        {
+          "llm_rank": 1,
+          "title": "Chopin - Nocturne in E-flat Major, Op. 9 No. 2",
+          "artist": "Martha Argerich",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 2,
+          "title": "Debussy - Arabesque No. 1 in G Major",
+          "artist": "Martha Argerich",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 3,
+          "title": "Rachmaninoff - Prelude in C-sharp Minor, Op. 3 No. 2",
+          "artist": "Martha Argerich",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 4,
+          "title": "Bach - Prelude and Fugue in C Major, BWV 846",
+          "artist": "Martha Argerich",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 5,
+          "title": "Mozart - Piano Sonata No. 11 in A Major, K. 331: Andante",
+          "artist": "Martha Argerich",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 6,
+          "title": "Beethoven - Piano Sonata No. 14 in C-sharp Minor, Op. 27 No. 2: 2nd Mvt. Adagio sostenuto",
+          "artist": "Martha Argerich",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 7,
+          "title": "Liszt - Liebestraum No. 3 in A-flat Major",
+          "artist": "Martha Argerich",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 8,
+          "title": "Scriabin - Prelude in F-sharp Minor, Op. 33 No. 1",
+          "artist": "Martha Argerich",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "seed_playlist_id": "PLFlry-brgyDs",
+      "status": "ok",
+      "parse_stats": {
+        "returned": 10,
+        "kept": 10,
+        "malformed": 0,
+        "duplicates": 0,
+        "seed_repeats": 0
+      },
+      "call": {
+        "finish_reason": "stop",
+        "id": "gen-1791255526-QLQtwbxeu2OzEoos46kd",
+        "model": "qwen/qwen3.8-27b",
+        "provider": "ModelRun",
+        "usage": {
+          "prompt_tokens": 584,
+          "completion_tokens": 1537,
+          "total_tokens": 2121,
+          "cost": 0.0048738,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.0048738,
+            "upstream_inference_prompt_cost": 0.0002628,
+            "upstream_inference_completions_cost": 0.004611
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1261,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "latency_s": 6.224,
+        "retries": 0,
+        "cached": true
+      },
+      "recommendations": [
+        {
+          "llm_rank": 1,
+          "title": "At Last",
+          "artist": "Etta James",
+          "resolved": true,
+          "rank": 1,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "1qJU8G7gR_g",
+            "title": "At Last",
+            "artists": [
+              "Etta James"
+            ],
+            "album": {
+              "name": "At Last!",
+              "id": "MPREb_SpgHmaufiRV"
+            },
+            "duration_seconds": 180,
+            "duration": "3:00",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "6YjnXPqJ7gw",
+              "ujH1H1Gu5rk",
+              "FtYhWgZGpQ4"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 2,
+          "title": "Unforgettable",
+          "artist": "Nat King Cole",
+          "resolved": true,
+          "rank": 2,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "iF7kOq0peAU",
+            "title": "Unforgettable",
+            "artists": [
+              "Nat King Cole"
+            ],
+            "album": {
+              "name": "Unforgettable",
+              "id": "MPREb_dyOMGQHVIRg"
+            },
+            "duration_seconds": 192,
+            "duration": "3:12",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "vo6D_tp3DeE",
+              "-XDAnPvTQFo",
+              "UG7RqSymQ9M",
+              "hvqeD1i1Wo8",
+              "zi2v7w-Q3TE",
+              "Ws2WiQ3TUMs",
+              "uGXHVGhqMcs",
+              "JAz4yN6xZow",
+              "DiUhkXiS3oY",
+              "YjKDdjR2SoA",
+              "g-jHPo23ErY",
+              "u6iOPxTDbnM",
+              "u_hRa4O1mV4",
+              "_v3NP1vCXAI"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 3,
+          "title": "The Way You Look Tonight",
+          "artist": "Frank Sinatra",
+          "resolved": true,
+          "rank": 3,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "82_JCboW69U",
+            "title": "The Way You Look Tonight",
+            "artists": [
+              "Frank Sinatra"
+            ],
+            "album": {
+              "name": "Days Of Wine And Roses, Moon River And Other Academy Award Winners",
+              "id": "MPREb_rhdDVUwdSr1"
+            },
+            "duration_seconds": 203,
+            "duration": "3:23",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "YFham2Xu6nA"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 4,
+          "title": "Mona Lisa",
+          "artist": "Nat King Cole",
+          "resolved": true,
+          "rank": 4,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "G2vgJ0MGOlg",
+            "title": "Mona Lisa",
+            "artists": [
+              "Nat King Cole"
+            ],
+            "album": {
+              "name": "The Unforgettable Legend of Jazz and Swing",
+              "id": "MPREb_EMqI7S5P0zF"
+            },
+            "duration_seconds": 198,
+            "duration": "3:18",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "cR7EP6sXWFg",
+              "DDGlK_NtpJI",
+              "bJ9KaD0mmcc",
+              "Wtm3nlzUF4o",
+              "kuagd58Tw0E",
+              "zkvYyr9SX88",
+              "xo_FzAfxv0s",
+              "GxiHk6yhl4I",
+              "qI6WLcP-z1w",
+              "Iue90GnT0nk",
+              "X_1zOrLYWBM",
+              "AQPj92m5RHU",
+              "V5QDs0qhrQo",
+              "54z648Pgoek",
+              "5qDhzVQgh_w",
+              "b6AfpxdV7Io"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 5,
+          "title": "I'll Be Seeing You",
+          "artist": "Billie Holiday",
+          "resolved": true,
+          "rank": 5,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "njCoOSJSDTI",
+            "title": "I'll Be Seeing You",
+            "artists": [
+              "Billie Holiday"
+            ],
+            "album": {
+              "name": "Billie Holiday",
+              "id": "MPREb_aDWoN3isOiI"
+            },
+            "duration_seconds": 212,
+            "duration": "3:32",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "777f-nXpRs4",
+              "li0T_cNexe4",
+              "40gbi9pxHXM",
+              "3jBSD-6stmc",
+              "Gd9JQGEoCFE",
+              "Ova1LJFQur4",
+              "z2DtSGBvF-g",
+              "b1jAWI12xpc",
+              "HAyKG8EpOVc",
+              "UShu_ibeSlg"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 6,
+          "title": "Body and Soul",
+          "artist": "Billie Holiday",
+          "resolved": true,
+          "rank": 6,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "Ibo-f3Q-yJQ",
+            "title": "Body And Soul",
+            "artists": [
+              "Billie Holiday"
+            ],
+            "album": {
+              "name": "Body and Soul",
+              "id": "MPREb_dFwmpk5PUb1"
+            },
+            "duration_seconds": 379,
+            "duration": "6:19",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "wcnqnS1H9R0",
+              "OkIgWc11CSw",
+              "IyhCrotrxP4",
+              "Hd4cfBWE_bw",
+              "-cuiIWeXStE",
+              "AOzU7CZiquI",
+              "jwHhfqBo3qs",
+              "ERpfC36y8Js",
+              "QkBIjEcgYyg",
+              "CX6zru-Tcp4",
+              "4_sQd5btpds",
+              "IXy9d5s0-3U",
+              "DDqVcBGpzZk",
+              "hyQvjIQRIYM",
+              "5M9yw-Je-g0",
+              "oiZHzH32QoM",
+              "snimomR-c2U",
+              "29F0lO7-GXc"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 7,
+          "title": "L-O-V-E",
+          "artist": "Nat King Cole",
+          "resolved": true,
+          "rank": 7,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "gZYtes1RO_w",
+            "title": "L-O-V-E",
+            "artists": [
+              "Nat King Cole"
+            ],
+            "album": {
+              "name": "L-O-V-E",
+              "id": "MPREb_OgrN4aTOQFV"
+            },
+            "duration_seconds": 156,
+            "duration": "2:36",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "UZWmtxLiiFE",
+              "cSUeqs6h-Q4",
+              "s2x0eGn2rrw",
+              "rkJka8gphwk",
+              "sySaHSaibVg",
+              "2opaVONSaHQ",
+              "r77dIUU_e0s",
+              "DVWg4aARyBg"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 8,
+          "title": "Mack the Knife",
+          "artist": "Louis Armstrong",
+          "resolved": true,
+          "rank": 8,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "b4tTl1KxtmY",
+            "title": "Mack the Knife",
+            "artists": [
+              "Louis Armstrong & His All Stars"
+            ],
+            "album": {
+              "name": "Louis Armstrong's Greatest Hits",
+              "id": "MPREb_WSZuPk99nto"
+            },
+            "duration_seconds": 202,
+            "duration": "3:22",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "pddwAjp7yak",
+              "x0fJb9a3vAQ",
+              "-dQZ73KWk80",
+              "CWZGmIObnoU",
+              "rwLzJZpINVk",
+              "dHXT3-BmAT0",
+              "013ub_4meGo",
+              "F3GC-h5TEdc",
+              "Q2HCf0Dn4ho",
+              "SAb_vmgrlBs",
+              "P8NeffnUgoI",
+              "mLPJ1pqCTmc",
+              "5wiXYRR4lcs",
+              "Shwx3skpT-w",
+              "O2B_7bTmQXk",
+              "WdOWDEDO8xE",
+              "5FBhyGkGHbw",
+              "HdK9_bpIwzw"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 9,
+          "title": "Moon River",
+          "artist": "Andy Williams",
+          "resolved": true,
+          "rank": 9,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "DGzz506bYOQ",
+            "title": "Moon River",
+            "artists": [
+              "Andy Williams"
+            ],
+            "album": {
+              "name": "16 Most Requested Songs",
+              "id": "MPREb_esglJaH0jiT"
+            },
+            "duration_seconds": 165,
+            "duration": "2:45",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "QyDhkPDXZ0A",
+              "QmaiZodUq0Y",
+              "b9L63OH8Ikc",
+              "_hrXv1Z9sJs",
+              "s9Z76LEUN1U",
+              "3tuJ34YgW0c",
+              "pPZN_rgjifc",
+              "e8ve5kWDT1Y",
+              "uFRTGRokHek"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 10,
+          "title": "The Best Is Yet to Come",
+          "artist": "Etta James",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "seed_playlist_id": "PLNO-QK9MH7c8",
+      "status": "ok",
+      "parse_stats": {
+        "returned": 10,
+        "kept": 10,
+        "malformed": 0,
+        "duplicates": 0,
+        "seed_repeats": 0
+      },
+      "call": {
+        "finish_reason": "stop",
+        "id": "gen-1791255538-ZG25NlBV8QGAZU5w3h3p",
+        "model": "qwen/qwen3.8-27b",
+        "provider": "ModelRun",
+        "usage": {
+          "prompt_tokens": 515,
+          "completion_tokens": 1899,
+          "total_tokens": 2414,
+          "cost": 0.00592875,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.00592875,
+            "upstream_inference_prompt_cost": 0.00023175,
+            "upstream_inference_completions_cost": 0.005697
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1611,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "latency_s": 6.288,
+        "retries": 0,
+        "cached": true
+      },
+      "recommendations": [
+        {
+          "llm_rank": 1,
+          "title": "I'll Make Love to You",
+          "artist": "Boyz II Men",
+          "resolved": true,
+          "rank": 1,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "_ZXVH8EMQp8",
+            "title": "I'll Make Love To You",
+            "artists": [
+              "Boyz II Men"
+            ],
+            "album": {
+              "name": "II",
+              "id": "MPREb_n2Pg2ZnIJ3J"
+            },
+            "duration_seconds": 237,
+            "duration": "3:57",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "mYcFPlhHmn0",
+              "6-G1Y4CLhks"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 2,
+          "title": "Say My Name",
+          "artist": "Destiny's Child",
+          "resolved": true,
+          "rank": 2,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "Ajez9PaCgek",
+            "title": "Say My Name",
+            "artists": [
+              "Destiny's Child"
+            ],
+            "album": {
+              "name": "The Writing's On The Wall",
+              "id": "MPREb_EmoyiBRSsE1"
+            },
+            "duration_seconds": 272,
+            "duration": "4:32",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "JguQIUGoE3E"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 3,
+          "title": "No Scrubs",
+          "artist": "TLC",
+          "resolved": true,
+          "rank": 3,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "q3MkrF5fPew",
+            "title": "No Scrubs",
+            "artists": [
+              "TLC"
+            ],
+            "album": {
+              "name": "Fanmail",
+              "id": "MPREb_5y6f9b4u4ZJ"
+            },
+            "duration_seconds": 215,
+            "duration": "3:35",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "18SwG-kep7s",
+              "UPGupODbWVk",
+              "y4pjKc0ZRiE",
+              "pf79jLMrXQc",
+              "BUNA-sAKO1E",
+              "nrNs0ZYL3x0",
+              "f1nR9EN_bc4",
+              "DKVlYPHLQKE"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 4,
+          "title": "I Can Love You Better",
+          "artist": "Brandy",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 5,
+          "title": "I'll Be",
+          "artist": "Erykah Badu",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 6,
+          "title": "I'm Yours",
+          "artist": "Jason Mraz",
+          "resolved": true,
+          "rank": 4,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "x3Hook-kZnk",
+            "title": "I'm Yours (Demo) [2023 Remaster]",
+            "artists": [
+              "Jason Mraz"
+            ],
+            "album": {
+              "name": "We Sing. We Dance. We Steal Things. We Deluxe Edition.",
+              "id": "MPREb_GRzZ385SqXT"
+            },
+            "duration_seconds": 258,
+            "duration": "4:18",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "hBqwfSCZigI",
+              "5EMmeH5lizI",
+              "aGjWYZBCWys",
+              "q1L-b-_s_q4",
+              "Df8v8SKiark"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 7,
+          "title": "Crazy in Love",
+          "artist": "Beyoncé",
+          "resolved": true,
+          "rank": 5,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "T6xbOPSUe8M",
+            "title": "Crazy In Love (feat. JAŸ-Z)",
+            "artists": [
+              "Beyoncé"
+            ],
+            "album": {
+              "name": "Dangerously In Love",
+              "id": "MPREb_bbx8qQv4jDw"
+            },
+            "duration_seconds": 237,
+            "duration": "3:57",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "JxMZPdZLehs",
+              "f-8ul82-VNQ",
+              "7BFNKis_c2w",
+              "oi2KtQPp0lk",
+              "kMSbZkUrZXw",
+              "3X0KPAYb0BA"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 8,
+          "title": "I'm Still in Love with You",
+          "artist": "Luther Vandross",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 9,
+          "title": "I'm a Woman",
+          "artist": "Jill Scott",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 10,
+          "title": "I'm Coming Out",
+          "artist": "Diana Ross",
+          "resolved": true,
+          "rank": 6,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "maJgjTp0NQ0",
+            "title": "I'm Coming Out",
+            "artists": [
+              "Diana Ross"
+            ],
+            "album": {
+              "name": "20th Century Masters: The Millennium Collection: Best of Motown '80s, Vol. 1",
+              "id": "MPREb_hD4rz8SD5rt"
+            },
+            "duration_seconds": 235,
+            "duration": "3:55",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "Ms6gz5hpXBE",
+              "E2muOFNlvVk",
+              "UATmdEu9Aag",
+              "FZefh9aPxfc",
+              "-xMvP6PsD9A",
+              "Pg1RlMAphzo"
+            ],
+            "search_filter": "songs"
+          }
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "seed_playlist_id": "PLeuZJ-fHN_9Y",
+      "status": "ok",
+      "parse_stats": {
+        "returned": 10,
+        "kept": 10,
+        "malformed": 0,
+        "duplicates": 0,
+        "seed_repeats": 0
+      },
+      "call": {
+        "finish_reason": "stop",
+        "id": "gen-1791255550-UMdR8ScUakaMTpeQpNW9",
+        "model": "qwen/qwen3.8-27b",
+        "provider": "ModelRun",
+        "usage": {
+          "prompt_tokens": 592,
+          "completion_tokens": 1303,
+          "total_tokens": 1895,
+          "cost": 0.0041754,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.0041754,
+            "upstream_inference_prompt_cost": 0.0002664,
+            "upstream_inference_completions_cost": 0.003909
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1171,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "latency_s": 5.802,
+        "retries": 0,
+        "cached": true
+      },
+      "recommendations": [
+        {
+          "llm_rank": 1,
+          "title": "Calm Down",
+          "artist": "Rema, Selena Gomez",
+          "resolved": true,
+          "rank": 1,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "DKrelwjugQA",
+            "title": "Calm Down",
+            "artists": [
+              "Rema",
+              "Selena Gomez"
+            ],
+            "album": {
+              "name": "Rave & Roses Ultra",
+              "id": "MPREb_xBizGz30cQH"
+            },
+            "duration_seconds": 240,
+            "duration": "4:00",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "TG5nGZOmE-w",
+              "dueP7ocuoWk",
+              "Fm4WiX6i1FE"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 2,
+          "title": "Levitating",
+          "artist": "Dua Lipa",
+          "resolved": true,
+          "rank": 2,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "OsfAnsMY21M",
+            "title": "Levitating",
+            "artists": [
+              "Dua Lipa"
+            ],
+            "album": {
+              "name": "Future Nostalgia",
+              "id": "MPREb_iWdtzQKst5b"
+            },
+            "duration_seconds": 204,
+            "duration": "3:24",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "e8WoWk4b3D0",
+              "5G-rzr2FxTw",
+              "VvnIcsGoWfo",
+              "gUSUjzJ84nw",
+              "YYOShTQ3XLo",
+              "xjsbAm1NfnA"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 3,
+          "title": "Blinding Lights",
+          "artist": "The Weeknd",
+          "resolved": true,
+          "rank": 3,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "J7p4bzqLvCw",
+            "title": "Blinding Lights",
+            "artists": [
+              "The Weeknd"
+            ],
+            "album": {
+              "name": "Blinding Lights",
+              "id": "MPREb_4U7yfKKFZLv"
+            },
+            "duration_seconds": 202,
+            "duration": "3:22",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "H64a2ggVIWc",
+              "hTAojo7-56w",
+              "nkn7R3yp4Sw",
+              "gJW0MRL9vLw",
+              "K9DrqFcNsow",
+              "qhnfTdpmqOs"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 4,
+          "title": "Super Shy",
+          "artist": "NewJeans",
+          "resolved": true,
+          "rank": 4,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "0c7zGU2C2mM",
+            "title": "Super Shy",
+            "artists": [
+              "NewJeans"
+            ],
+            "album": {
+              "name": "NewJeans 'Super Shy'",
+              "id": "MPREb_6lRp2rpQllT"
+            },
+            "duration_seconds": 155,
+            "duration": "2:35",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 5,
+          "title": "Paint The Town Red",
+          "artist": "Doja Cat",
+          "resolved": true,
+          "rank": 5,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "TfOsGnWy8qA",
+            "title": "Paint The Town Red",
+            "artists": [
+              "Doja Cat"
+            ],
+            "album": {
+              "name": "Scarlet",
+              "id": "MPREb_KfonHvA4DE5"
+            },
+            "duration_seconds": 231,
+            "duration": "3:51",
+            "is_explicit": true,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 6,
+          "title": "Last Last",
+          "artist": "Burna Boy",
+          "resolved": true,
+          "rank": 6,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "CmThpha4Hoo",
+            "title": "Last Last",
+            "artists": [
+              "Burna Boy"
+            ],
+            "album": {
+              "name": "Love, Damini",
+              "id": "MPREb_18wIGfvJg8V"
+            },
+            "duration_seconds": 173,
+            "duration": "2:53",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 7,
+          "title": "One Kiss",
+          "artist": "Calvin Harris, Dua Lipa",
+          "resolved": true,
+          "rank": 7,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "XWCPbRsMb0Q",
+            "title": "One Kiss",
+            "artists": [
+              "Calvin Harris",
+              "Dua Lipa"
+            ],
+            "album": {
+              "name": "One Kiss",
+              "id": "MPREb_NW4ERIu3xpn"
+            },
+            "duration_seconds": 215,
+            "duration": "3:35",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 8,
+          "title": "LALALALA",
+          "artist": "ILLIT",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 9,
+          "title": "Water",
+          "artist": "Tyla",
+          "resolved": true,
+          "rank": 8,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "xynO0CdiE6Q",
+            "title": "Water",
+            "artists": [
+              "Tyla"
+            ],
+            "album": {
+              "name": "TYLA",
+              "id": "MPREb_JDxHAibM2Rm"
+            },
+            "duration_seconds": 201,
+            "duration": "3:21",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "CF1rt_9pdgU",
+              "k6I5njTiUA4"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 10,
+          "title": "Head & Heart",
+          "artist": "Avicii, Aloe Blacc",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "seed_playlist_id": "PLdV3TRcz7gE8",
+      "status": "ok",
+      "parse_stats": {
+        "returned": 10,
+        "kept": 10,
+        "malformed": 0,
+        "duplicates": 0,
+        "seed_repeats": 0
+      },
+      "call": {
+        "finish_reason": "stop",
+        "id": "gen-1791255559-xMq8VaT0lecW17CXYIFP",
+        "model": "qwen/qwen3.8-27b",
+        "provider": "ModelRun",
+        "usage": {
+          "prompt_tokens": 566,
+          "completion_tokens": 1379,
+          "total_tokens": 1945,
+          "cost": 0.0043917,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.0043917,
+            "upstream_inference_prompt_cost": 0.0002547,
+            "upstream_inference_completions_cost": 0.004137
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1255,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "latency_s": 5.721,
+        "retries": 0,
+        "cached": true
+      },
+      "recommendations": [
+        {
+          "llm_rank": 1,
+          "title": "Holocene",
+          "artist": "Bon Iver",
+          "resolved": true,
+          "rank": 1,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "pvC5YD-IjL0",
+            "title": "Holocene",
+            "artists": [
+              "Bon Iver"
+            ],
+            "album": {
+              "name": "Bon Iver, Bon Iver",
+              "id": "MPREb_CV3KFsT8IdK"
+            },
+            "duration_seconds": 337,
+            "duration": "5:37",
+            "is_explicit": true,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 2,
+          "title": "The Night We Met",
+          "artist": "Lord Huron",
+          "resolved": true,
+          "rank": 2,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "90DKXLbzLto",
+            "title": "The Night We Met",
+            "artists": [
+              "Lord Huron"
+            ],
+            "album": {
+              "name": "Strange Trails",
+              "id": "MPREb_nKzCilDoeIL"
+            },
+            "duration_seconds": 209,
+            "duration": "3:29",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "fhLXgehFprw",
+              "9MOPMisDTiw"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 3,
+          "title": "Rivers",
+          "artist": "Vance Joy",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 4,
+          "title": "Skinny Love",
+          "artist": "Birdy",
+          "resolved": true,
+          "rank": 3,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "FjpX3cA36G0",
+            "title": "Skinny Love",
+            "artists": [
+              "Birdy"
+            ],
+            "album": {
+              "name": "Birdy",
+              "id": "MPREb_A9K4MrNrV7D"
+            },
+            "duration_seconds": 202,
+            "duration": "3:22",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "cF-RIJnANEg"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 5,
+          "title": "Ember Days",
+          "artist": "First Aid Kit",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 6,
+          "title": "White Winter Hymnal",
+          "artist": "Fleet Foxes",
+          "resolved": true,
+          "rank": 4,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "bepPFNnaviA",
+            "title": "White Winter Hymnal",
+            "artists": [
+              "Fleet Foxes"
+            ],
+            "album": {
+              "name": "Fleet Foxes",
+              "id": "MPREb_LvKFY51ojWh"
+            },
+            "duration_seconds": 148,
+            "duration": "2:28",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "OSLE0Z3vkdc"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 7,
+          "title": "Little Talks",
+          "artist": "Of Monsters and Men",
+          "resolved": true,
+          "rank": 5,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "KtDmEy7R_c8",
+            "title": "Little Talks",
+            "artists": [
+              "Of Monsters and Men"
+            ],
+            "album": {
+              "name": "My Head Is An Animal",
+              "id": "MPREb_x9xZgt4Hfe3"
+            },
+            "duration_seconds": 267,
+            "duration": "4:27",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "eeL3mgGh6zE"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 8,
+          "title": "Bloom",
+          "artist": "Birdy",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 9,
+          "title": "The Kill",
+          "artist": "First Aid Kit",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 10,
+          "title": "Cherry Wine",
+          "artist": "The Lumineers",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "seed_playlist_id": "PLFAO99y1dNzM",
+      "status": "ok",
+      "parse_stats": {
+        "returned": 10,
+        "kept": 10,
+        "malformed": 0,
+        "duplicates": 0,
+        "seed_repeats": 0
+      },
+      "call": {
+        "finish_reason": "stop",
+        "id": "gen-1791255572-9BZyelbdRCCzRlgG2zwb",
+        "model": "qwen/qwen3.8-27b",
+        "provider": "ModelRun",
+        "usage": {
+          "prompt_tokens": 611,
+          "completion_tokens": 1600,
+          "total_tokens": 2211,
+          "cost": 0.00507495,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.00507495,
+            "upstream_inference_prompt_cost": 0.00027495,
+            "upstream_inference_completions_cost": 0.0048
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1319,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "latency_s": 6.275,
+        "retries": 0,
+        "cached": true
+      },
+      "recommendations": [
+        {
+          "llm_rank": 1,
+          "title": "So What",
+          "artist": "Miles Davis",
+          "resolved": true,
+          "rank": 1,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "K2kp2AiB3Ak",
+            "title": "So What",
+            "artists": [
+              "John Coltrane",
+              "Miles Davis"
+            ],
+            "album": {
+              "name": "Essential Jazz Masters",
+              "id": "MPREb_MoMElNMj5Cd"
+            },
+            "duration_seconds": 542,
+            "duration": "9:02",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "gQMMHl__yNg",
+              "3xn5svCMb7M",
+              "3JD6YqNqR9M",
+              "7ibnZZdBTlA",
+              "rN9cfZs8RwM",
+              "X3_dUIAYEr8",
+              "-09mgJdqLKg",
+              "yQbDhXySX9Y",
+              "xoByzf-CTgE",
+              "309jB6ZjhE0",
+              "KJEzFvXx3Xw",
+              "mwHwlgBFVmM",
+              "8YhVb-rlgkY",
+              "cWGvsyeayFk",
+              "ENhdeTgxbKg",
+              "i2qTjTBUBjc"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 2,
+          "title": "Blue in Green",
+          "artist": "Miles Davis",
+          "resolved": true,
+          "rank": 2,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "oqNXw8l-U8U",
+            "title": "Blue In Green",
+            "artists": [
+              "Miles Davis"
+            ],
+            "album": {
+              "name": "The Jazz Masters - 27 Classic Performances From The Columbia Masterpieces Series",
+              "id": "MPREb_edQNHwfRri3"
+            },
+            "duration_seconds": 325,
+            "duration": "5:25",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "iRubQhcmq-Y",
+              "P6eJ5ue95RI",
+              "wUn4zV5mfNs",
+              "gHhos66MWK8",
+              "L1kb3vcK048",
+              "Pco93UxDkg0",
+              "iznw-YkikLo",
+              "w1Ipwm-Uy5s",
+              "swtyZ09Lgk8"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 3,
+          "title": "Naima",
+          "artist": "John Coltrane",
+          "resolved": true,
+          "rank": 3,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "mLlwp1aB8Eo",
+            "title": "Naima",
+            "artists": [
+              "John Coltrane"
+            ],
+            "album": {
+              "name": "Giant Steps",
+              "id": "MPREb_AhnSQis5zq6"
+            },
+            "duration_seconds": 259,
+            "duration": "4:19",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "mOzdI3qsfQ8",
+              "5A_dHbdxshI",
+              "lCWOjcvVJ6E",
+              "XjyHNavgzYI",
+              "X1n31jX8PIA",
+              "4Mw4wtVpMCI",
+              "_l7IHNFGQ70",
+              "tEAgQG1tdww",
+              "wMuQoDlncvw",
+              "lQCdF3UtGqQ",
+              "0ksSgZlWECk",
+              "040IPwqpLzc",
+              "wBI1Io6djHA",
+              "_BdvB-5z1po",
+              "VnTG8YF5vD8",
+              "zyFo-kf69xE",
+              "qwRQSxTyCIg",
+              "xYQjDOocc4w"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 4,
+          "title": "Autumn Leaves",
+          "artist": "Chet Baker",
+          "resolved": true,
+          "rank": 4,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "zTVlrOk9a8M",
+            "title": "Autumn Leaves",
+            "artists": [
+              "Chet Baker"
+            ],
+            "album": {
+              "name": "This Is Jazz #2",
+              "id": "MPREb_JS0FdbPYobp"
+            },
+            "duration_seconds": 423,
+            "duration": "7:03",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "AFTC1Fg9cXQ",
+              "4LKdSdgyUR0"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 5,
+          "title": "The Girl from Ipanema",
+          "artist": "Stan Getz & João Gilberto",
+          "resolved": true,
+          "rank": 5,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "N-TKOh0zsvU",
+            "title": "The Girl From Ipanema",
+            "artists": [
+              "Stan Getz"
+            ],
+            "album": {
+              "name": "Getz/Gilberto",
+              "id": "MPREb_AlEuT5xtBxO"
+            },
+            "duration_seconds": 325,
+            "duration": "5:25",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "7ephX9SlH4M",
+              "fzR25fqAyqQ",
+              "BNJS2WXjz-g",
+              "7RXT6AlPzSc",
+              "3F2mJMLvfGA",
+              "v5DZ5clg-bg",
+              "4AX1c2YsBNs",
+              "e2C-0YcS4Vc",
+              "NfZ_b26F3g8",
+              "V_pexBDOI4o"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 6,
+          "title": "My Funny Valentine",
+          "artist": "Bill Evans",
+          "resolved": true,
+          "rank": 6,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "w6t2SnKJgqg",
+            "title": "My Funny Valentine",
+            "artists": [
+              "Bill Evans",
+              "Jim Hall"
+            ],
+            "album": {
+              "name": "Undercurrent",
+              "id": "MPREb_dk5GfcQBl45"
+            },
+            "duration_seconds": 325,
+            "duration": "5:25",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "j3c0YuZcdyk",
+              "T3Pheb4ZQ_Y",
+              "uEeuycE0KPE",
+              "XYenLUxEYOU",
+              "JeNAkqqfzL0",
+              "Vlmkviomvtk"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 7,
+          "title": "Body and Soul",
+          "artist": "Bill Evans",
+          "resolved": true,
+          "rank": 7,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "_2xbhZBJPm4",
+            "title": "Body And Soul",
+            "artists": [
+              "Bill Evans"
+            ],
+            "album": {
+              "name": "Everybody Still Digs Bill Evans",
+              "id": "MPREb_R2cGaf29Fgr"
+            },
+            "duration_seconds": 382,
+            "duration": "6:22",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "giW4e2aBr0I",
+              "MzvGlrDUdqw"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 8,
+          "title": "Take the 'A' Train",
+          "artist": "Duke Ellington",
+          "resolved": true,
+          "rank": 8,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "r4pjKNGWm-c",
+            "title": "Take The \"A\" Train",
+            "artists": [
+              "Duke Ellington and His Orchestra"
+            ],
+            "album": {
+              "name": "The Great Band Era, Vol. 1",
+              "id": "MPREb_tBC0qaIC0my"
+            },
+            "duration_seconds": 169,
+            "duration": "2:49",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "MQ_vOm-mAys",
+              "b2p_87Imk94",
+              "VHTgfddVnzo",
+              "kJPgscFDtiE",
+              "-1S7MVAAj8o",
+              "Je0HX7YMFwY",
+              "t1_kga22Oz0",
+              "j5dDsPb3qaQ",
+              "4OEZSH9toiQ",
+              "tzoQphK8MmQ",
+              "n0HHErFMGK4",
+              "iOQpRaai464",
+              "kocbJoqo4V0",
+              "LASZY9D94bA",
+              "KLeMDhGs5W8",
+              "nwG1FUR3ESA",
+              "w3_b-OyRdzo",
+              "nNfTnaUzBQ8"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 9,
+          "title": "Stella by Starlight",
+          "artist": "Bill Evans",
+          "resolved": true,
+          "rank": 9,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "tARB9hEm3i4",
+            "title": "Stella By Starlight",
+            "artists": [
+              "Bill Evans"
+            ],
+            "album": {
+              "name": "A Simple Matter Of Conviction",
+              "id": "MPREb_zyiijoKCM26"
+            },
+            "duration_seconds": 250,
+            "duration": "4:10",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "fIOh1_o3jnE",
+              "nqtG4kuGOdc"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 10,
+          "title": "Round Midnight",
+          "artist": "Miles Davis",
+          "resolved": true,
+          "rank": 10,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "5qYUgq9o4Zg",
+            "title": "'Round Midnight",
+            "artists": [
+              "Miles Davis"
+            ],
+            "album": {
+              "name": "Directions",
+              "id": "MPREb_8B0OqLTetlf"
+            },
+            "duration_seconds": 460,
+            "duration": "7:40",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "MKEarE2YJu0",
+              "cit3dtO0hTw",
+              "7r77GLcGlvQ",
+              "Y6RGQMENnvY",
+              "ISmYDEYk8xU",
+              "iWC5wBXyozM",
+              "95UD19P9cqs",
+              "XVYxAUbitMM",
+              "1dAWfhy01Fk"
+            ],
+            "search_filter": "songs"
+          }
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "seed_playlist_id": "PLOFPR1-7xMYM",
+      "status": "ok",
+      "parse_stats": {
+        "returned": 10,
+        "kept": 10,
+        "malformed": 0,
+        "duplicates": 0,
+        "seed_repeats": 0
+      },
+      "call": {
+        "finish_reason": "stop",
+        "id": "gen-1791255581-jlnFYGkbMDySyxTZ6FGD",
+        "model": "qwen/qwen3.8-27b",
+        "provider": "ModelRun",
+        "usage": {
+          "prompt_tokens": 596,
+          "completion_tokens": 1562,
+          "total_tokens": 2158,
+          "cost": 0.0049542,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.0049542,
+            "upstream_inference_prompt_cost": 0.0002682,
+            "upstream_inference_completions_cost": 0.004686
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1264,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "latency_s": 6.23,
+        "retries": 0,
+        "cached": true
+      },
+      "recommendations": [
+        {
+          "llm_rank": 1,
+          "title": "One of Those Nights",
+          "artist": "Nas",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 2,
+          "title": "C.R.E.A.M.",
+          "artist": "Wu-Tang Clan",
+          "resolved": true,
+          "rank": 1,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "QWfHUU4tz5c",
+            "title": "C.R.E.A.M. (feat. Method Man, Raekwon, Inspectah Deck & Buddha Monk)",
+            "artists": [
+              "Wu-Tang Clan"
+            ],
+            "album": {
+              "name": "Enter the Wu-Tang (36 Chambers)",
+              "id": "MPREb_nQ6h0COoO2o"
+            },
+            "duration_seconds": 247,
+            "duration": "4:07",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "or5C2jV1qRc",
+              "ecRs1sWZIL4",
+              "wxi66Wm0XQw",
+              "OhVn19ICQZc",
+              "UwlJvOdyJjE",
+              "SyAy4tSLB4E"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 3,
+          "title": "Can't Truss It",
+          "artist": "De La Soul",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 4,
+          "title": "Gin and Juice",
+          "artist": "Snoop Dogg",
+          "resolved": true,
+          "rank": 2,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "1TqQvCdGSPk",
+            "title": "Gin and Juice",
+            "artists": [
+              "Snoop Dogg"
+            ],
+            "album": {
+              "name": "Doggystyle",
+              "id": "MPREb_ajgAfvebdsT"
+            },
+            "duration_seconds": 212,
+            "duration": "3:32",
+            "is_explicit": true,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "AQLwmsVLoiA"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 5,
+          "title": "California Love",
+          "artist": "2Pac",
+          "resolved": true,
+          "rank": 3,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "LRt6TdSvHag",
+            "title": "California Love (feat. Roger Troutman & Dr. Dre)",
+            "artists": [
+              "2Pac"
+            ],
+            "album": {
+              "name": "Greatest Hits",
+              "id": "MPREb_AM8MsSykxHd"
+            },
+            "duration_seconds": 285,
+            "duration": "4:45",
+            "is_explicit": true,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "J7_bMdYfSws",
+              "95x5MR_pXv0"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 6,
+          "title": "Findin' Out",
+          "artist": "The Fugees",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 7,
+          "title": "If I Ruled the World (Assassinator's Paradise)",
+          "artist": "Nas",
+          "resolved": true,
+          "rank": 4,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "9ZwG7QnkLZM",
+            "title": "If I Ruled the World (Imagine That) (feat. Lauryn Hill)",
+            "artists": [
+              "Nas"
+            ],
+            "album": {
+              "name": "It Was Written",
+              "id": "MPREb_VMY4230PUxe"
+            },
+            "duration_seconds": 283,
+            "duration": "4:43",
+            "is_explicit": true,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "E_zA9m-lJAM"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 8,
+          "title": "Me at the Zoo",
+          "artist": "Wu-Tang Clan",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 9,
+          "title": "D.A.I.S.Y. Age",
+          "artist": "De La Soul",
+          "resolved": true,
+          "rank": 5,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "jbls04xiB_s",
+            "title": "D.A.I.S.Y. Age",
+            "artists": [
+              "De La Soul"
+            ],
+            "album": {
+              "name": "3 Feet High and Rising",
+              "id": "MPREb_fnifeE9jiUX"
+            },
+            "duration_seconds": 283,
+            "duration": "4:43",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 10,
+          "title": "Keep Ya Head Up",
+          "artist": "2Pac",
+          "resolved": true,
+          "rank": 6,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "fAJfDP3b5_U",
+            "title": "Keep Ya Head Up",
+            "artists": [
+              "2Pac"
+            ],
+            "album": {
+              "name": "Greatest Hits",
+              "id": "MPREb_oScQoHQGm93"
+            },
+            "duration_seconds": 264,
+            "duration": "4:24",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "qAP8UpXFhUw",
+              "MSaAZZMs0FY",
+              "apfeHkjtAwY"
+            ],
+            "search_filter": "songs"
+          }
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "seed_playlist_id": "PLHIG4JHzVfyQ",
+      "status": "ok",
+      "parse_stats": {
+        "returned": 10,
+        "kept": 10,
+        "malformed": 0,
+        "duplicates": 0,
+        "seed_repeats": 0
+      },
+      "call": {
+        "finish_reason": "stop",
+        "id": "gen-1791255594-5z0txPpXMt5wx5E9Wj1n",
+        "model": "qwen/qwen3.8-27b",
+        "provider": "ModelRun",
+        "usage": {
+          "prompt_tokens": 558,
+          "completion_tokens": 1661,
+          "total_tokens": 2219,
+          "cost": 0.0052341,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.0052341,
+            "upstream_inference_prompt_cost": 0.0002511,
+            "upstream_inference_completions_cost": 0.004983
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1370,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "latency_s": 6.218,
+        "retries": 0,
+        "cached": true
+      },
+      "recommendations": [
+        {
+          "llm_rank": 1,
+          "title": "La chica de ayer",
+          "artist": "Los Secretos",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 2,
+          "title": "Amanecer",
+          "artist": "Los Secretos",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 3,
+          "title": "No me dejes",
+          "artist": "Los Secretos",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 4,
+          "title": "Bailando",
+          "artist": "Los Secretos",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 5,
+          "title": "La fuerza de la vida",
+          "artist": "Melendi",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 6,
+          "title": "Canción de cuna",
+          "artist": "Amaral",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 7,
+          "title": "No me dejes",
+          "artist": "Vanesa Martín",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 8,
+          "title": "Amanecer",
+          "artist": "Vanesa Martín",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 9,
+          "title": "Canción de cuna",
+          "artist": "Vanesa Martín",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 10,
+          "title": "No me dejes",
+          "artist": "Fito y Fitipaldis",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "seed_playlist_id": "PLCf-L5xwJD-U",
+      "status": "ok",
+      "parse_stats": {
+        "returned": 10,
+        "kept": 10,
+        "malformed": 0,
+        "duplicates": 0,
+        "seed_repeats": 0
+      },
+      "call": {
+        "finish_reason": "stop",
+        "id": "gen-1791255611-Me4sU3yNj9X6pphu34cR",
+        "model": "qwen/qwen3.8-27b",
+        "provider": "ModelRun",
+        "usage": {
+          "prompt_tokens": 510,
+          "completion_tokens": 1442,
+          "total_tokens": 1952,
+          "cost": 0.0045555,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.0045555,
+            "upstream_inference_prompt_cost": 0.0002295,
+            "upstream_inference_completions_cost": 0.004326
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1159,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "latency_s": 6.099,
+        "retries": 0,
+        "cached": true
+      },
+      "recommendations": [
+        {
+          "llm_rank": 1,
+          "title": "Somebody Else",
+          "artist": "The 1975",
+          "resolved": true,
+          "rank": 1,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "K9SUTtDVheM",
+            "title": "Somebody Else",
+            "artists": [
+              "The 1975"
+            ],
+            "album": {
+              "name": "I like it when you sleep, for you are so beautiful yet so unaware of it",
+              "id": "MPREb_ViBV1Kzezji"
+            },
+            "duration_seconds": 348,
+            "duration": "5:48",
+            "is_explicit": true,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "MQTuSNdAW6M"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 2,
+          "title": "The Less I Know The Better",
+          "artist": "Tame Impala",
+          "resolved": true,
+          "rank": 2,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "PvM79DJ2PmM",
+            "title": "The Less I Know The Better",
+            "artists": [
+              "Tame Impala"
+            ],
+            "album": {
+              "name": "Currents",
+              "id": "MPREb_AjwAqo5hI0U"
+            },
+            "duration_seconds": 217,
+            "duration": "3:37",
+            "is_explicit": true,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 3,
+          "title": "Heaven",
+          "artist": "Lorde",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 4,
+          "title": "Blinding Lights",
+          "artist": "The Weeknd",
+          "resolved": true,
+          "rank": 3,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "J7p4bzqLvCw",
+            "title": "Blinding Lights",
+            "artists": [
+              "The Weeknd"
+            ],
+            "album": {
+              "name": "Blinding Lights",
+              "id": "MPREb_4U7yfKKFZLv"
+            },
+            "duration_seconds": 202,
+            "duration": "3:22",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "H64a2ggVIWc",
+              "hTAojo7-56w",
+              "nkn7R3yp4Sw",
+              "gJW0MRL9vLw",
+              "K9DrqFcNsow",
+              "qhnfTdpmqOs"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 5,
+          "title": "Riptide",
+          "artist": "Vance Joy",
+          "resolved": true,
+          "rank": 4,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "En_6WWOWh8E",
+            "title": "Riptide",
+            "artists": [
+              "Vance Joy"
+            ],
+            "album": {
+              "name": "Dream Your Life Away (Deluxe Edition)",
+              "id": "MPREb_umGTIcPNlIt"
+            },
+            "duration_seconds": 205,
+            "duration": "3:25",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 6,
+          "title": "Sweater Weather",
+          "artist": "The Neighbourhood",
+          "resolved": true,
+          "rank": 5,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "cULQhvuq1Zc",
+            "title": "Sweater Weather",
+            "artists": [
+              "The Neighbourhood"
+            ],
+            "album": {
+              "name": "I Love You.",
+              "id": "MPREb_0uvucD0LWSQ"
+            },
+            "duration_seconds": 241,
+            "duration": "4:01",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "Ao81ziiXHhs",
+              "ltdqa0kxCuA",
+              "zRCYSzfFDuU"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 7,
+          "title": "I Feel It Coming",
+          "artist": "The Weeknd ft. Daft Punk",
+          "resolved": true,
+          "rank": 6,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "qPRNIHxLhmc",
+            "title": "I Feel It Coming (feat. Daft Punk)",
+            "artists": [
+              "The Weeknd"
+            ],
+            "album": {
+              "name": "Starboy",
+              "id": "MPREb_FWIMEPTHFsY"
+            },
+            "duration_seconds": 270,
+            "duration": "4:30",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "iIWoYaJRryw",
+              "y_i_3Kbi8nM"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 8,
+          "title": "Blue Monday",
+          "artist": "New Order",
+          "resolved": true,
+          "rank": 7,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "R1MBI2tSHe0",
+            "title": "Blue Monday",
+            "artists": [
+              "New Order"
+            ],
+            "album": {
+              "name": "Blue Monday",
+              "id": "MPREb_AdFhWLz5OID"
+            },
+            "duration_seconds": 453,
+            "duration": "7:33",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "iOEJHNZpeck",
+              "zGNMqNa8KLw",
+              "zx0ZoDYYI_o",
+              "Q0pIDCvNPRk"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 9,
+          "title": "Cherry",
+          "artist": "Twenty One Pilots",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 10,
+          "title": "Numb",
+          "artist": "Linkin Park",
+          "resolved": true,
+          "rank": 8,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "Q7cQU86CDB0",
+            "title": "Numb",
+            "artists": [
+              "Linkin Park"
+            ],
+            "album": {
+              "name": "Meteora (Bonus Edition)",
+              "id": "MPREb_eIeUqM4OeKG"
+            },
+            "duration_seconds": 188,
+            "duration": "3:08",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "dxp9w9Ggehc",
+              "u-IcadiJCrE"
+            ],
+            "search_filter": "songs"
+          }
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "seed_playlist_id": "PLN0u6cJH7784",
+      "status": "ok",
+      "parse_stats": {
+        "returned": 10,
+        "kept": 10,
+        "malformed": 0,
+        "duplicates": 0,
+        "seed_repeats": 0
+      },
+      "call": {
+        "finish_reason": "stop",
+        "id": "gen-1791255622-fFUFW4beFaXfp9kiLlVu",
+        "model": "qwen/qwen3.8-27b",
+        "provider": "ModelRun",
+        "usage": {
+          "prompt_tokens": 513,
+          "completion_tokens": 1598,
+          "total_tokens": 2111,
+          "cost": 0.00502485,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.00502485,
+            "upstream_inference_prompt_cost": 0.00023085,
+            "upstream_inference_completions_cost": 0.004794
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1325,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "latency_s": 6.138,
+        "retries": 0,
+        "cached": true
+      },
+      "recommendations": [
+        {
+          "llm_rank": 1,
+          "title": "Take It Easy",
+          "artist": "Eagles",
+          "resolved": true,
+          "rank": 1,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "32Oc2d_3yEk",
+            "title": "Take It Easy",
+            "artists": [
+              "Eagles"
+            ],
+            "album": {
+              "name": "Eagles",
+              "id": "MPREb_GRG9HQrp1NA"
+            },
+            "duration_seconds": 212,
+            "duration": "3:32",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "VzEmHYEggxM",
+              "GjlvB1sJ6yk",
+              "s0ZZHNRHA2g",
+              "Y1H6jUcxGTE",
+              "97vuObX4evI",
+              "Fq5nzkXWjSk",
+              "M0rcLdo5Iks"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 2,
+          "title": "Hotel California",
+          "artist": "Eagles",
+          "resolved": true,
+          "rank": 2,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "BciS5krYL80",
+            "title": "Hotel California",
+            "artists": [
+              "Eagles"
+            ],
+            "album": {
+              "name": "Legacy",
+              "id": "MPREb_E2rekB6aBjC"
+            },
+            "duration_seconds": 392,
+            "duration": "6:32",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 3,
+          "title": "Sultans of Swing",
+          "artist": "Dire Straits",
+          "resolved": true,
+          "rank": 3,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "xZatdZ_bqOc",
+            "title": "Sultans Of Swing",
+            "artists": [
+              "Dire Straits"
+            ],
+            "album": {
+              "name": "Dire Straits",
+              "id": "MPREb_hvShdCVz65r"
+            },
+            "duration_seconds": 349,
+            "duration": "5:49",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "YyF1FwiYcoQ",
+              "QRyglau6lvw"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 4,
+          "title": "Maggie May",
+          "artist": "Rod Stewart",
+          "resolved": true,
+          "rank": 4,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "EOl7dh7a-6g",
+            "title": "Maggie May",
+            "artists": [
+              "Rod Stewart"
+            ],
+            "album": {
+              "name": "Every Picture Tells A Story",
+              "id": "MPREb_CkJDYC5glp5"
+            },
+            "duration_seconds": 351,
+            "duration": "5:51",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "78ic5hZXdwk",
+              "pj2EQRLm7Vc",
+              "3LBqNyEcD-A",
+              "GwquyzqoYAA",
+              "NFyK3828eFs",
+              "jubOWUlkxuk",
+              "QlWXIp2tiQc"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 5,
+          "title": "Dream On",
+          "artist": "Aerosmith",
+          "resolved": true,
+          "rank": 5,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "yZR4zH9Zy34",
+            "title": "Dream On",
+            "artists": [
+              "Aerosmith"
+            ],
+            "album": {
+              "name": "Pandora's Box",
+              "id": "MPREb_xdTgH5ONh6S"
+            },
+            "duration_seconds": 266,
+            "duration": "4:26",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "4Zhm9ch184E"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 6,
+          "title": "American Pie",
+          "artist": "Don McLean",
+          "resolved": true,
+          "rank": 6,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "iX_TFkut1PM",
+            "title": "American Pie",
+            "artists": [
+              "Don McLean"
+            ],
+            "album": {
+              "name": "American Pie",
+              "id": "MPREb_1ZF32r1JEpI"
+            },
+            "duration_seconds": 517,
+            "duration": "8:37",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "rg_W7WdNFNk"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 7,
+          "title": "Born to Run",
+          "artist": "Bruce Springsteen",
+          "resolved": true,
+          "rank": 7,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "Wu4_zVxmufY",
+            "title": "Born to Run",
+            "artists": [
+              "Bruce Springsteen"
+            ],
+            "album": {
+              "name": "Born To Run",
+              "id": "MPREb_kPYj6JOZHGx"
+            },
+            "duration_seconds": 270,
+            "duration": "4:30",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "z_XiRS8eF8w",
+              "rVSWvjwO60w",
+              "ysuSJyBXAfs",
+              "5zJ5J64qydk",
+              "lO0NkOrj9iU",
+              "E2ReWNYxdkY",
+              "BX1gkE6ji08",
+              "k_4g-e8fhg4"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 8,
+          "title": "Heart of Glass",
+          "artist": "Blondie",
+          "resolved": true,
+          "rank": 8,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "M6zdLTfH-As",
+            "title": "Heart Of Glass",
+            "artists": [
+              "Blondie"
+            ],
+            "album": {
+              "name": "Parallel Lines",
+              "id": "MPREb_hIn0o5mmepR"
+            },
+            "duration_seconds": 230,
+            "duration": "3:50",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "BrcvwOkIWkA",
+              "A4MrL7ncX9M",
+              "pNeCMEESdn0",
+              "VtEu_SKE1Gc",
+              "CNRxtcT6WqY",
+              "TrVHFXUsnlk",
+              "SP6BgyF7LPw",
+              "M3wDJhJk3ck"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 9,
+          "title": "Superstition",
+          "artist": "Stevie Wonder",
+          "resolved": true,
+          "rank": 9,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "ftdZ363R9kQ",
+            "title": "Superstition",
+            "artists": [
+              "Stevie Wonder"
+            ],
+            "album": {
+              "name": "Talking Book",
+              "id": "MPREb_rZZHgjASXzQ"
+            },
+            "duration_seconds": 267,
+            "duration": "4:27",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "egqv1mtos6A",
+              "_O4yRbS_FoM",
+              "Jm5gu1-rEWg",
+              "Nz904pv4eQ8",
+              "PWSfx3nmQSE",
+              "o2V3xsnWcKc",
+              "MQozXFFvgJI",
+              "yPPSIPpujHQ"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 10,
+          "title": "Brown Eyed Girl",
+          "artist": "Van Morrison",
+          "resolved": true,
+          "rank": 10,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "nEQmbFWnQeE",
+            "title": "Brown Eyed Girl",
+            "artists": [
+              "Van Morrison"
+            ],
+            "album": {
+              "name": "Blowin' Your Mind!",
+              "id": "MPREb_BDmlgGD3Ix1"
+            },
+            "duration_seconds": 187,
+            "duration": "3:07",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "JLodR6sr7Z4",
+              "_EXzgEUSa3c",
+              "Njk_d1Q3jU8",
+              "Br1P4zrG7Gk",
+              "cpapWuVRwdA",
+              "FOvcbTE5MZE",
+              "lpsqoWBo7oc",
+              "Pu94UttLko0",
+              "nlPABHPq0-8",
+              "Z8Ozo0TUS7E",
+              "yC1gzkj7ydo",
+              "UarZUmUGUjo"
+            ],
+            "search_filter": "songs"
+          }
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "seed_playlist_id": "PLCUEjJa7gVrU",
+      "status": "ok",
+      "parse_stats": {
+        "returned": 10,
+        "kept": 4,
+        "malformed": 0,
+        "duplicates": 6,
+        "seed_repeats": 0
+      },
+      "call": {
+        "finish_reason": "stop",
+        "id": "gen-1791255630-ovaNl7JGDiiEOLjf3Liu",
+        "model": "qwen/qwen3.8-27b",
+        "provider": "ModelRun",
+        "usage": {
+          "prompt_tokens": 603,
+          "completion_tokens": 1809,
+          "total_tokens": 2412,
+          "cost": 0.00569835,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.00569835,
+            "upstream_inference_prompt_cost": 0.00027135,
+            "upstream_inference_completions_cost": 0.005427
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1526,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "latency_s": 6.19,
+        "retries": 0,
+        "cached": true
+      },
+      "recommendations": [
+        {
+          "llm_rank": 1,
+          "title": "An Ending (Ascent)",
+          "artist": "Brian Eno",
+          "resolved": true,
+          "rank": 1,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "XbL9DT4QFc8",
+            "title": "An Ending (Ascent)",
+            "artists": [
+              "Brian Eno"
+            ],
+            "album": {
+              "name": "Apollo: Atmospheres And Soundtracks (Extended Edition)",
+              "id": "MPREb_MprmSCoaBRU"
+            },
+            "duration_seconds": 265,
+            "duration": "4:25",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "hvzQQOAjuoU"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 2,
+          "title": "The Black Star",
+          "artist": "Lustmord",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 3,
+          "title": "Spiral",
+          "artist": "Carbon Based Lifeforms",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 4,
+          "title": "The Plateau",
+          "artist": "Brian Eno",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "seed_playlist_id": "PLNC6wn0F4Wqk",
+      "status": "ok",
+      "parse_stats": {
+        "returned": 10,
+        "kept": 10,
+        "malformed": 0,
+        "duplicates": 0,
+        "seed_repeats": 0
+      },
+      "call": {
+        "finish_reason": "stop",
+        "id": "gen-1791255639-X0V2YJTY0wDp4ucYQq8M",
+        "model": "qwen/qwen3.8-27b",
+        "provider": "ModelRun",
+        "usage": {
+          "prompt_tokens": 569,
+          "completion_tokens": 1527,
+          "total_tokens": 2096,
+          "cost": 0.00483705,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.00483705,
+            "upstream_inference_prompt_cost": 0.00025605,
+            "upstream_inference_completions_cost": 0.004581
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1392,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "latency_s": 5.697,
+        "retries": 0,
+        "cached": true
+      },
+      "recommendations": [
+        {
+          "llm_rank": 1,
+          "title": "Desafinado",
+          "artist": "João Gilberto",
+          "resolved": true,
+          "rank": 1,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "b9Cf4d7W7Uo",
+            "title": "Desafinado",
+            "artists": [
+              "João Gilberto"
+            ],
+            "album": {
+              "name": "João Gilberto Apresenta Chega de Saudade",
+              "id": "MPREb_Q9UXKZnedKB"
+            },
+            "duration_seconds": 119,
+            "duration": "1:59",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "r18r0uYEmEs",
+              "To2Rfrs375w",
+              "EQwqnixbevg",
+              "ILqbJJtSQBw",
+              "olyjW05IxJE",
+              "wzOaFIhE6wo",
+              "GNZk7sK9R0E",
+              "l9bcL3gxD9o",
+              "-mojrwdjNWo",
+              "cPavMxC5Uic",
+              "OxOGgGi5ESM",
+              "hsRgSxF2Msk",
+              "GqJioXlSTqg",
+              "2TzRB1UjGiE",
+              "WNqOp51xZE8",
+              "WSOns8QJ7G4",
+              "HmnsHI_Z_jQ",
+              "kGomV5yhu40"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 2,
+          "title": "O Barão",
+          "artist": "João Gilberto",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 3,
+          "title": "A Felicidade",
+          "artist": "Elis Regina",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 4,
+          "title": "Samba da Minha Terra",
+          "artist": "Roberto Carlos",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 5,
+          "title": "O Sol Nascerá",
+          "artist": "Roberto Carlos",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 6,
+          "title": "Saudosa Maloca",
+          "artist": "Roberto Carlos",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 7,
+          "title": "Samba de Verão",
+          "artist": "Roberto Carlos",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 8,
+          "title": "Trem das Onze",
+          "artist": "Cartola",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 9,
+          "title": "Ponteio",
+          "artist": "Cartola",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 10,
+          "title": "Bom Dia Tristeza",
+          "artist": "Elis Regina",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "seed_playlist_id": "PLKjdweYTdpi8",
+      "status": "ok",
+      "parse_stats": {
+        "returned": 10,
+        "kept": 10,
+        "malformed": 0,
+        "duplicates": 0,
+        "seed_repeats": 0
+      },
+      "call": {
+        "finish_reason": "stop",
+        "id": "gen-1791255653-Xl3xWaD9aqYiarlrv9Lc",
+        "model": "qwen/qwen3.8-27b",
+        "provider": "ModelRun",
+        "usage": {
+          "prompt_tokens": 579,
+          "completion_tokens": 1852,
+          "total_tokens": 2431,
+          "cost": 0.00581655,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.00581655,
+            "upstream_inference_prompt_cost": 0.00026055,
+            "upstream_inference_completions_cost": 0.005556
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1563,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "latency_s": 6.708,
+        "retries": 0,
+        "cached": true
+      },
+      "recommendations": [
+        {
+          "llm_rank": 1,
+          "title": "I'm Not a Girl, Not Yet a Woman",
+          "artist": "Avril Lavigne",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 2,
+          "title": "I Will Survive",
+          "artist": "The Starting Line",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 3,
+          "title": "Bleed American",
+          "artist": "The Used",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 4,
+          "title": "I'm Just a Kid",
+          "artist": "Simple Plan",
+          "resolved": true,
+          "rank": 1,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "koKLSBMibCc",
+            "title": "I'm Just a Kid",
+            "artists": [
+              "Simple Plan"
+            ],
+            "album": {
+              "name": "No Pads, No Helmets...Just Balls (15th Anniversary Tour Edition)",
+              "id": "MPREb_J2U8YGeEouW"
+            },
+            "duration_seconds": 199,
+            "duration": "3:19",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "IKhqbAjVyI4"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 5,
+          "title": "The Only Exception",
+          "artist": "Paramore",
+          "resolved": true,
+          "rank": 2,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "ChXcD6Z4uvQ",
+            "title": "The Only Exception",
+            "artists": [
+              "Paramore"
+            ],
+            "album": {
+              "name": "Brand New Eyes",
+              "id": "MPREb_h60xvrQFiho"
+            },
+            "duration_seconds": 268,
+            "duration": "4:28",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 6,
+          "title": "All the Small Things",
+          "artist": "Blink-182",
+          "resolved": true,
+          "rank": 3,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "5_PBNZXlzp0",
+            "title": "All The Small Things",
+            "artists": [
+              "blink-182"
+            ],
+            "album": {
+              "name": "Enema Of The State",
+              "id": "MPREb_JFruwWgHrSE"
+            },
+            "duration_seconds": 168,
+            "duration": "2:48",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 7,
+          "title": "Semi-Charmed Life",
+          "artist": "Third Eye Blind",
+          "resolved": true,
+          "rank": 4,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "gjdLAsnR_Ws",
+            "title": "Semi-Charmed Life",
+            "artists": [
+              "Third Eye Blind"
+            ],
+            "album": {
+              "name": "Third Eye Blind",
+              "id": "MPREb_U4IU2tONKDR"
+            },
+            "duration_seconds": 269,
+            "duration": "4:29",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 8,
+          "title": "The Pretender",
+          "artist": "Foo Fighters",
+          "resolved": true,
+          "rank": 5,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "BMMGwtklEeE",
+            "title": "The Pretender",
+            "artists": [
+              "Foo Fighters"
+            ],
+            "album": {
+              "name": "Echoes, Silence, Patience & Grace",
+              "id": "MPREb_LxuNwq2DCKw"
+            },
+            "duration_seconds": 270,
+            "duration": "4:30",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 9,
+          "title": "I Won't Be Home",
+          "artist": "The Starting Line",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 10,
+          "title": "The Story",
+          "artist": "The Starting Line",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        }
+      ]
+    },
+    {
+      "id": 34,
+      "seed_playlist_id": "PLejEZdIUsBkE",
+      "status": "ok",
+      "parse_stats": {
+        "returned": 10,
+        "kept": 10,
+        "malformed": 0,
+        "duplicates": 0,
+        "seed_repeats": 0
+      },
+      "call": {
+        "finish_reason": "stop",
+        "id": "gen-1791255667-SMeK0E4yiirhdl4VLTVe",
+        "model": "qwen/qwen3.8-27b",
+        "provider": "ModelRun",
+        "usage": {
+          "prompt_tokens": 646,
+          "completion_tokens": 1844,
+          "total_tokens": 2490,
+          "cost": 0.0058227,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.0058227,
+            "upstream_inference_prompt_cost": 0.0002907,
+            "upstream_inference_completions_cost": 0.005532
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1546,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "latency_s": 6.266,
+        "retries": 0,
+        "cached": true
+      },
+      "recommendations": [
+        {
+          "llm_rank": 1,
+          "title": "Let's Stay Together",
+          "artist": "Al Green",
+          "resolved": true,
+          "rank": 1,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "EKOcfZtKvYQ",
+            "title": "Let's Stay Together",
+            "artists": [
+              "Al Green"
+            ],
+            "album": {
+              "name": "Let's Stay Together",
+              "id": "MPREb_KTmoWRewXhi"
+            },
+            "duration_seconds": 200,
+            "duration": "3:20",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "z-YDst3WEmY"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 2,
+          "title": "I'll Be There",
+          "artist": "The Spinners",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 3,
+          "title": "I Can't Get Next to You",
+          "artist": "The Temptations",
+          "resolved": true,
+          "rank": 2,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "vT4l-rgjtPM",
+            "title": "I Can't Get Next To You",
+            "artists": [
+              "The Temptations"
+            ],
+            "album": {
+              "name": "Psychedelic Soul",
+              "id": "MPREb_rBUxeirhpEg"
+            },
+            "duration_seconds": 173,
+            "duration": "2:53",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "CxH1BYed6xc"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 4,
+          "title": "For the Strength of Love",
+          "artist": "The Isley Brothers",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 5,
+          "title": "Machinations",
+          "artist": "The Spinners",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 6,
+          "title": "Ain't Too Proud to Beg",
+          "artist": "The Temptations",
+          "resolved": true,
+          "rank": 3,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "_ObVQPBD0Uw",
+            "title": "Ain't Too Proud To Beg",
+            "artists": [
+              "The Temptations"
+            ],
+            "album": {
+              "name": "50th Anniversary: The Singles Collection 1961-1971",
+              "id": "MPREb_s155qsEtnJW"
+            },
+            "duration_seconds": 154,
+            "duration": "2:34",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "8fguIehzYQo",
+              "B9IZrpvhppQ",
+              "w5bHTkr2g4w"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 7,
+          "title": "I'm Still in Love with You",
+          "artist": "Al Green",
+          "resolved": true,
+          "rank": 4,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "Hb6W96VFVmE",
+            "title": "I'm Still In Love With You",
+            "artists": [
+              "Al Green"
+            ],
+            "album": {
+              "name": "I'm Still In Love With You",
+              "id": "MPREb_yh9b2dUThjA"
+            },
+            "duration_seconds": 192,
+            "duration": "3:12",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "tS4W_A1X1pM"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 8,
+          "title": "I Wish It Would Rain Down",
+          "artist": "The Temptations",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 9,
+          "title": "I Can't Help Myself",
+          "artist": "The Four Tops",
+          "resolved": true,
+          "rank": 5,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "3A3DP9KlYJo",
+            "title": "I Can't Help Myself",
+            "artists": [
+              "The Four Tops"
+            ],
+            "album": {
+              "name": "Concert Classics",
+              "id": "MPREb_USuKNXMWiH2"
+            },
+            "duration_seconds": 182,
+            "duration": "3:02",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "WMXYIrTZpfw",
+              "8Jtokmp8zoE",
+              "4ZShJG5N050",
+              "5ilOj_qawZ0",
+              "Pcl5mofAu4w",
+              "MQ5UAvk05rY",
+              "GM-3Qdhot2k",
+              "pDuDyvDShEI",
+              "bTScckRRyRI",
+              "pBbIYjCOTI4",
+              "8LzSBiI9-Jk",
+              "LyfuTWwoc50",
+              "BslbaC0za94",
+              "Av89y_ID8hc",
+              "5UvYrMjX5FE",
+              "icq2uAdh4g8",
+              "sTo2FwhyVBs"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 10,
+          "title": "I'll Never Leave You",
+          "artist": "Al Green",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        }
+      ]
+    },
+    {
+      "id": 35,
+      "seed_playlist_id": "PLdJWtCfu3MuQ",
+      "status": "ok",
+      "parse_stats": {
+        "returned": 10,
+        "kept": 10,
+        "malformed": 0,
+        "duplicates": 0,
+        "seed_repeats": 0
+      },
+      "call": {
+        "finish_reason": "stop",
+        "id": "gen-1791255681-aIbHMejvP3HrEYtUeO4k",
+        "model": "qwen/qwen3.8-27b",
+        "provider": "ModelRun",
+        "usage": {
+          "prompt_tokens": 606,
+          "completion_tokens": 1640,
+          "total_tokens": 2246,
+          "cost": 0.0051927,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.0051927,
+            "upstream_inference_prompt_cost": 0.0002727,
+            "upstream_inference_completions_cost": 0.00492
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1341,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "latency_s": 6.15,
+        "retries": 0,
+        "cached": true
+      },
+      "recommendations": [
+        {
+          "llm_rank": 1,
+          "title": "Funkytown",
+          "artist": "Lipps Inc.",
+          "resolved": true,
+          "rank": 1,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "OAC4ItP0xWM",
+            "title": "Funkytown",
+            "artists": [
+              "Lipps Inc."
+            ],
+            "album": {
+              "name": "Mouth to Mouth",
+              "id": "MPREb_pRQXdtKvWpI"
+            },
+            "duration_seconds": 471,
+            "duration": "7:51",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "Q2_ix56_d1g",
+              "ERpebIesPrs",
+              "mjUfdRqyEWU",
+              "hbp53NNBzTw"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 2,
+          "title": "Le Freak",
+          "artist": "Chic",
+          "resolved": true,
+          "rank": 2,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "RAYQTfFh4xk",
+            "title": "Le Freak",
+            "artists": [
+              "Chic"
+            ],
+            "album": {
+              "name": "C'est Chic",
+              "id": "MPREb_G1rK01iH7a5"
+            },
+            "duration_seconds": 328,
+            "duration": "5:28",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "IHfsRbUjTXQ",
+              "e6iPoBIuKxU",
+              "ZboF5H8Wow0",
+              "lqaSJXI0NF0",
+              "5pzyZiW4ors",
+              "5UnPpA4Dz58",
+              "1aFuwgT7o08",
+              "7RQH5QLiKsk",
+              "CUZzkHveQ58",
+              "6sk9fIUZLwY",
+              "dnil1OPWnaw",
+              "OGaztfaSrRs",
+              "4rtT3An3x54",
+              "7KP7bdFv_qg",
+              "ApH0gfDHQrE",
+              "Yk3QrO1Y3Zc",
+              "jO6hF3dGBIY",
+              "HdNp9sSr1VI",
+              "gbLoR_QJ7ks"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 3,
+          "title": "I'm So Excited",
+          "artist": "The Pointer Sisters",
+          "resolved": true,
+          "rank": 3,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "I57hkclh3kk",
+            "title": "I'm So Excited",
+            "artists": [
+              "The Pointer Sisters"
+            ],
+            "album": {
+              "name": "So Excited! (Expanded Edition)",
+              "id": "MPREb_actLLN3acsF"
+            },
+            "duration_seconds": 231,
+            "duration": "3:51",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "08uUX4Z3v20",
+              "SqxV4tq-6sc",
+              "x3q9TcM2iFA",
+              "6UgrdgTKEcQ",
+              "F6m53yhdrGA",
+              "QID4TVf7o_U",
+              "pZWCUQWb8Js",
+              "pJSHb-TIc3o",
+              "dzM-xcxOjDQ"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 4,
+          "title": "Ain't No Stoppin' Us Now",
+          "artist": "McFadden & Whitehead",
+          "resolved": true,
+          "rank": 4,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "Krv82FKneQg",
+            "title": "Ain't No Stoppin' Us Now",
+            "artists": [
+              "McFadden & Whitehead"
+            ],
+            "album": {
+              "name": "McFadden & Whitehead",
+              "id": "MPREb_Tjzdf4twQpC"
+            },
+            "duration_seconds": 421,
+            "duration": "7:01",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "rgf_ZFCZocA",
+              "df_qAA-Tf6A"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 5,
+          "title": "It's Just Begun",
+          "artist": "The Jacksons",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 6,
+          "title": "Candy",
+          "artist": "Redd's Hot Chili Peppers",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 7,
+          "title": "I'm Coming Out",
+          "artist": "Diana Ross",
+          "resolved": true,
+          "rank": 5,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "maJgjTp0NQ0",
+            "title": "I'm Coming Out",
+            "artists": [
+              "Diana Ross"
+            ],
+            "album": {
+              "name": "20th Century Masters: The Millennium Collection: Best of Motown '80s, Vol. 1",
+              "id": "MPREb_hD4rz8SD5rt"
+            },
+            "duration_seconds": 235,
+            "duration": "3:55",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "Ms6gz5hpXBE",
+              "E2muOFNlvVk",
+              "UATmdEu9Aag",
+              "FZefh9aPxfc",
+              "-xMvP6PsD9A",
+              "Pg1RlMAphzo"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 8,
+          "title": "Night Fever",
+          "artist": "Bee Gees",
+          "resolved": true,
+          "rank": 6,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "6bpd7Gkg0MQ",
+            "title": "Night Fever (Serban Mix)",
+            "artists": [
+              "Bee Gees"
+            ],
+            "album": {
+              "name": "Saturday Night Fever (The Original Movie Soundtrack Deluxe Edition)",
+              "id": "MPREb_OiFuJPwaTev"
+            },
+            "duration_seconds": 214,
+            "duration": "3:34",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "M4tN3s7EOsk",
+              "o9_mOKUe5NI",
+              "P39T8YM6uW0"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 9,
+          "title": "Rapper's Delight",
+          "artist": "Sugarhill Gang",
+          "resolved": true,
+          "rank": 7,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "dkDEDgMA5Ng",
+            "title": "Rapper's Delight",
+            "artists": [
+              "The Sugarhill Gang"
+            ],
+            "album": {
+              "name": "The Showdown: The Sugarhill Gang vs. Grandmaster Flash & The Furious Five",
+              "id": "MPREb_dhmhz2ymLKA"
+            },
+            "duration_seconds": 428,
+            "duration": "7:08",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "PkgCtm9x_2E",
+              "ZjRi-S7J70Y",
+              "TBMuGCw8hJY"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 10,
+          "title": "Planet Rock",
+          "artist": "Afrika Bambaataa & Soulsonic Force",
+          "resolved": true,
+          "rank": 8,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "SqS8X-5aIns",
+            "title": "Planet Rock",
+            "artists": [
+              "Afrika Bambaataa",
+              "The Soulsonic Force"
+            ],
+            "album": {
+              "name": "Planet Rock",
+              "id": "MPREb_eeP69Ds8l00"
+            },
+            "duration_seconds": 383,
+            "duration": "6:23",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "nGsQT3DAo7M",
+              "s0wWCj7uTp4",
+              "RxYtD6AE5hI",
+              "ERojEf-vKck",
+              "Zi1cCqj4HkI",
+              "gz89kPu0PRg",
+              "yH2qbBecjdo",
+              "zAMpeTJU6WI",
+              "7W192ep5drQ",
+              "S7NOr59Nx1c",
+              "qYcJSAQTztI",
+              "HkqQwVCjgQw",
+              "9mrLNdy1jcI",
+              "d314_XV-Y7I"
+            ],
+            "search_filter": "songs"
+          }
+        }
+      ]
+    },
+    {
+      "id": 36,
+      "seed_playlist_id": "PLdsqjqf0UFx4",
+      "status": "ok",
+      "parse_stats": {
+        "returned": 10,
+        "kept": 10,
+        "malformed": 0,
+        "duplicates": 0,
+        "seed_repeats": 0
+      },
+      "call": {
+        "finish_reason": "stop",
+        "id": "gen-1791255691-r7CtVeFFjLTDXD4wFEiF",
+        "model": "qwen/qwen3.8-27b",
+        "provider": "ModelRun",
+        "usage": {
+          "prompt_tokens": 551,
+          "completion_tokens": 1782,
+          "total_tokens": 2333,
+          "cost": 0.00559395,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.00559395,
+            "upstream_inference_prompt_cost": 0.00024795,
+            "upstream_inference_completions_cost": 0.005346
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1458,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "latency_s": 6.709,
+        "retries": 0,
+        "cached": true
+      },
+      "recommendations": [
+        {
+          "llm_rank": 1,
+          "title": "Kahin Aa Gaye Hum",
+          "artist": "Anuv Jain",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 2,
+          "title": "Kahin Aa Gaye Hum",
+          "artist": "Prateek Kuhad",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 3,
+          "title": "Kahin Aa Gaye Hum",
+          "artist": "The Local Train",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 4,
+          "title": "Kahin Aa Gaye Hum",
+          "artist": "Osho Jain",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 5,
+          "title": "Kahin Aa Gaye Hum",
+          "artist": "NEVERSOBER",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 6,
+          "title": "Kahin Aa Gaye Hum",
+          "artist": "Banjaare",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 7,
+          "title": "Kahin Aa Gaye Hum",
+          "artist": "MIRA",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 8,
+          "title": "Kahin Aa Gaye Hum",
+          "artist": "Samad Khan",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 9,
+          "title": "Kahin Aa Gaye Hum",
+          "artist": "Mitraz",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 10,
+          "title": "Kahin Aa Gaye Hum",
+          "artist": "Lost Stories",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        }
+      ]
+    },
+    {
+      "id": 37,
+      "seed_playlist_id": "PLZGc5InU6lXY",
+      "status": "ok",
+      "parse_stats": {
+        "returned": 10,
+        "kept": 2,
+        "malformed": 0,
+        "duplicates": 8,
+        "seed_repeats": 0
+      },
+      "call": {
+        "finish_reason": "stop",
+        "id": "gen-1791255708-jvHZQLlO0pOAt72K4iDi",
+        "model": "qwen/qwen3.8-27b",
+        "provider": "ModelRun",
+        "usage": {
+          "prompt_tokens": 469,
+          "completion_tokens": 1759,
+          "total_tokens": 2228,
+          "cost": 0.00548805,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.00548805,
+            "upstream_inference_prompt_cost": 0.00021105,
+            "upstream_inference_completions_cost": 0.005277
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1649,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "latency_s": 5.678,
+        "retries": 0,
+        "cached": true
+      },
+      "recommendations": [
+        {
+          "llm_rank": 1,
+          "title": "TV Party",
+          "artist": "Black Flag",
+          "resolved": true,
+          "rank": 1,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "psUOyXGacL0",
+            "title": "TV Party",
+            "artists": [
+              "Black Flag"
+            ],
+            "album": {
+              "name": "Damaged",
+              "id": "MPREb_GtbWcojOtjw"
+            },
+            "duration_seconds": 212,
+            "duration": "3:32",
+            "is_explicit": true,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "nIiDe1MYoKY"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 2,
+          "title": "Straight Edge",
+          "artist": "Circle Jerks",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        }
+      ]
+    },
+    {
+      "id": 38,
+      "seed_playlist_id": "PLABT4ZVVG004",
+      "status": "ok",
+      "parse_stats": {
+        "returned": 10,
+        "kept": 10,
+        "malformed": 0,
+        "duplicates": 0,
+        "seed_repeats": 0
+      },
+      "call": {
+        "finish_reason": "stop",
+        "id": "gen-1791255715-qnasA1BeKoiCQYfgzw8l",
+        "model": "qwen/qwen3.8-27b",
+        "provider": "ModelRun",
+        "usage": {
+          "prompt_tokens": 588,
+          "completion_tokens": 1807,
+          "total_tokens": 2395,
+          "cost": 0.0056856,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.0056856,
+            "upstream_inference_prompt_cost": 0.0002646,
+            "upstream_inference_completions_cost": 0.005421
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1505,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "latency_s": 6.409,
+        "retries": 0,
+        "cached": true
+      },
+      "recommendations": [
+        {
+          "llm_rank": 1,
+          "title": "I Can Only Imagine",
+          "artist": "MercyMe",
+          "resolved": true,
+          "rank": 1,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "G_X2c6MPiAg",
+            "title": "I Can Only Imagine",
+            "artists": [
+              "MercyMe"
+            ],
+            "album": {
+              "name": "Almost There",
+              "id": "MPREb_jufIVBoWdgi"
+            },
+            "duration_seconds": 249,
+            "duration": "4:09",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "R19c0ynephU",
+              "Mdjedj4IS_I",
+              "h5IqBjWJfUw"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 2,
+          "title": "I Surrender All",
+          "artist": "The Clark Sisters",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 3,
+          "title": "I'll Praise Him",
+          "artist": "Kirk Franklin",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 4,
+          "title": "I Love You Lord",
+          "artist": "The Winans",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 5,
+          "title": "I'm So Glad",
+          "artist": "Tasha Cobbs Leonard",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 6,
+          "title": "I Believe in You",
+          "artist": "Hezekiah Walker",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 7,
+          "title": "I'm Not Ashamed",
+          "artist": "Bishop Paul S. Morton, Sr.",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 8,
+          "title": "I'm Not Ashamed",
+          "artist": "Deitrick Haddon",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 9,
+          "title": "I'm Not Ashamed",
+          "artist": "Bishop T.D. Jakes",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 10,
+          "title": "I'm Not Ashamed",
+          "artist": "The Clark Sisters",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        }
+      ]
+    },
+    {
+      "id": 39,
+      "seed_playlist_id": "PLNf2BjP4be1Y",
+      "status": "ok",
+      "parse_stats": {
+        "returned": 10,
+        "kept": 7,
+        "malformed": 0,
+        "duplicates": 3,
+        "seed_repeats": 0
+      },
+      "call": {
+        "finish_reason": "stop",
+        "id": "gen-1791255730-0ufrWaKvHiAI9aAYKBNB",
+        "model": "qwen/qwen3.8-27b",
+        "provider": "ModelRun",
+        "usage": {
+          "prompt_tokens": 682,
+          "completion_tokens": 1876,
+          "total_tokens": 2558,
+          "cost": 0.0059349,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.0059349,
+            "upstream_inference_prompt_cost": 0.0003069,
+            "upstream_inference_completions_cost": 0.005628
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1594,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "latency_s": 6.454,
+        "retries": 0,
+        "cached": true
+      },
+      "recommendations": [
+        {
+          "llm_rank": 1,
+          "title": "Star Sky",
+          "artist": "Two Steps From Hell",
+          "resolved": true,
+          "rank": 1,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "Ikj4PH1zw5w",
+            "title": "Star Sky",
+            "artists": [
+              "Two Steps from Hell",
+              "Thomas Bergersen"
+            ],
+            "album": {
+              "name": "Battlecry",
+              "id": "MPREb_2qm8aRYj7Lj"
+            },
+            "duration_seconds": 331,
+            "duration": "5:31",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "QMHArgfWgYQ",
+              "tbRA6KRaF0w"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 2,
+          "title": "Victory",
+          "artist": "Two Steps From Hell",
+          "resolved": true,
+          "rank": 2,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "ClJawR61ea8",
+            "title": "Victory (Instrumental)",
+            "artists": [
+              "Two Steps from Hell"
+            ],
+            "album": {
+              "name": "Battlecry Anthology",
+              "id": "MPREb_5sCN6vx242D"
+            },
+            "duration_seconds": 322,
+            "duration": "5:22",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "xY-QgeCgoV0"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 3,
+          "title": "Heart of Courage",
+          "artist": "Two Steps From Hell",
+          "resolved": true,
+          "rank": 3,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "K2iC1aCPbKA",
+            "title": "Heart of Courage",
+            "artists": [
+              "Two Steps from Hell",
+              "Thomas Bergersen"
+            ],
+            "album": {
+              "name": "Invincible",
+              "id": "MPREb_SikOn17Yp1y"
+            },
+            "duration_seconds": 120,
+            "duration": "2:00",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "_-NBlnzXp4o",
+              "AUfHIJUU6qQ"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 4,
+          "title": "Protectors of the Earth",
+          "artist": "Two Steps From Hell",
+          "resolved": true,
+          "rank": 4,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "Y54rf5FfO90",
+            "title": "Protectors of the Earth",
+            "artists": [
+              "Two Steps from Hell",
+              "Thomas Bergersen"
+            ],
+            "album": {
+              "name": "Invincible",
+              "id": "MPREb_SikOn17Yp1y"
+            },
+            "duration_seconds": 172,
+            "duration": "2:52",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "2bEHxO-vVTw"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 5,
+          "title": "Wars of Faith",
+          "artist": "Two Steps From Hell",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 6,
+          "title": "Defender",
+          "artist": "Audiomachine",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 7,
+          "title": "The Great Passage",
+          "artist": "Audiomachine",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        }
+      ]
+    },
+    {
+      "id": 40,
+      "seed_playlist_id": "PLE5J_q_BOiIo",
+      "status": "ok",
+      "parse_stats": {
+        "returned": 10,
+        "kept": 10,
+        "malformed": 0,
+        "duplicates": 0,
+        "seed_repeats": 0
+      },
+      "call": {
+        "finish_reason": "stop",
+        "id": "gen-1791255739-mmKinnN9oXeuKrvxF1kR",
+        "model": "qwen/qwen3.8-27b",
+        "provider": "ModelRun",
+        "usage": {
+          "prompt_tokens": 607,
+          "completion_tokens": 1664,
+          "total_tokens": 2271,
+          "cost": 0.00526515,
+          "is_byok": false,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0,
+            "video_tokens": 0
+          },
+          "cost_details": {
+            "upstream_inference_cost": 0.00526515,
+            "upstream_inference_prompt_cost": 0.00027315,
+            "upstream_inference_completions_cost": 0.004992
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1373,
+            "image_tokens": 0,
+            "audio_tokens": 0
+          }
+        },
+        "latency_s": 6.065,
+        "retries": 0,
+        "cached": true
+      },
+      "recommendations": [
+        {
+          "llm_rank": 1,
+          "title": "Legalize It",
+          "artist": "Peter Tosh",
+          "resolved": true,
+          "rank": 1,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "tJhmuSk76KQ",
+            "title": "Legalize It",
+            "artists": [
+              "Peter Tosh"
+            ],
+            "album": {
+              "name": "Legalize It",
+              "id": "MPREb_76TXRTmMdBA"
+            },
+            "duration_seconds": 280,
+            "duration": "4:40",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "RgW-zo0FwgY",
+              "eDs7oNaOQ9c",
+              "xyY46l9qmlU",
+              "tJ9GIGv6qSQ",
+              "HltFGGphoQ0",
+              "DSW6iDgLgUM",
+              "tlkAc7SwBhs",
+              "RShupWj6TBY",
+              "eo-NHGJtmp0"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 2,
+          "title": "Mellow",
+          "artist": "Peter Tosh",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 3,
+          "title": "Equal Rights",
+          "artist": "Peter Tosh",
+          "resolved": true,
+          "rank": 2,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "q0Th7D5cJLc",
+            "title": "Equal Rights",
+            "artists": [
+              "Peter Tosh"
+            ],
+            "album": {
+              "name": "Equal Rights (Legacy Edition)",
+              "id": "MPREb_gFSvwX36yIJ"
+            },
+            "duration_seconds": 358,
+            "duration": "5:58",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "JfnMZA0s1Eg"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 4,
+          "title": "Get Up, Stand Up",
+          "artist": "Bob Marley & The Wailers",
+          "resolved": true,
+          "rank": 3,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "KP0V15PgFaQ",
+            "title": "Get Up, Stand Up",
+            "artists": [
+              "Bob Marley",
+              "The Wailers"
+            ],
+            "album": {
+              "name": "Burnin' (Deluxe Edition)",
+              "id": "MPREb_CJzuUTJxbT5"
+            },
+            "duration_seconds": 198,
+            "duration": "3:18",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "MjacySOy7ps",
+              "c-Ai_G71B0k"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 5,
+          "title": "Trench Town Rock",
+          "artist": "Bob Marley & The Wailers",
+          "resolved": true,
+          "rank": 4,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "r9T84hBgQU8",
+            "title": "Trench Town Rock",
+            "artists": [
+              "Bob Marley"
+            ],
+            "album": {
+              "name": "Music Inspired by Tony Hawk",
+              "id": "MPREb_DKXmoB1ZCJs"
+            },
+            "duration_seconds": 182,
+            "duration": "3:02",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 6,
+          "title": "I Shot the Sheriff",
+          "artist": "Bob Marley & The Wailers",
+          "resolved": true,
+          "rank": 5,
+          "in_top_k": true,
+          "drop_reason": null,
+          "track": {
+            "video_id": "tvBfolZUn9o",
+            "title": "I Shot The Sheriff",
+            "artists": [
+              "Bob Marley",
+              "The Wailers"
+            ],
+            "album": {
+              "name": "Burnin' (Deluxe Edition)",
+              "id": "MPREb_CJzuUTJxbT5"
+            },
+            "duration_seconds": 280,
+            "duration": "4:40",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "z9YETDchZVI",
+              "IzNSc7EdkBk",
+              "frKas-fh9Ag"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 7,
+          "title": "Clementine",
+          "artist": "The Wailers",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 8,
+          "title": "Simmer Down",
+          "artist": "The Wailers",
+          "resolved": true,
+          "rank": 6,
+          "in_top_k": false,
+          "drop_reason": null,
+          "track": {
+            "video_id": "FUmUOhbWMn0",
+            "title": "Simmer Down",
+            "artists": [
+              "The Wailers"
+            ],
+            "album": {
+              "name": "The Wailing Wailers",
+              "id": "MPREb_yOB6EllSLSr"
+            },
+            "duration_seconds": 171,
+            "duration": "2:51",
+            "is_explicit": false,
+            "video_type": "MUSIC_VIDEO_TYPE_ATV",
+            "alt_video_ids": [
+              "2BxTSUGaWc4",
+              "ed99iv3pJpU"
+            ],
+            "search_filter": "songs"
+          }
+        },
+        {
+          "llm_rank": 9,
+          "title": "I Can See",
+          "artist": "The Wailers",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        },
+        {
+          "llm_rank": 10,
+          "title": "African Herbsman",
+          "artist": "Peter Tosh",
+          "resolved": false,
+          "rank": null,
+          "in_top_k": false,
+          "drop_reason": "unresolved",
+          "track": null
+        }
+      ]
+    }
+  ]
+}

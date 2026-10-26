@@ -1,0 +1,87 @@
+{
+  "request_hash": "32b321ef944699f6eb9b982fe7b46dba70e8e80e2287d38576d671a204a56345",
+  "saved_at": "2026-10-06T03:00:28.037982+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. Knockin' On Heaven's Door (Official Audio) — Bob Dylan\n2. Don't Stop Me Now — Queen\n3. You're So Vain — Carly Simon\n4. Ladida — MIRA\n5. Jealous Guy — John Lennon\n6. Copacabana (At the Copa) (Short Version) — Barry Manilow\n7. Piano Man — Billy Joel\n8. Vienna (Official Video) — Billy Joel\n9. The Chain (2004 Remaster) — FLEETWOOD MAC\n10. The Passenger — Iggy Pop\n11. ALL MINE — Brent Faiyaz\n12. I Can See Clearly Now (Official Audio) — Johnny Nash\n13. Carry on Wayward Son (Official Video) — Kansas\n14. Love Again — MIRA\n15. Ring Ring — MIRA\n16. Hurricane (Official Audio) — Bob Dylan\n17. Walk on the Wild Side (Official Audio) — Lou Reed\n18. Tiny Dancer — Elton John\n19. Drift Away (Single Version) — Dobie Gray\n20. It's Too Late (Official Audio) — Carole King\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    },
+    "provider": "ModelRun"
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Take It Easy\",\n      \"artist\": \"Eagles\"\n    },\n    {\n      \"title\": \"Hotel California\",\n      \"artist\": \"Eagles\"\n    },\n    {\n      \"title\": \"Sultans of Swing\",\n      \"artist\": \"Dire Straits\"\n    },\n    {\n      \"title\": \"Maggie May\",\n      \"artist\": \"Rod Stewart\"\n    },\n    {\n      \"title\": \"Dream On\",\n      \"artist\": \"Aerosmith\"\n    },\n    {\n      \"title\": \"American Pie\",\n      \"artist\": \"Don McLean\"\n    },\n    {\n      \"title\": \"Born to Run\",\n      \"artist\": \"Bruce Springsteen\"\n    },\n    {\n      \"title\": \"Heart of Glass\",\n      \"artist\": \"Blondie\"\n    },\n    {\n      \"title\": \"Superstition\",\n      \"artist\": \"Stevie Wonder\"\n    },\n    {\n      \"title\": \"Brown Eyed Girl\",\n      \"artist\": \"Van Morrison\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791255622-fFUFW4beFaXfp9kiLlVu",
+    "model": "qwen/qwen3.8-27b",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 513,
+      "completion_tokens": 1598,
+      "total_tokens": 2111,
+      "cost": 0.00502485,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.00502485,
+        "upstream_inference_prompt_cost": 0.00023085,
+        "upstream_inference_completions_cost": 0.004794
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1325,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 6.138,
+    "retries": 0
+  }
+}

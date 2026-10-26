@@ -1,0 +1,87 @@
+{
+  "request_hash": "30fb28391c44e8445f2cee2a30b9c5f7c3b76511ba71bd2022e06cdbe5617c98",
+  "saved_at": "2026-10-06T03:01:00.472565+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. Misery Business — Paramore\n2. Dance, Dance (Official Music Video) — Fall Out Boy\n3. Your Guardian Angel — The Red Jumpsuit Apparatus\n4. Tokio Hotel - Ready, Set, Go! — Tokio Hotel\n5. Bury Your Head — Saosin\n6. The Kill (Bury Me) — Thirty Seconds To Mars\n7. Helena (Live for BBC Radio 1's \"The Lock Up\", 2005) — My Chemical Romance\n8. Face Down — The Red Jumpsuit Apparatus\n9. You Found Me (Official Video) — The Fray\n10. Scars (Official Music Video) — Papa Roach\n11. This Ain't A Scene, It's An Arms Race (Official Music Video) — Fall Out Boy\n12. My Friends Over You Closed-Captioned — New Found Glory\n13. MakeDamnSure (Live in Long Beach 2006) — Taking Back Sunday\n14. Durch den Monsun (Original Version 2003) — Tokio Hotel\n15. World Behind My Wall (Video Version) — Tokio Hotel\n16. Seventeen Forever (Official Video) — Metro Station\n17. Here We Are Juggernaut (Official Music Video) — Coheed and Cambria\n18. This Is Who We Are (Instrumental) — Hawthorne Heights\n19. My Eyes Burn — Matchbook Romance\n20. Milligram Smile — From Autumn To Ashes\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    },
+    "provider": "ModelRun"
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"I'm Not a Girl, Not Yet a Woman\",\n      \"artist\": \"Avril Lavigne\"\n    },\n    {\n      \"title\": \"I Will Survive\",\n      \"artist\": \"The Starting Line\"\n    },\n    {\n      \"title\": \"Bleed American\",\n      \"artist\": \"The Used\"\n    },\n    {\n      \"title\": \"I'm Just a Kid\",\n      \"artist\": \"Simple Plan\"\n    },\n    {\n      \"title\": \"The Only Exception\",\n      \"artist\": \"Paramore\"\n    },\n    {\n      \"title\": \"All the Small Things\",\n      \"artist\": \"Blink-182\"\n    },\n    {\n      \"title\": \"Semi-Charmed Life\",\n      \"artist\": \"Third Eye Blind\"\n    },\n    {\n      \"title\": \"The Pretender\",\n      \"artist\": \"Foo Fighters\"\n    },\n    {\n      \"title\": \"I Won't Be Home\",\n      \"artist\": \"The Starting Line\"\n    },\n    {\n      \"title\": \"The Story\",\n      \"artist\": \"The Starting Line\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791255653-Xl3xWaD9aqYiarlrv9Lc",
+    "model": "qwen/qwen3.8-27b",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 579,
+      "completion_tokens": 1852,
+      "total_tokens": 2431,
+      "cost": 0.00581655,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.00581655,
+        "upstream_inference_prompt_cost": 0.00026055,
+        "upstream_inference_completions_cost": 0.005556
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1563,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 6.708,
+    "retries": 0
+  }
+}

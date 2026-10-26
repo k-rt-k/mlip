@@ -20,17 +20,20 @@ def api_key():
 
 
 def complete(messages, model, temperature=0, seed=0, response_format=None, max_tokens=None,
-             attempts=4, key=None):
+             attempts=4, key=None, provider=None):
     """One chat completion; returns text plus model/provider/usage/latency metadata.
 
     Retries 429/5xx, including errors OpenRouter reports inside a 200 body;
     other client errors fail immediately because they will not heal.
+    `provider` pins one host with no fallback, keeping weights/quantization fixed.
     """
     payload = {"model": model, "messages": messages, "temperature": temperature, "seed": seed}
     if response_format:
         payload["response_format"] = response_format
     if max_tokens:
         payload["max_tokens"] = max_tokens
+    if provider:
+        payload["provider"] = {"order": [provider], "allow_fallbacks": False}
     headers = {"Authorization": f"Bearer {key or api_key()}", "X-Title": "mlip-llm-baseline"}
     for attempt in range(attempts):
         start = time.monotonic()
