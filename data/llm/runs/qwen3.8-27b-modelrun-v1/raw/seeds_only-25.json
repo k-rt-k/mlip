@@ -1,0 +1,87 @@
+{
+  "request_hash": "06c6213312972a02b2e3e0fa9de663eb85acbc38454c6febbfbb41d0b6774017",
+  "saved_at": "2026-10-06T02:59:25.221965+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. Stolen Dance (Single Version) — Milky Chance\n2. Stubborn Love — The Lumineers\n3. Missing Piece — Vance Joy\n4. Asaf Avidan, The Mojos - One Day / Reckoning Song (Videoclip Night Version) — Wankelmut\n5. Scenic World — Beirut\n6. Home — Edward Sharpe & The Magnetic Zeros\n7. Atlantis (Official Video) — Seafret\n8. I Will Wait (Official Music Video) — Mumford & Sons\n9. Dirty Paws (Official Lyric Video) — Of Monsters and Men\n10. Ophelia (Official Music Video) — The Lumineers\n11. This is the Life — Amy Macdonald\n12. Lord Huron - She Lit a Fire (Official Music Video) — Lord Huron\n13. It's a Shame (Official Video) — First Aid Kit\n14. If You Need To, Keep Time on Me — Fleet Foxes\n15. Love Won't Let Me Leave — Seafret\n16. Warning Signs — Band Of Horses\n17. At the Purchaser's Option — Rhiannon Giddens\n18. Indie Folk Type Beat [FREE] Sad Acoustic Guitar Instrumental \"Laying\"  ☼ — VOV\n19. The Woods — Hollow Coves\n20. Little Dark Age (Official Video) — MGMT\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    },
+    "provider": "ModelRun"
+  },
+  "response": {
+    "text": "{\"songs\":[{\"title\":\"Holocene\",\"artist\":\"Bon Iver\"},{\"title\":\"The Night We Met\",\"artist\":\"Lord Huron\"},{\"title\":\"Rivers\",\"artist\":\"Vance Joy\"},{\"title\":\"Skinny Love\",\"artist\":\"Birdy\"},{\"title\":\"Ember Days\",\"artist\":\"First Aid Kit\"},{\"title\":\"White Winter Hymnal\",\"artist\":\"Fleet Foxes\"},{\"title\":\"Little Talks\",\"artist\":\"Of Monsters and Men\"},{\"title\":\"Bloom\",\"artist\":\"Birdy\"},{\"title\":\"The Kill\",\"artist\":\"First Aid Kit\"},{\"title\":\"Cherry Wine\",\"artist\":\"The Lumineers\"}]}",
+    "finish_reason": "stop",
+    "id": "gen-1791255559-xMq8VaT0lecW17CXYIFP",
+    "model": "qwen/qwen3.8-27b",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 566,
+      "completion_tokens": 1379,
+      "total_tokens": 1945,
+      "cost": 0.0043917,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.0043917,
+        "upstream_inference_prompt_cost": 0.0002547,
+        "upstream_inference_completions_cost": 0.004137
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1255,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 5.721,
+    "retries": 0
+  }
+}

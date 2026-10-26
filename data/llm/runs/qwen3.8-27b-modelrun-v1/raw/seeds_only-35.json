@@ -1,0 +1,87 @@
+{
+  "request_hash": "ca3acf0c9d24b29b99d4d1036c7490b4316eb2fc6ede64b39671b044f41fc388",
+  "saved_at": "2026-10-06T03:01:27.294751+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. Last Night a DJ Saved My Life — Indeep\n2. I'm In Love (Official Video) — Evelyn \"Champagne\" King\n3. Melba Moore -  Love's Comin' At Ya ! 1982 — ArchieGe\n4. Operator (12\" Mix) — Solar Records\n5. S.O.S. Band - High Hopes 1982 — ArchieGe\n6. And the Beat Goes On — Party All Night\n7. Stomp! — The Brothers Johnson\n8. Early In The Morning — The Gap Band\n9. A Night To Remember — Shalamar\n10. Shalamar   A Night To Remember 1982 — RETROVISOR\n11. Midas Touch — Solar Records\n12. Parliament - Flashlight (HQ) — Trellheim\n13. Mary Jane Girls - In My House (Official HD Video) — Mary Jane Girls\n14. What Have You Done For Me Lately — Janet Jackson\n15. Serge Ponsar - Out In The Night [Extended Version] — Mixsensei\n16. The System - You Are In My System — criticalbeat\n17. Rah Band - Messages From The Stars Original 12 inch Version 1983 — dertaubedj\n18. TURN THE MUSIC UP ! / THE PLAYERS ASSOCIATION — yuyolove\n19. Starpoint - Wanting You (1981) — OldSkoolFunkn80s\n20. OHIO PLAYERS - Fast track.(1984) — GROOVATHERAPIC CHANNEL\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    },
+    "provider": "ModelRun"
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Funkytown\",\n      \"artist\": \"Lipps Inc.\"\n    },\n    {\n      \"title\": \"Le Freak\",\n      \"artist\": \"Chic\"\n    },\n    {\n      \"title\": \"I'm So Excited\",\n      \"artist\": \"The Pointer Sisters\"\n    },\n    {\n      \"title\": \"Ain't No Stoppin' Us Now\",\n      \"artist\": \"McFadden & Whitehead\"\n    },\n    {\n      \"title\": \"It's Just Begun\",\n      \"artist\": \"The Jacksons\"\n    },\n    {\n      \"title\": \"Candy\",\n      \"artist\": \"Redd's Hot Chili Peppers\"\n    },\n    {\n      \"title\": \"I'm Coming Out\",\n      \"artist\": \"Diana Ross\"\n    },\n    {\n      \"title\": \"Night Fever\",\n      \"artist\": \"Bee Gees\"\n    },\n    {\n      \"title\": \"Rapper's Delight\",\n      \"artist\": \"Sugarhill Gang\"\n    },\n    {\n      \"title\": \"Planet Rock\",\n      \"artist\": \"Afrika Bambaataa & Soulsonic Force\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791255681-aIbHMejvP3HrEYtUeO4k",
+    "model": "qwen/qwen3.8-27b",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 606,
+      "completion_tokens": 1640,
+      "total_tokens": 2246,
+      "cost": 0.0051927,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.0051927,
+        "upstream_inference_prompt_cost": 0.0002727,
+        "upstream_inference_completions_cost": 0.00492
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1341,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 6.15,
+    "retries": 0
+  }
+}

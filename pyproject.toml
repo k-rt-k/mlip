@@ -17,4 +17,4 @@ dev = ["pytest>=8,<9"]
 package = false
 
 [tool.pytest.ini_options]
-testpaths = ["spotify/tests", "youtube_music/tests", "llm/tests"]
+testpaths = ["spotify/tests", "youtube_music/tests", "llm/tests", "baselines/tests"]

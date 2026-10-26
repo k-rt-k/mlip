@@ -1,0 +1,87 @@
+{
+  "request_hash": "cbe365ab86771e6518092b8d390d1ceabe5270a89a9389743b57506d106a105d",
+  "saved_at": "2026-10-06T03:00:17.301732+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. End of Beginning — Djo\n2. Tonight You Are Mine — The Technicolors\n3. Starlight (feat. Mr Gabriel) — Jai Wolf\n4. Oh No (Official Video) — Bring Me The Horizon\n5. Snoop Dogg - Riders on the Storm — Rebel Music Studios\n6. Excuse Me (Official Video) — Nothing But Thieves\n7. Midnight City — M83\n8. Self Control — Laura Branigan\n9. Still Corners - The Trip — David Dean Burkhart\n10. Car Radio — Twenty One Pilots\n11. The Catalyst — Linkin Park\n12. Drive — Oh Wonder\n13. Youth (Official Video) — Glass Animals\n14. Rocky Mountain High (Official Audio) — John Denver\n15. Walking On A Dream (Official Music Video) — Empire Of The Sun\n16. Enfance 80 — Videoclub\n17. Carry Your Throne — Jon Bellion\n18. Hometown — French 79\n19. Hot Blooded — New Constellations\n20. City Lights — Leony, VIZE, Armin van Buuren\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    },
+    "provider": "ModelRun"
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"Somebody Else\",\n      \"artist\": \"The 1975\"\n    },\n    {\n      \"title\": \"The Less I Know The Better\",\n      \"artist\": \"Tame Impala\"\n    },\n    {\n      \"title\": \"Heaven\",\n      \"artist\": \"Lorde\"\n    },\n    {\n      \"title\": \"Blinding Lights\",\n      \"artist\": \"The Weeknd\"\n    },\n    {\n      \"title\": \"Riptide\",\n      \"artist\": \"Vance Joy\"\n    },\n    {\n      \"title\": \"Sweater Weather\",\n      \"artist\": \"The Neighbourhood\"\n    },\n    {\n      \"title\": \"I Feel It Coming\",\n      \"artist\": \"The Weeknd ft. Daft Punk\"\n    },\n    {\n      \"title\": \"Blue Monday\",\n      \"artist\": \"New Order\"\n    },\n    {\n      \"title\": \"Cherry\",\n      \"artist\": \"Twenty One Pilots\"\n    },\n    {\n      \"title\": \"Numb\",\n      \"artist\": \"Linkin Park\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791255611-Me4sU3yNj9X6pphu34cR",
+    "model": "qwen/qwen3.8-27b",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 510,
+      "completion_tokens": 1442,
+      "total_tokens": 1952,
+      "cost": 0.0045555,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.0045555,
+        "upstream_inference_prompt_cost": 0.0002295,
+        "upstream_inference_completions_cost": 0.004326
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1159,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 6.099,
+    "retries": 0
+  }
+}

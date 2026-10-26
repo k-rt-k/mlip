@@ -104,6 +104,15 @@ def test_complete_retries_rate_limit_then_returns_metadata(monkeypatch):
     assert payload["temperature"] == 0 and payload["seed"] == 3 and payload["model"] == "m"
 
 
+def test_complete_pins_provider_without_fallbacks(monkeypatch):
+    http = fake_requests(monkeypatch, response(200, OK))
+    openrouter.complete([], "m", key="sk-test", provider="ModelRun")
+    assert http.post.call_args.kwargs["json"]["provider"] == {"order": ["ModelRun"], "allow_fallbacks": False}
+    http = fake_requests(monkeypatch, response(200, OK))
+    openrouter.complete([], "m", key="sk-test")
+    assert "provider" not in http.post.call_args.kwargs["json"]
+
+
 def test_complete_retries_error_in_ok_body_and_gives_up(monkeypatch):
     busy = {"error": {"code": 502, "message": "upstream busy"}}
     fake_requests(monkeypatch, *[response(200, busy)] * 3)

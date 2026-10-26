@@ -1,0 +1,87 @@
+{
+  "request_hash": "3c7832157ac08c86430a542c1d169a6ad29d4fb7742b3b39b7a312091f1c0858",
+  "saved_at": "2026-10-06T02:59:04.206904+00:00",
+  "request": {
+    "model": "qwen/qwen3.8-27b",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are an expert music curator who builds playlists for listeners. Recommend only real, commercially released songs that are available on major streaming services such as YouTube Music. Never invent songs or artists; if you are unsure a song exists, choose a different one. Give each song's exact title and its primary credited artist. Respond only with JSON matching the requested schema."
+      },
+      {
+        "role": "user",
+        "content": "These songs are already in a playlist:\n1. Not Gon' Cry — Mary J. Blige\n2. Foolish — Ashanti\n3. I Should Have Cheated — Keyshia Cole\n4. Distant Lover — Marvin Gaye\n5. Heartbreak Hotel (feat. Faith Evans & Kelly Price) — Whitney Houston\n6. Un-Break My Heart — Toni Braxton\n7. If I Ain't Got You — Alicia Keys\n8. We Belong Together — Mariah Carey\n9. Ex-Factor — Lauryn Hill\n10. Irreplaceable — Beyoncé\n11. I'm Goin' Down — Mary J. Blige\n12. How Do I Breathe — Mario\n13. Have You Ever — Brandy\n14. A House Is Not a Home — Luther Vandross\n15. Neither One Of Us (Wants To Be The First To Say Goodbye) — Gladys Knight & The Pips\n16. Free Yourself (feat. Missy Elliott) — Fantasia\n17. Rehab — Rihanna\n18. Let Me Down Easy — The Isley Brothers\n19. Emotional Rollercoaster — Vivian Green\n20. In My Bed — Dru Hill\n\nRecommend 10 different songs to add next, ordered from best fit to weakest fit. Match the playlist's genre, mood, era, language, and energy. Do not repeat any listed song. Return JSON: {\"songs\": [{\"title\": ..., \"artist\": ...}]}."
+      }
+    ],
+    "temperature": 0,
+    "seed": 0,
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "songs",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "songs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "artist"
+                ]
+              }
+            }
+          },
+          "required": [
+            "songs"
+          ]
+        }
+      }
+    },
+    "provider": "ModelRun"
+  },
+  "response": {
+    "text": "{\n  \"songs\": [\n    {\n      \"title\": \"I'll Make Love to You\",\n      \"artist\": \"Boyz II Men\"\n    },\n    {\n      \"title\": \"Say My Name\",\n      \"artist\": \"Destiny's Child\"\n    },\n    {\n      \"title\": \"No Scrubs\",\n      \"artist\": \"TLC\"\n    },\n    {\n      \"title\": \"I Can Love You Better\",\n      \"artist\": \"Brandy\"\n    },\n    {\n      \"title\": \"I'll Be\",\n      \"artist\": \"Erykah Badu\"\n    },\n    {\n      \"title\": \"I'm Yours\",\n      \"artist\": \"Jason Mraz\"\n    },\n    {\n      \"title\": \"Crazy in Love\",\n      \"artist\": \"Beyoncé\"\n    },\n    {\n      \"title\": \"I'm Still in Love with You\",\n      \"artist\": \"Luther Vandross\"\n    },\n    {\n      \"title\": \"I'm a Woman\",\n      \"artist\": \"Jill Scott\"\n    },\n    {\n      \"title\": \"I'm Coming Out\",\n      \"artist\": \"Diana Ross\"\n    }\n  ]\n}",
+    "finish_reason": "stop",
+    "id": "gen-1791255538-ZG25NlBV8QGAZU5w3h3p",
+    "model": "qwen/qwen3.8-27b",
+    "provider": "ModelRun",
+    "usage": {
+      "prompt_tokens": 515,
+      "completion_tokens": 1899,
+      "total_tokens": 2414,
+      "cost": 0.00592875,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.00592875,
+        "upstream_inference_prompt_cost": 0.00023175,
+        "upstream_inference_completions_cost": 0.005697
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1611,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 6.288,
+    "retries": 0
+  }
+}

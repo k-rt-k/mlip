@@ -13,9 +13,12 @@ The LLM also takes prompt + partial inputs; evaluation for that mode remains TBD
 
 As of **2026-10-05**: the music proposal is documented; Spotify authentication,
 inventory, and metadata-enrichment code exists from earlier feasibility work.
-The **current stage is dataset handoff to baseline owners**; the four-part milestone
-checklist is in `docs/STATUS.md`. Harsh's pipelines/dataset work is complete for
-this batch; LLM, scoring, evaluation splits, and baseline work are other owners' tasks.
+The **current stage is baseline comparison and remaining LLM evaluation**; the
+four-part milestone checklist is in `docs/STATUS.md`. Harsh's datasets/pipelines
+are ready. Spandan's evaluation pipeline, YouTube Music continuation, and
+co-occurrence baseline have results on all 40 partial inputs. Ayush's zero-shot
+LLM is scored on 20 prompts and all 40 partial inputs; prompt + partial generation
+remains pending.
 Public search/fetch, local seed/hidden splits, private seed-only creation, and
 continuation suggestions have passed live pilot checks. Twenty prompts now have
 three cached reference playlists each (60 playlists, 4,475 distinct video IDs),
@@ -27,12 +30,13 @@ each size. Copies are owned by `mlip.team0@gmail.com`. The current partial datas
 is under `data/youtube_music/partial_examples/v3/`; v2 is retained for compatibility.
 A credential-free dataset handoff ZIP and checksum manifest are committed under `datasets/`;
 extract the ZIP from the repository root as described in `README.md`.
-Development/test splits and scoring conventions remain pending;
+The reported split and primary constrained metric still need agreement;
 see `docs/STATUS.md` for artifacts and review caveats. Browser headers are the only
-supported account-auth method.
-No baseline benchmark, embedding pipeline,
-or recommendation evaluation harness has been completed. Off-repo team
-progress is unconfirmed. Read `docs/STATUS.md` for the latest updates and open issues.
+supported account-auth method. Radio Pool is also scored on all 40 inputs; its
+399 cached public seed radios, frozen pools, and evaluation are shared in
+`datasets/radio-pool-v1.zip`. LLM reranking is a separate deferred experiment.
+No embedding pipeline has been completed. Read `docs/STATUS.md` for the latest
+results, remaining evaluation work, and open issues.
 
 ## Read Before Working
 
@@ -49,12 +53,16 @@ team changes direction. Do not treat historical docs as current requirements.
 ## Repo Layout
 
 - `spotify/` — existing music API/authentication and feasibility tooling
+- `llm/` — zero-shot generation, catalog resolution, and tests
+- `evaluation/` — partial-playlist metrics and evaluation runner
+- `baselines/` — co-occurrence and Radio Pool baselines, candidate collection, and runners
+- `predictions/` — saved co-occurrence, YouTube Music, Radio Pool, and LLM predictions for all 40 inputs (plus LLM prompt-only)
 - `youtube_music/` — public playlist collection, seed-only copies, suggestions,
   browser-auth setup, and tests; script docstrings contain usage
 - `youtube_music/scripts/setup_auth.py` — paste Copy as fetch (Node.js) input from `mlip.team0@gmail.com` to refresh browser credentials and test authentication; usage is in the file.
 - `prompts.txt` — twenty synthetic prompts explicitly requested by the user
-- `datasets/` — explicitly approved, credential-free baseline ZIP and checksum manifest
-- `data/` — extracted datasets and local artifacts (gitignored)
+- `datasets/` — approved, credential-free baseline and Radio Pool ZIPs with checksum manifests
+- `data/` — extracted datasets/local artifacts (gitignored), plus explicitly committed LLM run outputs
 - `docs/` — `SCOPE.md`, `STATUS.md`, and existing API/feasibility references
 - `milestones/` — descriptions of project milestone deliverables; see `milestones/baselines.md`.
 - `scripts/git-hooks/` — secret guards; setup instructions in `README.md`
