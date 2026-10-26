@@ -23,6 +23,7 @@ from jobs import record, shard_of, require_persistent_out
 from previews import download_previews
 from embed import load_existing, save
 from embed_mpd import resolve
+from deezer import LimitedSession, RateLimiter  # noqa: F401  (re-exported for tests)
 
 
 def atomic_json(path, value):
@@ -30,47 +31,6 @@ def atomic_json(path, value):
     tmp = path.with_suffix(path.suffix + '.part')
     tmp.write_text(json.dumps(value, indent=2))
     tmp.replace(path)
-
-
-class RateLimiter:
-    """One process-wide request budget shared by all fetching threads."""
-    def __init__(self, requests_per_second):
-        if requests_per_second <= 0:
-            raise ValueError('request rate must be positive')
-        self.interval = 1 / requests_per_second
-        self.lock = threading.Lock()
-        self.next = 0
-
-    def wait(self):
-        with self.lock:
-            delay = self.next - time.monotonic()
-            if delay > 0:
-                time.sleep(delay)
-            self.next = time.monotonic() + self.interval
-
-    def cool_down(self, seconds):
-        with self.lock:
-            self.next = max(self.next, time.monotonic() + seconds)
-
-
-class LimitedSession(requests.Session):
-    def __init__(self, limiter):
-        super().__init__()
-        self.limiter = limiter
-
-    def get(self, *args, **kwargs):
-        self.limiter.wait()
-        response = super().get(*args, **kwargs)
-        if response.status_code == 429:
-            self.limiter.cool_down(30)
-        elif response.status_code == 200:
-            try:
-                if response.json().get('error', {}).get('code') == 4:
-                    self.limiter.cool_down(30)
-            except ValueError:
-                pass
-        return response
-
 
 
 def read_checkpoint(path, ids):
