@@ -10,7 +10,7 @@
 #SBATCH --open-mode=append
 set -euo pipefail
 ROOT=/data/user_data/ksnair/mlip
-REPO=/home/ksnair/worktrees/mlip-mpd
+REPO="${REPO:-$PWD}"  # the checkout: submit with --chdir=<repo> or from the repo root
 CACHE=/scratch/ksnair/mlip
 mkdir -p "$CACHE" "$ROOT/logs"
 # Each job owns its runtime and scratch previews. Weights share the persistent HF cache.

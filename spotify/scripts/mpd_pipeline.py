@@ -1,4 +1,18 @@
-"""Decoupled MPD fetching and batched inference, preserving v1 checkpoints."""
+"""Decoupled MPD fetching and batched inference, preserving v1 checkpoints.
+
+A CPU producer searches Deezer under one shared rate budget and queues audio
+bundles; a GPU consumer CLAP-embeds them into 128-track chunk checkpoints. The
+supervisor runs the producer and resubmits the consumer after preemption.
+Restarts skip complete chunks and retry incomplete ones. On Babel:
+
+    sbatch --job-name=mpd-supervisor --chdir=<repo> \\
+      --output=/data/user_data/ksnair/mlip/logs/%x-%j.out \\
+      --export=ALL,ROLE=supervise,MAX_CHUNKS=,RATE=8 spotify/scripts/mpd_pipeline.sbatch
+
+RATE (requests/s) is shared by every Deezer job on Babel's egress IPs; use <= 2
+when others run. Monitor `<queue>/supervisor-events.jsonl`, `<output>/pipeline-events.jsonl`
+and `mpd_status.py`. Catalog, chunk size and shard count must stay fixed for resume.
+"""
 import argparse
 from concurrent.futures import ThreadPoolExecutor
 import fcntl

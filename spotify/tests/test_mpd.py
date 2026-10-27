@@ -52,7 +52,7 @@ def test_conflicting_recordings_are_ambiguous():
 
 
 # v2 policy: Spotify and Deezer format the same versions differently. Cases are
-# real MPD tracks the v1 policy rejected (see docs/mpd_embedding.md).
+# real MPD tracks the v1 policy rejected (250-track no-match sample, 2026-10-05).
 
 def song(artist='Artist', title='Song', duration_ms=200000):
     return dict(artist=artist, title=title, duration_ms=duration_ms)

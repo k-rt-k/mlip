@@ -9,7 +9,7 @@
 #SBATCH --open-mode=append
 set -euo pipefail
 ROOT=/data/user_data/ksnair/mlip
-REPO=/home/ksnair/worktrees/mlip-mpd
+REPO="${REPO:-$PWD}"  # the checkout: submit with --chdir=<repo> or from the repo root
 CACHE=/scratch/ksnair/mlip
 RUNTIME="$CACHE/runtime-pipeline-$SLURM_JOB_ID"
 mkdir -p "$RUNTIME"
