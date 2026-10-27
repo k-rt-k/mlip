@@ -1,7 +1,7 @@
 # Spotify Million Playlist Dataset (MPD)
 
-Reference only — **not obtained, not used yet**. Looked up 2026-09-23 as the
-candidate source of collaborative signal and of held-out similarity labels for
+**Downloaded 2026-09-29** from the Kaggle mirror; all 1,000 slices pass the
+bundled MD5 manifest. Originally looked up 2026-09-23 as the candidate source of collaborative signal and of held-out similarity labels for
 evaluating the audio embedders (see `docs/eda_workflow.md`).
 
 ## Access — no longer self-service ⚠️
@@ -80,3 +80,26 @@ ids we already pulled — no name matching, unlike every metadata source in
 
 Caveat: it ends in 2017, so it says nothing about post-2017 tracks — the same
 recency wall as the other frozen sources, and ~46% of one user's library here.
+
+## Local copy and CLAP embeddings (2026-10-26)
+
+- **Archive:** Kaggle mirror, `/data/user_data/ksnair/mlip/data/mpd/archive.zip`
+  (1,000 slices, MD5 manifest verified). The AIcrowd download is unavailable and
+  the Hugging Face mirror has only 100 slices.
+- **Catalog:** `data/mpd/catalog.sqlite` beside it, built by
+  `spotify/scripts/build_mpd_catalog.py`: 1,000,000 playlists, 66,346,428
+  entries, 2,262,292 unique tracks.
+- **Embeddings:** `/data/user_data/ksnair/mlip/embeddings/mpd-full/clap/`, CLAP
+  (`laion/larger_clap_music_and_speech`) on 30 s Deezer previews, 512-D,
+  L2-normalized, in 128-track chunks (`ids`, `vectors` NPZ plus JSON match
+  evidence for every track). **1,025,994 tracks (45.4%) embedded**; 1,236,225
+  have no strict Deezer match, ~70 failed on download/decode/request.
+- **Matching:** MPD has no ISRCs, so tracks are matched by Deezer search (policy
+  `full-title-artist-duration2s-v1`: exact normalized artist and title, duration
+  within 2 s, one ISRC). This is metadata matching, not a verified ID join;
+  no-match does not mean the song is absent from Deezer. The looser v2 policy
+  in `spotify/src/mpd.py` recovered 19% of a 250-track no-match sample but has
+  not been run over the dataset.
+- **Pipeline:** `spotify/scripts/mpd_pipeline.py` (CPU producer + GPU consumer
+  under a supervisor; usage in its docstring). Progress:
+  `spotify/scripts/mpd_status.py`.

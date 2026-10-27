@@ -2,6 +2,28 @@
 
 Scope: [SCOPE.md](SCOPE.md). Deliverables: [baselines milestone](../milestones/baselines.md).
 
+## 2026-10-26 — CLAP audio embeddings for MPD and eval songs (Kartik)
+
+- **Ready:** 1,028,385 CLAP vectors (`laion/larger_clap_music_and_speech`, 512-D,
+  L2-normalized, 30 s Deezer previews; text queries embed into the same space).
+  Stored on Babel under `/data/user_data/ksnair/mlip/embeddings/`, not in Git.
+  - **Eval songs** (`ytm-eval/`): 2,391 of 5,958 unique video IDs in the v3
+    partial inputs and v2 reference pools. `clap.npz` is keyed by video ID;
+    `deezer_map.json` records the Deezer ID, ISRC, and match evidence per song.
+    Built by `spotify/scripts/map_eval_deezer.py`.
+  - **Spotify MPD** (`mpd-full/clap/`): 1,025,994 of 2,262,292 unique tracks
+    (45%), keyed by Spotify track ID. Built by `spotify/scripts/mpd_pipeline.py`;
+    details in [mpd_dataset.md](mpd_dataset.md).
+- **Limitations:** matching is by title/artist/duration metadata (no ISRCs from
+  YouTube or MPD), so unmatched songs are not necessarily missing from Deezer.
+  Eval coverage is 76% for official audio, 41% for music videos, and ~0% for
+  user uploads. Only **29% of hidden partial songs** are covered, so scores on
+  covered songs are biased toward official audio. Overlap between eval songs
+  and MPD is not computed.
+- **Remaining:** an embedding baseline/retrieval experiment; the v2 matching
+  policy in `spotify/src/mpd.py` (+~19% on a no-match sample) is implemented
+  but not run over MPD.
+
 ## 2026-10-05 — Radio Pool baseline scored
 
 - **Ready:** public song-radio aggregation (`baselines/candidates.py`,
@@ -126,7 +148,7 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables: [baselines milestone](../milestones/b
   release years are not verified. Matching currently uses exact video IDs,
   leaving alternate uploads, covers, and recording versions unresolved.
 - **Other tooling:** earlier Spotify API/metadata tooling remains in
-  `spotify/`; no embedding pipeline or interactive prototype is implemented.
+  `spotify/`; no interactive prototype is implemented.
 
 ## Baselines milestone — current checklist
 

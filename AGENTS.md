@@ -35,7 +35,8 @@ see `docs/STATUS.md` for artifacts and review caveats. Browser headers are the o
 supported account-auth method. Radio Pool is also scored on all 40 inputs; its
 399 cached public seed radios, frozen pools, and evaluation are shared in
 `datasets/radio-pool-v1.zip`. LLM reranking is a separate deferred experiment.
-No embedding pipeline has been completed. Read `docs/STATUS.md` for the latest
+CLAP audio embeddings exist for 2,391 eval songs and ~1.03M Spotify MPD tracks
+(Babel storage, not Git); no embedding baseline has been run yet. Read `docs/STATUS.md` for the latest
 results, remaining evaluation work, and open issues.
 
 ## Read Before Working
@@ -52,7 +53,8 @@ team changes direction. Do not treat historical docs as current requirements.
 
 ## Repo Layout
 
-- `spotify/` — existing music API/authentication and feasibility tooling
+- `spotify/` — music API/authentication and feasibility tooling, MPD catalog,
+  Deezer matching, and CLAP preview-embedding pipelines (Babel sbatch scripts)
 - `llm/` — zero-shot generation, catalog resolution, and tests
 - `evaluation/` — partial-playlist metrics and evaluation runner
 - `baselines/` — co-occurrence and Radio Pool baselines, candidate collection, and runners
@@ -66,6 +68,7 @@ team changes direction. Do not treat historical docs as current requirements.
 - `docs/` — `SCOPE.md`, `STATUS.md`, and existing API/feasibility references
 - `milestones/` — descriptions of project milestone deliverables; see `milestones/baselines.md`.
 - `scripts/git-hooks/` — secret guards; setup instructions in `README.md`
+- `scripts/validation/` — one-off integrity audits of Babel embedding outputs
 - `w0_writeup.md` — initial Spotify project idea; current scope is in `docs/SCOPE.md`
 - `CLAUDE.md` — existing symlink to this file, sharing the same agent guidance
 

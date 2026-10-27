@@ -73,15 +73,19 @@ def _is_mp3(header):
                                           header[0] == 0xff and header[1] & 0xe0 == 0xe0)
 
 
-def download_previews(tracks, out_dir=PREVIEW_DIR, pause=MIN_INTERVAL):
+def download_previews(tracks, out_dir=PREVIEW_DIR, pause=MIN_INTERVAL, retries=0, backoff=5.0, errors=None):
     """Fetch any missing previews into out_dir/<track_id>.mp3.
 
     Resumable: cached clips with MP3 headers are kept; invalid files are retried.
-    Returns ({track_id: path}, [ids unavailable or whose download failed]).
+    Failed audio fetches are retried `retries` times with exponential backoff
+    (CDN throttling is transient); a missing preview URL is not retried.
+    Returns ({track_id: path}, [ids unavailable or whose download failed]);
+    `errors`, if given, receives {track_id: reason} for each failure.
     """
     out_dir.mkdir(parents=True, exist_ok=True)
     session = requests.Session()
     have, unavailable = {}, []
+    errors = {} if errors is None else errors
     for tid, meta in tracks.items():
         dest = out_dir / f"{tid}.mp3"
         if dest.exists():
@@ -92,19 +96,37 @@ def download_previews(tracks, out_dir=PREVIEW_DIR, pause=MIN_INTERVAL):
                 continue
         part = dest.with_suffix(".mp3.part")
         try:
-            url = preview_url(meta["isrc"], session)
+            try:
+                url = meta.get("preview_url") or preview_url(meta["isrc"], session)
+            except requests.RequestException as exc:
+                url, errors[tid] = None, type(exc).__name__
             if not url:
+                errors.setdefault(tid, "no preview")
                 unavailable.append(tid)
                 continue
-            response = session.get(url, timeout=30)
-            if response.status_code != 200 or not _is_mp3(response.content[:3]):
+            content = None
+            for attempt in range(retries + 1):
+                if attempt:
+                    time.sleep(backoff * 2 ** (attempt - 1))
+                try:
+                    response = session.get(url, timeout=30)
+                except requests.RequestException as exc:
+                    errors[tid] = type(exc).__name__
+                    continue
+                if response.status_code != 200:
+                    errors[tid] = f"http {response.status_code}"
+                elif not _is_mp3(response.content[:3]):
+                    errors[tid] = "not mp3"
+                else:
+                    content = response.content
+                    errors.pop(tid, None)
+                    break
+            if content is None:
                 unavailable.append(tid)
                 continue
-            part.write_bytes(response.content)
+            part.write_bytes(content)
             part.replace(dest)
             have[tid] = dest
-        except requests.RequestException:
-            unavailable.append(tid)
         finally:
             part.unlink(missing_ok=True)
             time.sleep(pause)
