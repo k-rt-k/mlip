@@ -36,6 +36,7 @@ under `/home/hpoonia/mlip/data/retrieval/mpd-v1/`. These files are not in Git.
 For a new run, from a compute node with storage mounted:
 
 ```sh
+umask 022  # Keep new shared artifacts readable by teammates.
 MLIP_STORAGE=/data/user_data/hpoonia/mlip
 export TMPDIR="$MLIP_STORAGE/tmp"
 mkdir -p "$TMPDIR"
