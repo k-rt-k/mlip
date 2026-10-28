@@ -58,20 +58,61 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables:
   reaches all **2,262,292 MPD tracks**, but still fails “90s Bollywood romance”;
   verified release-year/language fields are unavailable. Learned/hybrid models
   use exact GPU scoring and sparse associations; their ANN indexes are not built.
-- **Other explored directions:** audio/metadata fusion, query-tower LoRA,
-  sentence wrappers, synthetic conjunctions, centering/density corrections,
-  title filtering, and general-text/local-LLM reranking have not established a
-  better full-prompt method. Validation-score gains alone do not settle quality.
-- **Ongoing, unshared experiments:** acoustic-query reranking and vocal-form
-  evidence; contrasting-request training; repeated-evidence/positive-loss
-  variants; descriptive-title selection; and calibrated audio/metadata fusion.
-  Twenty-four contrasting requests support constraint diagnostics, not an
-  independent correctness estimate. No final method or held-out quality claim yet.
+- **Acoustic-attribute results:** linear classifiers over frozen audio,
+  plain E5 metadata, or both learn instrumental/vocal, low/high energy and
+  sad/happy scores from repeated training-title evidence (at least two supporting
+  memberships, none for the opposite class). Display-artist groups are disjoint
+  between training and validation; checkpoints use that same validation set.
+
+  | Weak attribute labels | Validation tracks | Audio AUROC | Audio + metadata AUROC |
+  |---|---:|---:|---:|
+  | Instrumental / vocal | 2,875 | .9961 | .9964 |
+  | Low / high energy | 7,704 | .9712 | .9729 |
+  | Sad / happy | 536 | .8824 | .9003 |
+
+  These measure agreement with noisy playlist-derived labels, not listening-based
+  accuracy, prompt relevance or an independent test. Energy/mood labels use
+  model-selected descriptive training titles; the vocal labels use explicit form
+  cues. Features exclude title-derived song profiles.
+- **Vocal-form and prompt checks:** on four constructed vocal-form requests, the
+  audio vocal head changes the piano/guitar singer suggestions while preserving
+  the two instrumental pairs. The guitar-with-vocals example now returns Calum
+  Graham's *Half Your Heart* and *Billie Jean*. Descriptive-title routing plus
+  acoustic heads changes the seen dreamy-drive pair from *Sail* / *Riptide* to
+  *Skinny Love* / *Intro*, and mellow jazz to *In A Sentimental Mood* /
+  *Summertime*. These are non-blind metadata inspections without listening;
+  the earlier 32/40 hybrid review does not score this new recipe.
+- **Completed follow-ups:** 41 contrasting-energy title pairs yield HR@10
+  **31.07% / NDCG .0747**, versus the semantic baseline's **31.24% / .0775**.
+  Sampled-positive loss falls to **11.46% / .0330** (repeated evidence:
+  **17.73% / .0462**). Descriptive-title sampling reaches **30.26% / .0739**
+  overall and HR@10 **30.81%** on 185 model-selected descriptive validation
+  titles (baseline **29.19%**). Title-count retrieval gets **43.78%** on that
+  slice; 14/185 titles have a training title with the same word bag. The slice
+  was used for selection and is not independent quality evidence. Audio gating,
+  LoRA, sentence wrappers, synthetic conjunctions, centering, title filtering and
+  reranking have not established a better full-prompt method.
+- **Integration and remaining failure:** the local experimental CLI's acoustic
+  recipe ran on both the 1.03M audio-covered and 2.26M full-MPD catalogs.
+  Missing-audio tracks receive neutral acoustic scores. The full catalog still
+  returns Barenaked Ladies — *One Week* and Hootie & the Blowfish — *Only Wanna
+  Be With You* for “90s Bollywood romance,” a clear genre/language failure.
+  A routing correction preserves exact Hindi/Bollywood facet matches previously
+  excluded by descriptive-title selection; its backend rerun still fails. The
+  full CLI passed before that correction and has not been rerun afterward.
+- **Still exploratory:** acoustic-query scoring, descriptive-title routing,
+  calibrated attribute fusion and compound-constraint handling. The 24 contrasting
+  development requests measure response sensitivity, not correctness. No final
+  recipe, independent relevance estimate or test ranking score is available.
 - **Local artifacts:** active code is in `playlist_model/` in
   `/home/hpoonia/mlip-text-music-retrieval` (separate from shared `retrieval/`).
   Login-readable summaries/results: `/home/hpoonia/mlip/data/retrieval/mpd-v1/`
   and `data/retrieval/overnight/` (`experiments.csv`, `full-results/`,
-  `constraint-diagnostic/`, `top2-review.md`). Large snapshots/indexes are under
+  `constraint-diagnostic/`, `top2-review.md`). Attribute evidence is in
+  `vocal-attribute/results.json`, `energy-attribute/results.json`, and
+  `mood-attribute/results.json`; slice/review evidence is in `validation-slices.md`
+  and `constraint-diagnostic/{development-comparison,vocal-review}.md`.
+  Large snapshots/indexes are under
   `/data/user_data/hpoonia/mlip/retrieval/mpd-v1/`; model features/checkpoints
   under `/data/user_data/hpoonia/mlip/overnight/`. These are Babel-local,
   gitignored artifacts; no datasets, weights or live run logs are added here.
