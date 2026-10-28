@@ -89,3 +89,31 @@ def test_load_pools_rejects_seed_leaks_duplicates_and_shortlists(tmp_path):
     path.write_text(json.dumps({'examples': {'1': {'seed_tracks': [track('s')], 'seed_count': 1,
                                                  'candidates': [track('a'), track('b')]}}}))
     assert len(load_pools(path, k=2)['1']['candidates']) == 2
+
+
+def test_builder_caps_radio_calls_but_keeps_all_seeds_excluded(tmp_path, monkeypatch):
+    import json
+    from baselines import build_candidate_pools as runner
+
+    inputs, dataset, references = (tmp_path / name for name in ["inputs.json", "dataset.json", "refs.json"])
+    inputs.write_text(json.dumps({"examples": [{"example_id": 1, "seed_tracks": [track("s"), track("t")]}]}))
+    dataset.write_text(json.dumps({"examples": [{"example_id": 1, "held_out_tracks": [track("h")]}]}))
+    references.write_text(json.dumps({"prompts": [{"playlists": [{"tracks": [track("t"), track("co")]}]}]}))
+    calls = []
+
+    class Client:
+        def get_watch_playlist(self, **kwargs):
+            calls.append(kwargs["videoId"])
+            return {"tracks": [{"videoId": v, "title": v, "artists": [{"name": "A"}]} for v in ["t", "r"]]}
+
+    monkeypatch.setattr(runner, "make_client", Client)
+    cache = tmp_path / "shared" / "radio_cache.json"
+    output = tmp_path / "capped" / "pools.json"
+    monkeypatch.setattr(sys, "argv", ["builder", "--inputs", str(inputs), "--dataset", str(dataset),
+                                     "--references", str(references), "--output", str(output),
+                                     "--delay", "0", "--radio-seeds", "1", "--cache", str(cache)])
+    runner.main()
+    result = json.loads(output.read_text())
+    assert calls == ["s"] and cache.exists()
+    assert [t["video_id"] for t in result["examples"]["1"]["candidates"]] == ["r", "co"]
+    assert result["settings"]["radio_seeds"] == 1
