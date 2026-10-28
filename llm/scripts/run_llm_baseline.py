@@ -3,12 +3,22 @@
 uv run python llm/scripts/run_llm_baseline.py --mode prompt_only --run-id gemma4-31b-v1
 uv run python llm/scripts/run_llm_baseline.py --mode seeds_only --run-id gemma4-31b-v1
 
-Add --limit N for a dry run. Needs OPENROUTER_API_KEY in llm/.env (see llm/.env.example).
+Local endpoint (Claude router with model loading):
+uv run python llm/scripts/run_llm_baseline.py --backend local --model local-deepseek --mode seeds_only --run-id local-deepseek-v1
+
+Add --limit N to run only N examples (this makes live calls, not a dry run).
+OpenRouter is the default and needs OPENROUTER_API_KEY in llm/.env.
+Local requires --model, uses LOCAL_LLM_BASE_URL (default http://127.0.0.1:18088/v1),
+and optionally LOCAL_LLM_API_KEY. On the Claude router use local-deepseek,
+local-qwen, local-gemma, or local-gemma-bf16. Other OpenAI-compatible base URLs
+can be configured explicitly with their served model name. See llm/.env.example.
+--provider pins an OpenRouter host and is not available with --backend local.
+Use a separate --run-id per backend/endpoint/model/provider; mismatched directories are rejected.
 prompt_only reads only prompt text from reference_pools.json; seeds_only reads only
 model_inputs.json, never hidden answers. The model is asked for --count songs
 (2K by default); every resolved, de-duplicated suggestion gets a rank and the
 first --keep form the top-K list. Outputs (gitignored): data/llm/runs/<run-id>/<mode>.json,
-raw responses in raw/ cached by request hash (reruns never re-call the API), and a
+raw responses in raw/ cached by request hash (identical requests reuse saved responses), and a
 shared search cache in data/llm/resolve_cache.json. Scoring is left to evaluation.
 """
 
@@ -23,6 +33,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "llm" / "src"))
 sys.path.insert(0, str(ROOT / "youtube_music" / "src"))
 import openrouter  # noqa: E402
+import local_llm  # noqa: E402
 from parse import parse_songs, track_keys  # noqa: E402
 from playlists import make_client, save_json, timestamp  # noqa: E402
 from prompts import PROMPT_VERSION, SYSTEM, prompt_only, seeds_only, song_schema  # noqa: E402
@@ -58,6 +69,27 @@ def cached_complete(path, request, call):
     return response, False
 
 
+def validate_run_directory(run_dir, backend, endpoint, model, provider=None):
+    """Reject mixing backends/models/pinned hosts, including legacy outputs and partial raw runs."""
+    expected = (backend, endpoint, model, provider)
+    paths = [run_dir / f"{mode}.json" for mode in INPUTS]
+    paths.extend((run_dir / "raw").glob("*.json"))
+    for path in paths:
+        if not path.is_file():
+            continue
+        saved = json.loads(path.read_text(encoding="utf-8"))
+        run, request = saved.get("run"), saved.get("request")
+        record = run or request
+        if not record:
+            raise ValueError("Saved run identity is missing; choose a different --run-id")
+        pinned = run.get("provider_pinned") if run else request.get("provider")
+        identity = (record.get("backend", "openrouter"), record.get("endpoint", openrouter.URL),
+                    record.get("model_requested", record.get("model")), pinned)
+        if identity != expected:
+            raise ValueError("Run directory contains a different backend, endpoint, model or provider; "
+                             "choose a different --run-id")
+
+
 def rank_suggestions(songs, seed_tracks, keep, resolve):
     """Resolve in model order; rank unique, non-seed tracks; first `keep` ranks are the top K.
 
@@ -85,7 +117,7 @@ def rank_suggestions(songs, seed_tracks, keep, resolve):
     return rows
 
 
-def summarize(examples, keep):
+def summarize(examples, keep, backend="openrouter"):
     done = [e for e in examples if e["status"] == "ok"]
     suggested = sum(len(e["recommendations"]) for e in done)
     resolved = sum(r["resolved"] for e in done for r in e["recommendations"])
@@ -96,29 +128,46 @@ def summarize(examples, keep):
             "examples_short_of_k": sum(sum(r["in_top_k"] for r in e["recommendations"]) < keep for e in done),
             "total_tokens": sum((c.get("usage") or {}).get("total_tokens", 0) for c in calls),
             "mean_latency_s": round(sum(c["latency_s"] for c in calls) / len(calls), 2) if calls else None,
-            "cost_usd": round(sum((c.get("usage") or {}).get("cost") or 0 for c in calls), 4)}
+            "cost_usd": (round(sum((c.get("usage") or {}).get("cost") or 0 for c in calls), 4)
+                         if backend == "openrouter" else None)}
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--mode", required=True, choices=sorted(INPUTS))
     parser.add_argument("--run-id", required=True)
-    parser.add_argument("--model", default=DEFAULT_MODEL)
+    parser.add_argument("--backend", choices=("openrouter", "local"), default="openrouter",
+                        help="chat endpoint (default openrouter)")
+    parser.add_argument("--model", help="OpenRouter model ID (default %s) or local model name" % DEFAULT_MODEL)
     parser.add_argument("--count", type=int, help="songs requested (default 2K)")
     parser.add_argument("--keep", type=int, help="top-K budget (default 10 prompt_only, 5 seeds_only)")
     parser.add_argument("--temperature", type=float, default=0)
     parser.add_argument("--seed", type=int, default=0)
-    parser.add_argument("--limit", type=int, help="first N examples only (dry run)")
+    parser.add_argument("--limit", type=int, help="first N examples only (makes live calls)")
     parser.add_argument("--ids", help="example ids to run, e.g. 21-40 or 1,3,5")
     parser.add_argument("--provider", help="pin one OpenRouter host with no fallback, e.g. ModelRun")
-    parser.add_argument("--min-interval", type=float, default=4.0, help="seconds between live calls (free tier ~20/min)")
+    parser.add_argument("--min-interval", type=float, help="seconds between live calls (default 4 OpenRouter, 0 local)")
     parser.add_argument("--input", type=Path)
     parser.add_argument("--out-root", type=Path, default=ROOT / "data" / "llm")
     args = parser.parse_args()
 
+    if args.backend == "local" and not args.model:
+        parser.error("--model is required for --backend local")
+    if args.backend == "local" and args.provider:
+        parser.error("--provider applies only to --backend openrouter")
+    args.model = args.model or DEFAULT_MODEL
+    adapter = openrouter if args.backend == "openrouter" else local_llm
+    endpoint = openrouter.URL if args.backend == "openrouter" else local_llm.endpoint()
+    if args.backend == "local":
+        local_llm.validate_model(args.model, endpoint)
+    interval = args.min_interval if args.min_interval is not None else (4.0 if args.backend == "openrouter" else 0.0)
+    if interval < 0:
+        parser.error("--min-interval must be nonnegative")
+
     count, keep = args.count or BUDGET[args.mode][0], args.keep or BUDGET[args.mode][1]
     input_path = args.input or ROOT / INPUTS[args.mode]
     run_dir = args.out_root / "runs" / args.run_id
+    validate_run_directory(run_dir, args.backend, endpoint, args.model, args.provider)
     cache_path = args.out_root / "resolve_cache.json"
     cache = json.loads(cache_path.read_text(encoding="utf-8")) if cache_path.is_file() else {}
     client = make_client()
@@ -130,7 +179,7 @@ def main():
             wanted.update(range(int(lo), int(hi or lo) + 1))
         examples = [e for e in examples if e["id"] in wanted]
     examples = examples[:args.limit]
-    key = openrouter.api_key()
+    key = adapter.api_key()
     results, last_call = [], 0.0
 
     for example in examples:
@@ -139,15 +188,18 @@ def main():
                    "seed": args.seed, "response_format": song_schema()}
         if args.provider:  # only when set, so cache hashes of earlier runs stay valid
             request["provider"] = args.provider
+        if args.backend == "local":  # likewise, OpenRouter request hashes stay unchanged
+            request.update(backend=args.backend, endpoint=endpoint)
         result = {k: v for k, v in example.items() if k != "seed_tracks"}
         result.update(status="ok", parse_stats=None, call=None, recommendations=[])
 
         def call():
             nonlocal last_call
-            time.sleep(max(0.0, args.min_interval - (time.monotonic() - last_call)))
+            time.sleep(max(0.0, interval - (time.monotonic() - last_call)))
             last_call = time.monotonic()
-            return openrouter.complete(messages, args.model, args.temperature, args.seed, song_schema(),
-                                       key=key, provider=args.provider)
+            options = {"url": endpoint} if args.backend == "local" else {"provider": args.provider}
+            return adapter.complete(messages, args.model, args.temperature, args.seed, song_schema(),
+                                    key=key, **options)
 
         try:
             response, cached = cached_complete(run_dir / "raw" / f"{args.mode}-{example['id']:02d}.json", request, call)
@@ -175,7 +227,7 @@ def main():
 
     calls = [r["call"] for r in results if r["call"]]
     run = {"schema_version": 1, "run_id": args.run_id, "mode": args.mode, "collected_at": timestamp(),
-           "model_requested": args.model,
+           "backend": args.backend, "endpoint": endpoint, "model_requested": args.model,
            "models_returned": sorted({c.get("model") for c in calls if c.get("model")}),
            "providers": sorted({c.get("provider") for c in calls if c.get("provider")}),
            "provider_pinned": args.provider, "ids": args.ids,
@@ -184,7 +236,7 @@ def main():
            "example_user_prompt": build_messages(args.mode, examples[0], count)[1]["content"] if examples else None,
            "input_file": str(input_path.relative_to(ROOT)) if input_path.is_relative_to(ROOT) else str(input_path),
            "limit": args.limit, "identity_note": "video_id from public search; alt_video_ids lists other matching uploads"}
-    output = {"run": run, "summary": summarize(results, keep), "examples": results}
+    output = {"run": run, "summary": summarize(results, keep, args.backend), "examples": results}
     save_json(run_dir / f"{args.mode}.json", output)
     print(json.dumps(output["summary"], indent=2))
 

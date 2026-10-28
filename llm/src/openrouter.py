@@ -1,11 +1,11 @@
-"""Minimal OpenRouter chat client with retries; the key comes from llm/.env, never arguments or logs."""
+"""OpenRouter adapter; credentials come from llm/.env, never saved requests."""
 
 import os
 from pathlib import Path
-import time
 
-import requests
 from dotenv import load_dotenv
+
+import chat_client
 
 URL = "https://openrouter.ai/api/v1/chat/completions"
 ENV_PATH = Path(__file__).resolve().parents[1] / ".env"
@@ -21,42 +21,12 @@ def api_key():
 
 def complete(messages, model, temperature=0, seed=0, response_format=None, max_tokens=None,
              attempts=4, key=None, provider=None):
-    """One chat completion; returns text plus model/provider/usage/latency metadata.
+    """One chat completion via the shared client, keeping OpenRouter defaults.
 
-    Retries 429/5xx, including errors OpenRouter reports inside a 200 body;
-    other client errors fail immediately because they will not heal.
     `provider` pins one host with no fallback, keeping weights/quantization fixed.
     """
-    payload = {"model": model, "messages": messages, "temperature": temperature, "seed": seed}
-    if response_format:
-        payload["response_format"] = response_format
-    if max_tokens:
-        payload["max_tokens"] = max_tokens
-    if provider:
-        payload["provider"] = {"order": [provider], "allow_fallbacks": False}
-    headers = {"Authorization": f"Bearer {key or api_key()}", "X-Title": "mlip-llm-baseline"}
-    for attempt in range(attempts):
-        start = time.monotonic()
-        response = requests.post(URL, headers=headers, json=payload, timeout=180)
-        latency = round(time.monotonic() - start, 3)
-        status, message = response.status_code, f"HTTP {response.status_code}"
-        if status < 400:
-            body = response.json()
-            error = body.get("error")
-            if not error and body["choices"][0].get("finish_reason") == "error":
-                error = {"code": 502, "message": "provider error mid-generation (finish_reason=error)"}
-            if not error:
-                choice = body["choices"][0]
-                return {"text": choice["message"].get("content") or "",
-                        "finish_reason": choice.get("finish_reason"), "id": body.get("id"),
-                        "model": body.get("model"), "provider": body.get("provider"),
-                        "usage": body.get("usage"), "latency_s": latency, "retries": attempt}
-            code = error.get("code")
-            status, message = (code if isinstance(code, int) else 500), error.get("message", message)
-        if status != 429 and status < 500:
-            response.raise_for_status()
-            raise RuntimeError(f"OpenRouter error {status}: {message}")
-        if attempt == attempts - 1:
-            raise RuntimeError(f"OpenRouter gave up after {attempts} attempts: {message}")
-        retry_after = str((response.headers or {}).get("Retry-After", ""))
-        time.sleep(float(retry_after) if retry_after.isdigit() else min(60, 5 * 2 ** attempt))
+    extra = {"provider": {"order": [provider], "allow_fallbacks": False}} if provider else None
+    return chat_client.complete(
+        messages, model, temperature, seed, response_format, max_tokens, attempts,
+        endpoint=URL, headers={"Authorization": f"Bearer {key or api_key()}",
+                               "X-Title": "mlip-llm-baseline"}, label="OpenRouter", extra=extra)

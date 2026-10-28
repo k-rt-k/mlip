@@ -10,6 +10,7 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import openrouter  # noqa: E402
+import chat_client  # noqa: E402
 from parse import parse_songs, track_keys  # noqa: E402
 from prompts import PROMPT_VERSION, SYSTEM, prompt_only, seeds_only, song_schema  # noqa: E402
 from resolve import RESOLVE_VERSION, matches, resolve_song  # noqa: E402
@@ -77,7 +78,7 @@ def test_parse_without_json_raises():
 def response(status, body=None, headers=None):
     r = MagicMock(status_code=status, headers=headers or {})
     r.json.return_value = body or {}
-    r.raise_for_status.side_effect = None if status < 400 else openrouter.requests.HTTPError(str(status))
+    r.raise_for_status.side_effect = None if status < 400 else chat_client.requests.HTTPError(str(status))
     return r
 
 
@@ -89,9 +90,9 @@ OK = {"id": "gen-1", "model": "google/gemma", "provider": "Google AI Studio",
 def fake_requests(monkeypatch, *responses):
     http = MagicMock()
     http.post.side_effect = list(responses)
-    http.HTTPError = openrouter.requests.HTTPError
-    monkeypatch.setattr(openrouter, "requests", http)
-    monkeypatch.setattr(openrouter.time, "sleep", lambda s: None)
+    http.HTTPError = chat_client.requests.HTTPError
+    monkeypatch.setattr(chat_client, "requests", http)
+    monkeypatch.setattr(chat_client.time, "sleep", lambda s: None)
     return http
 
 
@@ -129,7 +130,7 @@ def test_complete_retries_choice_level_provider_error(monkeypatch):
 
 def test_complete_does_not_retry_client_errors(monkeypatch):
     http = fake_requests(monkeypatch, response(401), response(200, OK))
-    with pytest.raises(openrouter.requests.HTTPError):
+    with pytest.raises(chat_client.requests.HTTPError):
         openrouter.complete([], "m", key="sk-test")
     assert http.post.call_count == 1
 
