@@ -1,6 +1,26 @@
 # Project Status
 
-Scope: [SCOPE.md](SCOPE.md). Deliverables: [baselines milestone](../milestones/baselines.md).
+Scope: [SCOPE.md](SCOPE.md). Deliverables:
+[initial ML solution](../milestones/initial_ml_solution.md),
+[baselines milestone](../milestones/baselines.md).
+
+## 2026-10-27 — CPU text-to-music retrieval ready for real-data runs (Harsh)
+
+- **Ready:** `retrieval/` implements FAISS exact (`IndexFlatIP`), IVF
+  (`IndexIVFFlat`) and HNSW (`IndexHNSWFlat`) over normalized CLAP vectors, with
+  ordered song IDs, integrity-checked persistence, build/search CLI and a shared
+  ANN benchmark. FAISS CPU is pinned through uv. Usage and continuation plan:
+  [compute-node handoff](retrieval_handoff.md).
+- **Validation:** 21 retrieval tests and a 5,000 x 512 synthetic-vector CLI
+  comparison (40 queries, six settings) cover all three methods. Existing tests
+  pass separately with their optional PyTorch runtime (242 passed, one skipped).
+  Local PyTorch/FAISS OpenMP conflict requires separate encoding/retrieval
+  processes. No real-data performance or recommendation-quality claim yet.
+- **Remaining:** verify Babel artifact schemas/counts and runtime; freeze text
+  query vectors; benchmark ANN recall against exact, latency, construction time
+  and memory before choosing a method. MPD-to-YouTube recording matching,
+  downstream baseline comparison, seed association learning and score fusion
+  remain separate method-design work. ANN recall is not playlist NDCG.
 
 ## 2026-10-26 — CLAP audio embeddings for MPD and eval songs (Kartik)
 

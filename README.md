@@ -13,7 +13,19 @@ lives in `docs/SCOPE.md` and `docs/STATUS.md`, with completed-task summaries new
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then run
 `uv sync` from this directory. `.python-version` selects Python 3.12; `uv.lock`
-pins dependencies. Run tests with `uv run pytest`.
+pins dependencies. Run the lightweight suite and optional encoder tests in
+separate processes (the local PyTorch/FAISS wheels conflict through OpenMP when
+loaded together):
+
+```sh
+uv run python -m pytest --ignore=spotify/tests/test_embeddings.py
+uv run --with torch python -m pytest spotify/tests/test_embeddings.py
+```
+
+CPU text-to-music retrieval supports exact, IVF and HNSW indexes over existing
+CLAP vectors. Run `uv run python -m retrieval --help`; see the
+[compute-node handoff](docs/retrieval_handoff.md) for interfaces, artifact paths,
+validation and the remaining real-data benchmark work.
 
 The twenty synthetic prompts are in `prompts.txt`. YouTube Music collection,
 partial-playlist creation, suggestions, and browser-auth setup commands are documented

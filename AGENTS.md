@@ -11,9 +11,11 @@ continuation using public **YouTube Music** playlists (reference dataset v2
 assembled for twenty prompts; evaluation decisions belong to the baseline owners).
 The LLM also takes prompt + partial inputs; evaluation for that mode remains TBD.
 
-As of **2026-10-05**: the music proposal is documented; Spotify authentication,
+As of **2026-10-27**: the music proposal is documented; Spotify authentication,
 inventory, and metadata-enrichment code exists from earlier feasibility work.
-The **current stage is baseline comparison and remaining LLM evaluation**; the
+The **current stage is the initial ML solution**. CPU exact/IVF/HNSW retrieval
+is implemented; real-data benchmarking and method selection remain. See the
+requested compute-node handoff in `docs/retrieval_handoff.md`. The baseline
 four-part milestone checklist is in `docs/STATUS.md`. Harsh's datasets/pipelines
 are ready. Spandan's evaluation pipeline, YouTube Music continuation, and
 co-occurrence baseline have results on all 40 partial inputs. Ayush's zero-shot
@@ -57,6 +59,7 @@ team changes direction. Do not treat historical docs as current requirements.
   Deezer matching, and CLAP preview-embedding pipelines (Babel sbatch scripts)
 - `llm/` — zero-shot generation, catalog resolution, and tests
 - `evaluation/` — partial-playlist metrics and evaluation runner
+- `retrieval/` — CPU FAISS exact/IVF/HNSW indexes, persistence and ANN benchmarks
 - `baselines/` — co-occurrence and Radio Pool baselines, candidate collection, and runners
 - `predictions/` — saved co-occurrence, YouTube Music, Radio Pool, and LLM predictions for all 40 inputs (plus LLM prompt-only)
 - `youtube_music/` — public playlist collection, seed-only copies, suggestions,
@@ -66,7 +69,7 @@ team changes direction. Do not treat historical docs as current requirements.
 - `datasets/` — approved, credential-free baseline and Radio Pool ZIPs with checksum manifests
 - `data/` — extracted datasets/local artifacts (gitignored), plus explicitly committed LLM run outputs
 - `docs/` — `SCOPE.md`, `STATUS.md`, and existing API/feasibility references
-- `milestones/` — descriptions of project milestone deliverables; see `milestones/baselines.md`.
+- `milestones/` — assignment deliverables, including `initial_ml_solution.md` and `baselines.md`.
 - `scripts/git-hooks/` — secret guards; setup instructions in `README.md`
 - `scripts/validation/` — one-off integrity audits of Babel embedding outputs
 - `w0_writeup.md` — initial Spotify project idea; current scope is in `docs/SCOPE.md`
