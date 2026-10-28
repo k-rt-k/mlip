@@ -1,6 +1,83 @@
 # Project Status
 
-Scope: [SCOPE.md](SCOPE.md). Deliverables: [baselines milestone](../milestones/baselines.md).
+Scope: [SCOPE.md](SCOPE.md). Deliverables:
+[initial ML solution](../milestones/initial_ml_solution.md),
+[baselines milestone](../milestones/baselines.md).
+
+## 2026-10-28 — Prompt-only retrieval infrastructure and modeling progress (Harsh)
+
+- **Shared:** CPU FAISS exact/IVF/HNSW search, validated catalog loading,
+  checksummed index persistence, retained benchmark predictions, frozen query
+  encoding, and audited MPD snapshot preparation in `retrieval/`,
+  `spotify/scripts/embed_text_queries.py`, and `scripts/validation/audit_retrieval.py`.
+  Recording-level metrics live in `evaluation/recordings.py`; the run-specific
+  scorer is separate in `experiments/retrieval/score_mpd_retrieval.py`.
+  Commands/setup: [README](../README.md) and source docstrings.
+- **Search benchmark:** 1,025,994 audio-covered MPD tracks (512-D CLAP),
+  20 frozen development prompts, six builds / 24 settings, four CPU threads
+  on Babel-v9-20 (EPYC 7313), ten warm repetitions per query. Exact search p95
+  **75.96 ms**; HNSW M=16 / efConstruction=100 / efSearch=512 p95 **1.31 ms**,
+  ANN recall@5/@100 **0.990 / 0.9815**, serialized index **2.095 GiB**, build
+  **138.4 s**. Encoding/loading/IO are excluded. ANN recall measures recovery
+  of exact neighbors; these provisional settings do not establish song relevance.
+- **Raw CLAP quality check:** upstream metadata-derived ISRC matching covers
+  **698 / 4,485** per-prompt reference-recording memberships (15.6%). All
+  24 trials have zero precision/hit rate/NDCG at 5 and 10; unmatched references
+  remain in scoring. The prompt-only LLM rescored with the same identity policy
+  has P@5 **0.04**, NDCG@5 **.0330**. This diagnostic inherits matching errors,
+  limited catalog coverage and incomplete reference positives. A metadata-only
+  assistant review of exact top-two outputs found 17 plausible, nine poor fits,
+  14 uncertain; no audio was auditioned.
+- **Completed exploratory comparisons (code/results remain local):** metadata
+  and training-playlist-title supervision improve held-out-title member recovery:
+
+  | Method | HR@10 | NDCG@10 |
+  |---|---:|---:|
+  | Frozen CLAP text → audio (pilot diagnostic) | 0.27% | .0002 |
+  | Frozen E5 metadata | 7.70% | .0284 |
+  | Learned E5 query/song projections | 20.68% | .0422 |
+  | Song title profiles + hard negatives | 30.17% | .0650 |
+  | Song/artist profiles + hard negatives + semantic anchor | 31.24% | .0775 |
+  | Matched song-only control | 31.24% | .0713 |
+  | E5 title-neighbor membership counts | 33.84% | .0853 |
+
+  HR@10 counts titles with at least one known member in ten results; NDCG@10
+  also rewards rank and multiple recovered members. Full supervision:
+  621,870 training playlists, 12,704 normalized titles,
+  13.78M title–song links; evaluation uses 1,117 validation titles and the same
+  1.03M candidates. Exact normalized titles are disjoint across 80/10/10
+  splits; songs overlap and near-duplicate titles remain. Checkpoint selection
+  uses 512 validation titles; many settings were tuned on validation. No test
+  ranking scores exist for the 1,102 test titles. These exploratory single-run
+  membership scores are distinct from the YouTube prompt-reference proxy.
+- **Prompt behavior:** the highest membership score still produces generic pop
+  for some Hindi/bossa/instrumental requests. A soft-facet/audio hybrid's top-two
+  review on the 20 repeatedly seen prompts found **32 broadly reasonable,
+  one poor fit, seven uncertain** (assistant review, no listening/blinding).
+  Mood and combined constraints remain unreliable. A metadata-only extension
+  reaches all **2,262,292 MPD tracks**, but still fails “90s Bollywood romance”;
+  verified release-year/language fields are unavailable. Learned/hybrid models
+  use exact GPU scoring and sparse associations; their ANN indexes are not built.
+- **Other explored directions:** audio/metadata fusion, query-tower LoRA,
+  sentence wrappers, synthetic conjunctions, centering/density corrections,
+  title filtering, and general-text/local-LLM reranking have not established a
+  better full-prompt method. Validation-score gains alone do not settle quality.
+- **Ongoing, unshared experiments:** acoustic-query reranking and vocal-form
+  evidence; contrasting-request training; repeated-evidence/positive-loss
+  variants; descriptive-title selection; and calibrated audio/metadata fusion.
+  Twenty-four contrasting requests support constraint diagnostics, not an
+  independent correctness estimate. No final method or held-out quality claim yet.
+- **Local artifacts:** active code is in `playlist_model/` in
+  `/home/hpoonia/mlip-text-music-retrieval` (separate from shared `retrieval/`).
+  Login-readable summaries/results: `/home/hpoonia/mlip/data/retrieval/mpd-v1/`
+  and `data/retrieval/overnight/` (`experiments.csv`, `full-results/`,
+  `constraint-diagnostic/`, `top2-review.md`). Large snapshots/indexes are under
+  `/data/user_data/hpoonia/mlip/retrieval/mpd-v1/`; model features/checkpoints
+  under `/data/user_data/hpoonia/mlip/overnight/`. These are Babel-local,
+  gitignored artifacts; no datasets, weights or live run logs are added here.
+- **Remaining:** independent constraint-focused review with audio listening,
+  reliable recording metadata, final model selection and comparable baseline
+  evaluation, seed-conditioned modeling, and the ML milestone writeup.
 
 ## 2026-10-26 — CLAP audio embeddings for MPD and eval songs (Kartik)
 
@@ -18,9 +95,9 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables: [baselines milestone](../milestones/b
   YouTube or MPD), so unmatched songs are not necessarily missing from Deezer.
   Eval coverage is 76% for official audio, 41% for music videos, and ~0% for
   user uploads. Only **29% of hidden partial songs** are covered, so scores on
-  covered songs are biased toward official audio. Overlap between eval songs
-  and MPD is not computed.
-- **Remaining:** an embedding baseline/retrieval experiment; the v2 matching
+  covered songs are biased toward official audio. Full overlap between eval songs
+  and MPD is not computed; the prompt-reference subset is audited above.
+- **Remaining:** seed-conditioned embedding evaluation; the v2 matching
   policy in `spotify/src/mpd.py` (+~19% on a no-match sample) is implemented
   but not run over MPD.
 
@@ -149,6 +226,19 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables: [baselines milestone](../milestones/b
   leaving alternate uploads, covers, and recording versions unresolved.
 - **Other tooling:** earlier Spotify API/metadata tooling remains in
   `spotify/`; no interactive prototype is implemented.
+
+## Initial ML solution — current checklist
+
+**Prompt-only retrieval owner:** Harsh. **State:** search infrastructure shared;
+learned retrieval remains exploratory. Due October 29; see the
+[assignment](../milestones/initial_ml_solution.md).
+
+- [x] Implement and benchmark exact/IVF/HNSW over the full audio-covered MPD catalog.
+- [x] Audit recording-overlap coverage and raw-CLAP development recommendations.
+- [x] Explore metadata/title-supervised retrieval and record validation comparisons locally.
+- [ ] Select a final method with independent constraint/relevance evidence.
+- [ ] Compare the chosen ML method and baselines on the same split and metric.
+- [ ] Complete seed-conditioned modeling/evaluation and the milestone writeup.
 
 ## Baselines milestone — current checklist
 

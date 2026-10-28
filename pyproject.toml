@@ -8,6 +8,8 @@ dependencies = [
     "spotipy>=2.25,<3",
     "python-dotenv>=1,<2",
     "requests>=2.32,<3",
+    "faiss-cpu==1.13.2",
+    "numpy>=1.25,<3",
 ]
 
 [dependency-groups]
@@ -17,4 +19,4 @@ dev = ["pytest>=8,<9"]
 package = false
 
 [tool.pytest.ini_options]
-testpaths = ["spotify/tests", "youtube_music/tests", "llm/tests", "baselines/tests"]
+testpaths = ["spotify/tests", "youtube_music/tests", "llm/tests", "baselines/tests", "retrieval/tests"]
