@@ -1,0 +1,153 @@
+[
+  {
+    "method": "ivf",
+    "nlist": 256,
+    "nprobe": 1,
+    "training_sample_size": 200000,
+    "seed": 0
+  },
+  {
+    "method": "ivf",
+    "nlist": 256,
+    "nprobe": 4,
+    "training_sample_size": 200000,
+    "seed": 0
+  },
+  {
+    "method": "ivf",
+    "nlist": 256,
+    "nprobe": 16,
+    "training_sample_size": 200000,
+    "seed": 0
+  },
+  {
+    "method": "ivf",
+    "nlist": 256,
+    "nprobe": 64,
+    "training_sample_size": 200000,
+    "seed": 0
+  },
+  {
+    "method": "ivf",
+    "nlist": 256,
+    "nprobe": 256,
+    "training_sample_size": 200000,
+    "seed": 0
+  },
+  {
+    "method": "ivf",
+    "nlist": 1024,
+    "nprobe": 4,
+    "training_sample_size": 200000,
+    "seed": 0
+  },
+  {
+    "method": "ivf",
+    "nlist": 1024,
+    "nprobe": 16,
+    "training_sample_size": 200000,
+    "seed": 0
+  },
+  {
+    "method": "ivf",
+    "nlist": 1024,
+    "nprobe": 64,
+    "training_sample_size": 200000,
+    "seed": 0
+  },
+  {
+    "method": "ivf",
+    "nlist": 1024,
+    "nprobe": 256,
+    "training_sample_size": 200000,
+    "seed": 0
+  },
+  {
+    "method": "ivf",
+    "nlist": 4096,
+    "nprobe": 16,
+    "training_sample_size": 200000,
+    "seed": 0
+  },
+  {
+    "method": "ivf",
+    "nlist": 4096,
+    "nprobe": 64,
+    "training_sample_size": 200000,
+    "seed": 0
+  },
+  {
+    "method": "ivf",
+    "nlist": 4096,
+    "nprobe": 256,
+    "training_sample_size": 200000,
+    "seed": 0
+  },
+  {
+    "method": "ivf",
+    "nlist": 4096,
+    "nprobe": 1024,
+    "training_sample_size": 200000,
+    "seed": 0
+  },
+  {
+    "method": "hnsw",
+    "m": 16,
+    "ef_construction": 100,
+    "ef_search": 32
+  },
+  {
+    "method": "hnsw",
+    "m": 16,
+    "ef_construction": 100,
+    "ef_search": 64
+  },
+  {
+    "method": "hnsw",
+    "m": 16,
+    "ef_construction": 100,
+    "ef_search": 128
+  },
+  {
+    "method": "hnsw",
+    "m": 16,
+    "ef_construction": 100,
+    "ef_search": 256
+  },
+  {
+    "method": "hnsw",
+    "m": 16,
+    "ef_construction": 100,
+    "ef_search": 512
+  },
+  {
+    "method": "hnsw",
+    "m": 32,
+    "ef_construction": 100,
+    "ef_search": 32
+  },
+  {
+    "method": "hnsw",
+    "m": 32,
+    "ef_construction": 100,
+    "ef_search": 64
+  },
+  {
+    "method": "hnsw",
+    "m": 32,
+    "ef_construction": 100,
+    "ef_search": 128
+  },
+  {
+    "method": "hnsw",
+    "m": 32,
+    "ef_construction": 100,
+    "ef_search": 256
+  },
+  {
+    "method": "hnsw",
+    "m": 32,
+    "ef_construction": 100,
+    "ef_search": 512
+  }
+]

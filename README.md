@@ -3,7 +3,7 @@
 Course project for CMU's Machine Learning In Practice: a music playlist
 recommender guided by natural-language requests and optional existing songs.
 See [docs/SCOPE.md](docs/SCOPE.md) for the project goal and
-[docs/STATUS.md](docs/STATUS.md) for current progress and remaining baseline work.
+[docs/STATUS.md](docs/STATUS.md) for current progress and remaining milestone work.
 
 Coding agents should start with [AGENTS.md](AGENTS.md). Shared project context
 lives in `docs/SCOPE.md` and `docs/STATUS.md`, with completed-task summaries newest first.
@@ -13,7 +13,67 @@ lives in `docs/SCOPE.md` and `docs/STATUS.md`, with completed-task summaries new
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then run
 `uv sync` from this directory. `.python-version` selects Python 3.12; `uv.lock`
-pins dependencies. Run tests with `uv run pytest`.
+pins dependencies. Run the lightweight suite separately from optional PyTorch
+encoder tests; the local FAISS/PyTorch wheels conflict through OpenMP when loaded
+together:
+
+```sh
+uv run python -m pytest --ignore=spotify/tests/test_embeddings.py
+# In an existing encoder environment with PyTorch, separately:
+/path/to/encoder-venv/bin/python -m pytest spotify/tests/test_embeddings.py
+```
+
+CPU prompt-to-music search supports exact, IVF and HNSW over precomputed CLAP
+vectors. Its shared interface is `EmbeddingCatalog`, `IndexConfig`, and
+`RetrievalIndex.build/search/save/load`; see the docstrings in `retrieval/`
+and `uv run python -m retrieval --help`. Corpus/query NPZs contain string `ids`
+and numeric `vectors` arrays. IDs retain their original namespace.
+
+On Babel, keep full-catalog artifacts, temporary files and model caches on data
+storage. The verified raw-CLAP snapshot is under
+`/data/user_data/hpoonia/mlip/retrieval/mpd-v1/snapshot/`; small local reports are
+under `/home/hpoonia/mlip/data/retrieval/mpd-v1/`. These files are not in Git.
+For a new run, from a compute node with storage mounted:
+
+```sh
+MLIP_STORAGE=/data/user_data/hpoonia/mlip
+export TMPDIR="$MLIP_STORAGE/tmp"
+mkdir -p "$TMPDIR"
+uv run python scripts/validation/audit_retrieval.py --help
+uv run python -m retrieval.prepare_mpd --help
+# Encode in the existing separate environment; no FAISS import:
+OMP_NUM_THREADS=4 "$MLIP_STORAGE/encoder-venv/bin/python" spotify/scripts/embed_text_queries.py --output data/retrieval/text-queries.npz
+uv run python -m retrieval benchmark \
+  --corpus "$MLIP_STORAGE/retrieval/mpd-v1/snapshot/corpus.npz" \
+  --queries data/retrieval/text-queries.npz \
+  --configs retrieval/configs/mpd-v1.json --threads 4 --k 100 \
+  --warmups 2 --repeats 10 \
+  --artifacts-dir "$MLIP_STORAGE/retrieval/new-run/indexes" \
+  --output data/retrieval/new-run/benchmark.json
+```
+
+Output directories must be new. The query encoder reuses
+`spotify.src.embeddings.get_embedder('clap')` and records checkpoint revision,
+package versions and checksums in the adjacent JSON. The verified encoder used
+Python 3.12, torch 2.14.1+cpu, transformers 5.17.0, numpy 2.4.6 and librosa 0.11.0;
+it is separate from the pinned CPU retrieval environment. Benchmark settings
+reuse builds where only `nprobe`/`ef_search` changes. Reports include exact-neighbor
+recall, warm search latency, build time, serialized size and worker peak RSS.
+Encoding/loading/IO are outside the latency measurement. These measurements do
+not establish recommendation quality.
+
+The run-specific recording-overlap scorer is under `experiments/retrieval/`:
+
+```sh
+uv run python -m experiments.retrieval.score_mpd_retrieval --help
+```
+
+It uses upstream ISRC evidence, deduplicates recordings, retains unmatched
+reference songs and counts short outputs as misses. Its defaults refer to the
+saved Babel development run; pass `--query-manifest` for newly encoded queries.
+The learned metadata/title-supervised models and live experiments remain local
+in the feature worktree; [STATUS.md](docs/STATUS.md) summarizes their findings
+and remaining work.
 
 The twenty synthetic prompts are in `prompts.txt`. YouTube Music collection,
 partial-playlist creation, suggestions, and browser-auth setup commands are documented

@@ -11,10 +11,12 @@ continuation using public **YouTube Music** playlists (reference dataset v2
 assembled for twenty prompts; evaluation decisions belong to the baseline owners).
 The LLM also takes prompt + partial inputs; evaluation for that mode remains TBD.
 
-As of **2026-10-05**: the music proposal is documented; Spotify authentication,
+As of **2026-10-28**: the music proposal is documented; Spotify authentication,
 inventory, and metadata-enrichment code exists from earlier feasibility work.
-The **current stage is baseline comparison and remaining LLM evaluation**; the
-four-part milestone checklist is in `docs/STATUS.md`. Harsh's datasets/pipelines
+The **current stage is the initial ML solution**. Prompt-only FAISS retrieval
+is benchmarked; metadata/title-supervised models remain exploratory, with mood
+and combined constraints unresolved. Current results, ongoing experiments and
+milestone checklists are in `docs/STATUS.md`. Harsh's datasets/pipelines
 are ready. Spandan's evaluation pipeline, YouTube Music continuation, and
 co-occurrence baseline have results on all 40 partial inputs. Ayush's zero-shot
 LLM is scored on 20 prompts and all 40 partial inputs; prompt + partial generation
@@ -36,8 +38,8 @@ supported account-auth method. Radio Pool is also scored on all 40 inputs; its
 399 cached public seed radios, frozen pools, and evaluation are shared in
 `datasets/radio-pool-v1.zip`. LLM reranking is a separate deferred experiment.
 CLAP audio embeddings exist for 2,391 eval songs and ~1.03M Spotify MPD tracks
-(Babel storage, not Git); no embedding baseline has been run yet. Read `docs/STATUS.md` for the latest
-results, remaining evaluation work, and open issues.
+(Babel storage, not Git); seed-conditioned embedding evaluation remains pending.
+Read `docs/STATUS.md` for the latest results, remaining evaluation work, and open issues.
 
 ## Read Before Working
 
@@ -56,7 +58,9 @@ team changes direction. Do not treat historical docs as current requirements.
 - `spotify/` — music API/authentication and feasibility tooling, MPD catalog,
   Deezer matching, and CLAP preview-embedding pipelines (Babel sbatch scripts)
 - `llm/` — zero-shot generation, catalog resolution, and tests
-- `evaluation/` — partial-playlist metrics and evaluation runner
+- `evaluation/` — partial-playlist metrics, recording-identity metrics, and evaluation runners
+- `retrieval/` — shared CPU FAISS search, catalog preparation, persistence, and ANN benchmarks
+- `experiments/retrieval/` — run-specific prompt-retrieval diagnostics; ongoing learned-model code remains in the feature worktree
 - `baselines/` — co-occurrence and Radio Pool baselines, candidate collection, and runners
 - `predictions/` — saved co-occurrence, YouTube Music, Radio Pool, and LLM predictions for all 40 inputs (plus LLM prompt-only)
 - `youtube_music/` — public playlist collection, seed-only copies, suggestions,
@@ -66,7 +70,7 @@ team changes direction. Do not treat historical docs as current requirements.
 - `datasets/` — approved, credential-free baseline and Radio Pool ZIPs with checksum manifests
 - `data/` — extracted datasets/local artifacts (gitignored), plus explicitly committed LLM run outputs
 - `docs/` — `SCOPE.md`, `STATUS.md`, and existing API/feasibility references
-- `milestones/` — descriptions of project milestone deliverables; see `milestones/baselines.md`.
+- `milestones/` — assignment deliverables, including `initial_ml_solution.md` and `baselines.md`.
 - `scripts/git-hooks/` — secret guards; setup instructions in `README.md`
 - `scripts/validation/` — one-off integrity audits of Babel embedding outputs
 - `w0_writeup.md` — initial Spotify project idea; current scope is in `docs/SCOPE.md`
@@ -74,6 +78,8 @@ team changes direction. Do not treat historical docs as current requirements.
 
 ## Code Conventions
 
+- Keep exploratory model/ranking runners separate from shared `retrieval/` code.
+  Keep large Babel artifacts and model caches on data storage; outputs stay gitignored.
 - Flag missing credentials, access, inputs, or unfinished requirements immediately; stop dependent work and ask for what is needed rather than substitute assumptions or present incomplete work as ready.
 - **Reuse first.** When writing experiments, use existing code functions. Before
   writing any new function, search the codebase for an existing implementation
