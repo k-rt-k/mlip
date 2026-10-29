@@ -1,6 +1,6 @@
-"""Input and embedding loaders for prompt-conditioned playlist experiments."""
+"""Input and embedding loaders for seed-only and prompt-conditioned playlist experiments."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import json
 from pathlib import Path
 
@@ -28,23 +28,43 @@ def load_video_embeddings(path: Path) -> dict[str, np.ndarray]:
     return dict(zip(ids, vectors))
 
 
-def load_partial_examples(inputs_path: Path, prompts_path: Path) -> list[PartialExample]:
-    """Join public seed inputs to frozen prompt labels by example ID."""
+def merge_embeddings(sources: list[dict[str, np.ndarray]]) -> tuple[dict[str, np.ndarray], dict[str, int]]:
+    """Overlay vector caches; earlier sources win, and each ID records its source index."""
+    merged, origin = {}, {}
+    for index, source in enumerate(sources):
+        for video_id, vector in source.items():
+            if merged and len(vector) != len(next(iter(merged.values()))):
+                raise ValueError(f"source {index}: inconsistent embedding dimension")
+            if video_id not in merged:
+                merged[video_id], origin[video_id] = vector, index
+    return merged, origin
+
+
+def load_seed_inputs(inputs_path: Path) -> list[PartialExample]:
+    """Load public seed-only inputs (empty prompts); refuse files carrying held-out tracks."""
     inputs = json.loads(inputs_path.read_text(encoding="utf-8"))
     if any("held_out_tracks" in row for row in inputs.get("examples", [])):
         raise ValueError("inputs must not include held-out tracks")
-    prompt_rows = json.loads(prompts_path.read_text(encoding="utf-8")).get("examples", [])
-    prompts = {str(row["example_id"]): row["prompt"] for row in prompt_rows}
     examples = []
     for row in inputs.get("examples", []):
         example_id = str(row["example_id"])
-        prompt = prompts.get(example_id)
-        if not isinstance(prompt, str) or not prompt.strip():
-            raise ValueError(f"example {example_id}: missing frozen prompt")
         seed_ids = tuple(track["video_id"] for track in row.get("seed_tracks", []))
         if not seed_ids:
             raise ValueError(f"example {example_id}: no seed video IDs")
-        examples.append(PartialExample(example_id, seed_ids, prompt))
+        examples.append(PartialExample(example_id, seed_ids, ""))
+    return examples
+
+
+def load_partial_examples(inputs_path: Path, prompts_path: Path) -> list[PartialExample]:
+    """Join public seed inputs to frozen prompt labels by example ID."""
+    prompt_rows = json.loads(prompts_path.read_text(encoding="utf-8")).get("examples", [])
+    prompts = {str(row["example_id"]): row["prompt"] for row in prompt_rows}
+    examples = []
+    for example in load_seed_inputs(inputs_path):
+        prompt = prompts.get(example.example_id)
+        if not isinstance(prompt, str) or not prompt.strip():
+            raise ValueError(f"example {example.example_id}: missing frozen prompt")
+        examples.append(replace(example, prompt=prompt))
     if set(prompts) != {example.example_id for example in examples}:
         raise ValueError("prompt labels and partial inputs have different example IDs")
     return examples
