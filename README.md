@@ -76,6 +76,51 @@ The learned metadata/title-supervised models and live experiments remain local
 in the feature worktree; [STATUS.md](docs/STATUS.md) summarizes their findings
 and remaining work.
 
+## Prompt-conditioned playlist retrieval
+
+`experiments/retrieval/` also contains the initial no-training prompt-plus-
+playlist experiment. It combines a CLAP text embedding with the normalized mean
+of available CLAP seed-song embeddings, retrieves from the embedded public
+reference pool, then reranks the first-stage candidates by seed similarity.
+Data loading (`playlist_data.py`) and fusion/ranking policy (`playlist_model.py`)
+are separate so later experiments can replace the model without changing input
+handling.
+
+The frozen labels in
+`data/youtube_music/partial_examples/v3/prompt_inputs.json` are built by
+`build_partial_prompts.py`. They were manually authored from visible seed-track
+metadata only; a source playlist's five- and twenty-seed inputs share one
+prompt. Regenerate the ignored local artifact after extracting the dataset:
+
+```sh
+uv run python -m experiments.retrieval.build_partial_prompts \
+  --output data/youtube_music/partial_examples/v3/prompt_inputs.json
+```
+
+The prediction runner reads `model_inputs.json`, the frozen prompt labels,
+public reference-pool candidates, and Kartik's cached YTM CLAP vectors. It does
+not read `dataset.json` or held-out tracks. Candidate IDs are YouTube Music
+video IDs, so its output has the same `{example_id: [video_id, ...]}` contract
+as `predictions/cooccurrence.json` and `predictions/ytm_native.json` and can use
+the shared evaluator directly. Run it in the separate encoder environment:
+
+```sh
+/data/user_data/hpoonia/mlip/encoder-venv/bin/python \
+  -m experiments.retrieval.run_playlist_conditioned \
+  --embeddings /data/user_data/ksnair/mlip/embeddings/ytm-eval/clap.npz \
+  --output predictions/prompt_playlist_clap_fusion.json \
+  --report data/retrieval/prompt_playlist_clap_fusion/report.json \
+  --prompt-weight 0.5 --rerank-seed-weight 0.25 --top-k 5 --device cpu
+uv run python evaluation/evaluate.py \
+  --predictions predictions/prompt_playlist_clap_fusion.json \
+  --output data/retrieval/prompt_playlist_clap_fusion/evaluation.json
+```
+
+Both output paths must be new. The report records per-example missing seed
+vectors and whether the model fell back to prompt-only retrieval; do not treat
+those fallbacks as seed-conditioned results. The cached `clap.npz` is a Babel
+artifact rather than a Git dataset handoff.
+
 The twenty synthetic prompts are in `prompts.txt`. YouTube Music collection,
 partial-playlist creation, suggestions, and browser-auth setup commands are documented
 in the scripts under `youtube_music/scripts/` (also available via `--help`).
