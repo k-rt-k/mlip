@@ -4,6 +4,22 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables:
 [initial ML solution](../milestones/initial_ml_solution.md),
 [baselines milestone](../milestones/baselines.md).
 
+## 2026-10-29 — Seed-only CLAP retrieval scored (Ayush)
+
+- **Ready:** `experiments/retrieval/run_seed_only.py` mean-pools seed CLAP
+  vectors and ranks the embedded reference pool (2,003 songs) by cosine
+  similarity, excluding seeds; no text, no training, NumPy only. It overlays
+  `ytm-eval/clap.npz` with `ytm-eval/seed-youtube-clap.npz` (both under
+  Kartik's Babel embeddings directory), so all 500 seed slots have vectors.
+  [Predictions](../predictions/seed_only_clap.json),
+  [evaluation](../results/seed_only_clap.txt).
+- **Results (@5, five/twenty seeds):** precision **0.14 / 0.08**, hit rate
+  **0.35 / 0.20**, NDCG **0.1442 / 0.0881**. Hits concentrate in examples
+  3, 12 and 32; only 26/40 inputs have any hidden song among the embedded
+  candidates, so the candidate pool caps every pool-based method.
+- **Remaining:** fixed-setting pooling/diversity variants and CLAP reranking of
+  Radio Pool candidates (needs vectors for those candidates).
+
 ## 2026-10-29 — Partial-playlist seed embeddings complete (Kartik)
 
 - **Dataset:** the 40 five-/twenty-song partial inputs contain 399 distinct seed
