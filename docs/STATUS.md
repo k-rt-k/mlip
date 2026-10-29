@@ -4,32 +4,29 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables:
 [initial ML solution](../milestones/initial_ml_solution.md),
 [baselines milestone](../milestones/baselines.md).
 
-## 2026-10-28 — Seed-audio coverage and YouTube fallback probe (Kartik)
+## 2026-10-29 — Partial-playlist seed embeddings complete (Kartik)
 
 - **Dataset:** the 40 five-/twenty-song partial inputs contain 399 distinct seed
-  video IDs; the twenty-song input includes its paired five seeds. Cached CLAP
-  vectors cover 160 seeds. All 239 uncovered seeds have `no_match` in the
-  existing Deezer map, leaving 11 inputs with no embedded seed. Examples include
-  Rousseau's Scriabin/Chopin uploads, Sophie Milman tracks credited to upload
-  channels, and Keyshia Cole's *I Should Have Cheated*. `no_match` does not
-  establish that the recording is absent from Deezer.
-- **Feasibility probe:** `ytmusicapi.get_song()` reported playable audio formats
-  for the Scriabin and Keyshia Cole seeds, but only signature-cipher URLs.
-  `yt-dlp` fetched a decodable 30-second segment from each YouTube video; the
-  existing CLAP encoder produced a finite, normalized 512-D vector from the
-  Scriabin segment. Probe clips and the seed-only retrieval smoke check remain
-  local under `data/retrieval/seed-smoke/` and are not dataset handoff artifacts.
+  video IDs; the twenty-song input includes its paired five seeds. All **399**
+  now have 512-D CLAP vectors: 160 from matched Deezer previews in
+  `/data/user_data/ksnair/mlip/embeddings/ytm-eval/clap.npz` and 239 in the
+  separate `seed-youtube-clap.npz` fallback cache. The fallback uses 237 YouTube
+  video segments and two iTunes previews for unavailable videos; 236 staged
+  clips were embedded together on CPU with no decode failures. All 40 inputs
+  have seed vectors. Clips and provenance remain on Babel under
+  `/data/user_data/ksnair/mlip/embeddings/seed-youtube-clips/`; pilot scripts
+  remain local under `data/retrieval/seed-smoke/`, not in the Git handoff.
 - **Planned retrieval inputs:** text only uses text embeddings; seeds only uses
   playlist-song embeddings. With both inputs, compare text-dominant combined
   embeddings for first-stage retrieval against text-only first-stage retrieval
   followed by seed-based reranking. Compare seed-similarity and diversity-aware
   rerankers while preserving text relevance when the request conflicts with the
   existing playlist. These combined-input methods are not implemented or scored.
-- **Remaining:** implement request-time retrieval and caching of missing seed
-  embeddings, then evaluate seed-only retrieval, text-plus-seed retrieval, and
-  seed-based reranking. The probe did not update `clap.npz` or change the 11-input
-  coverage gap; it does not establish recommendation quality or coverage for all
-  239 unmatched videos.
+- **Remaining:** make the fallback and cache-overlay path reproducible for
+  teammates, then evaluate seed-only retrieval, text-plus-seed retrieval, and
+  seed-based reranking. Embedding coverage does not establish recommendation
+  quality; the slowed-and-reverb iTunes match has a duration mismatch with its
+  original YouTube upload, accepted for this pilot.
 
 ## 2026-10-28 — Prompt-only retrieval infrastructure and modeling progress (Harsh)
 
