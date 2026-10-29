@@ -11,8 +11,8 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables:
   similarity, excluding seeds; no text, no training, NumPy only. It overlays
   `ytm-eval/clap.npz` with `ytm-eval/seed-youtube-clap.npz` (both under
   Kartik's Babel embeddings directory), so all 500 seed slots have vectors.
-  [Predictions](../predictions/seed_only_clap.json),
-  [evaluation](../results/seed_only_clap.txt).
+  [Predictions](../predictions/seed_only_clap_v1.json),
+  [evaluation](../results/seed_only_clap_v1.txt).
 - **Results (@5, five/twenty seeds):** precision **0.14 / 0.08**, hit rate
   **0.35 / 0.20**, NDCG **0.1442 / 0.0881**. Hits concentrate in examples
   3, 12 and 32; only 26/40 inputs have any hidden song among the embedded

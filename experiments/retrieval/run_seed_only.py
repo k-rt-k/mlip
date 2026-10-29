@@ -8,11 +8,11 @@ reads dataset.json or held-out tracks.
 
   uv run python -m experiments.retrieval.run_seed_only \
     --embeddings data/embeddings/clap.npz data/embeddings/seed-youtube-clap.npz \
-    --output predictions/seed_only_clap.json \
-    --report data/retrieval/seed_only_clap/report.json
+    --output predictions/seed_only_clap_v1.json \
+    --report data/retrieval/seed_only_clap_v1/report.json
   uv run python evaluation/evaluate.py \
-    --predictions predictions/seed_only_clap.json \
-    --output data/retrieval/seed_only_clap/evaluation.json
+    --predictions predictions/seed_only_clap_v1.json \
+    --output data/retrieval/seed_only_clap_v1/evaluation.json
 
 On Babel the caches are /data/user_data/ksnair/mlip/embeddings/ytm-eval/clap.npz
 and /data/user_data/ksnair/mlip/embeddings/seed-youtube-clap.npz.

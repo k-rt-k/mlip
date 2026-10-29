@@ -1,5 +1,5 @@
 
-Evaluating: seed_only_clap.json
+Evaluating: seed_only_clap_v1.json
 Ground Truth: dataset.json (40 examples)
 
 Example ID   | Seeds        | precision@1  | recall@1     | hit_rate@1   | map@1        | ndcg@1       | precision@5  | recall@5     | hit_rate@5   | map@5        | ndcg@5       | r_precision 
@@ -92,4 +92,4 @@ OVERALL DATASET SUMMARY (40/40 evaluated)
   r_precision : 0.0101
 ==================================================
 
-Detailed results saved to data/retrieval/seed_only_clap/evaluation.json
+Detailed results saved to data/retrieval/seed_only_clap_v1/evaluation.json
