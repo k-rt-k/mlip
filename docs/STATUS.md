@@ -19,11 +19,17 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables:
   existing CLAP encoder produced a finite, normalized 512-D vector from the
   Scriabin segment. Probe clips and the seed-only retrieval smoke check remain
   local under `data/retrieval/seed-smoke/` and are not dataset handoff artifacts.
+- **Planned retrieval inputs:** text only uses text embeddings; seeds only uses
+  playlist-song embeddings. With both inputs, compare text-dominant combined
+  embeddings for first-stage retrieval against text-only first-stage retrieval
+  followed by seed-based reranking. Compare seed-similarity and diversity-aware
+  rerankers while preserving text relevance when the request conflicts with the
+  existing playlist. These combined-input methods are not implemented or scored.
 - **Remaining:** implement request-time retrieval and caching of missing seed
   embeddings, then evaluate seed-only retrieval, text-plus-seed retrieval, and
   seed-based reranking. The probe did not update `clap.npz` or change the 11-input
   coverage gap; it does not establish recommendation quality or coverage for all
-  239 unmatched videos. Text-only retrieval does not depend on seed audio.
+  239 unmatched videos.
 
 ## 2026-10-28 — Prompt-only retrieval infrastructure and modeling progress (Harsh)
 
