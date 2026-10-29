@@ -4,6 +4,27 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables:
 [initial ML solution](../milestones/initial_ml_solution.md),
 [baselines milestone](../milestones/baselines.md).
 
+## 2026-10-28 — Seed-audio coverage and YouTube fallback probe (Kartik)
+
+- **Dataset:** the 40 five-/twenty-song partial inputs contain 399 distinct seed
+  video IDs; the twenty-song input includes its paired five seeds. Cached CLAP
+  vectors cover 160 seeds. All 239 uncovered seeds have `no_match` in the
+  existing Deezer map, leaving 11 inputs with no embedded seed. Examples include
+  Rousseau's Scriabin/Chopin uploads, Sophie Milman tracks credited to upload
+  channels, and Keyshia Cole's *I Should Have Cheated*. `no_match` does not
+  establish that the recording is absent from Deezer.
+- **Feasibility probe:** `ytmusicapi.get_song()` reported playable audio formats
+  for the Scriabin and Keyshia Cole seeds, but only signature-cipher URLs.
+  `yt-dlp` fetched a decodable 30-second segment from each YouTube video; the
+  existing CLAP encoder produced a finite, normalized 512-D vector from the
+  Scriabin segment. Probe clips and the seed-only retrieval smoke check remain
+  local under `data/retrieval/seed-smoke/` and are not dataset handoff artifacts.
+- **Remaining:** implement request-time retrieval and caching of missing seed
+  embeddings, then evaluate seed-only retrieval, text-plus-seed retrieval, and
+  seed-based reranking. The probe did not update `clap.npz` or change the 11-input
+  coverage gap; it does not establish recommendation quality or coverage for all
+  239 unmatched videos. Text-only retrieval does not depend on seed audio.
+
 ## 2026-10-28 — Prompt-only retrieval infrastructure and modeling progress (Harsh)
 
 - **Shared:** CPU FAISS exact/IVF/HNSW search, validated catalog loading,
