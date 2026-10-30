@@ -5,7 +5,10 @@ from collections import defaultdict
 import json
 from pathlib import Path
 
-from metrics import calculate_all_metrics
+try:  # Supports both `python evaluation/evaluate.py` and module callers.
+    from .metrics import calculate_all_metrics
+except ImportError:
+    from metrics import calculate_all_metrics
 
 
 def load_dataset_ground_truth(dataset_path: Path) -> dict:

@@ -1,0 +1,1097 @@
+{
+  "config": {
+    "paths": {
+      "inputs": "data/youtube_music/partial_examples/v3/model_inputs.json",
+      "prompts": "data/youtube_music/partial_examples/v3/prompt_inputs.json",
+      "references": "data/youtube_music/references/v2/reference_pools.json",
+      "embeddings": [
+        "/data/user_data/ksnair/mlip/embeddings/ytm-eval/clap.npz",
+        "/data/user_data/ksnair/mlip/embeddings/ytm-eval/seed-youtube-clap.npz"
+      ],
+      "output": "/home/sanaokar/Projects/10718/mlip/predictions/prompt_playlist_matrix/agg-mean__ret-text_only__rank-rrf__seed-max.json",
+      "report": "/home/sanaokar/Projects/10718/mlip/results/prompt_playlist_matrix/agg-mean__ret-text_only__rank-rrf__seed-max.report.json"
+    },
+    "encoder": {
+      "name": "clap",
+      "repository": "laion/larger_clap_music_and_speech",
+      "dimension": 512
+    },
+    "coverage": {
+      "require_all_seed_embeddings": true
+    },
+    "seed_aggregation": {
+      "method": "mean",
+      "top_k": 5,
+      "temperature": 0.1
+    },
+    "retrieval": {
+      "method": "text_only",
+      "candidate_k": 100,
+      "prompt_weight": 0.5
+    },
+    "ranking": {
+      "method": "rrf",
+      "prompt_weight": 0.6,
+      "seed_similarity": "max",
+      "seed_top_k": 3,
+      "rrf_k": 60,
+      "cooccurrence_weight": 0.0
+    },
+    "filtering": {
+      "exclude_seed_ids": true,
+      "mmr_lambda": 1.0
+    },
+    "output": {
+      "top_k": 5
+    }
+  },
+  "config_sha256": "f454b42e98c95dce17a814211a1ae313ff30c10a00d908c3cbfa5796cbac18a3",
+  "candidate_count": 2003,
+  "embedding_sources": [
+    "/data/user_data/ksnair/mlip/embeddings/ytm-eval/clap.npz",
+    "/data/user_data/ksnair/mlip/embeddings/ytm-eval/seed-youtube-clap.npz"
+  ],
+  "missing_seed_embeddings": {},
+  "examples": [
+    {
+      "example_id": "1",
+      "seed_embedding_count": 5,
+      "recommendations": [
+        {
+          "video_id": "mfGfnBsuh9s",
+          "score": 0.03057889822595705
+        },
+        {
+          "video_id": "0ciHfIvQxM4",
+          "score": 0.030536130536130537
+        },
+        {
+          "video_id": "lPvEWUf_LQk",
+          "score": 0.028177225029148854
+        },
+        {
+          "video_id": "WR9i8CfEziw",
+          "score": 0.028021349599695006
+        },
+        {
+          "video_id": "oTPuLgnk8iQ",
+          "score": 0.02758751902587519
+        }
+      ]
+    },
+    {
+      "example_id": "2",
+      "seed_embedding_count": 5,
+      "recommendations": [
+        {
+          "video_id": "U3zFsNrpu1o",
+          "score": 0.029437229437229435
+        },
+        {
+          "video_id": "odPzuYJruz0",
+          "score": 0.029030910609857977
+        },
+        {
+          "video_id": "LJwZcfREQiU",
+          "score": 0.025726010101010104
+        },
+        {
+          "video_id": "kJtr5JwgrHM",
+          "score": 0.02438307873090482
+        },
+        {
+          "video_id": "9uXuKnJ4E0Q",
+          "score": 0.023614523614523618
+        }
+      ]
+    },
+    {
+      "example_id": "3",
+      "seed_embedding_count": 5,
+      "recommendations": [
+        {
+          "video_id": "8sYMoQwk3VM",
+          "score": 0.02904040404040404
+        },
+        {
+          "video_id": "r3p3G0tZunE",
+          "score": 0.02857142857142857
+        },
+        {
+          "video_id": "k2btwdWYAX0",
+          "score": 0.028404512489927477
+        },
+        {
+          "video_id": "1zpePewGTKk",
+          "score": 0.02782608695652174
+        },
+        {
+          "video_id": "3w0T9GxZx34",
+          "score": 0.025384615384615387
+        }
+      ]
+    },
+    {
+      "example_id": "4",
+      "seed_embedding_count": 5,
+      "recommendations": [
+        {
+          "video_id": "FBdLS0sGZA0",
+          "score": 0.03007688828584351
+        },
+        {
+          "video_id": "hDXNccjTirw",
+          "score": 0.028474711270410194
+        },
+        {
+          "video_id": "y08pFwmgKz8",
+          "score": 0.02817460317460317
+        },
+        {
+          "video_id": "yWEK4v9AVKQ",
+          "score": 0.027820121951219513
+        },
+        {
+          "video_id": "90RLzVUuXe4",
+          "score": 0.0277569392348087
+        }
+      ]
+    },
+    {
+      "example_id": "5",
+      "seed_embedding_count": 5,
+      "recommendations": [
+        {
+          "video_id": "__JkTHlgMrU",
+          "score": 0.027500922849760058
+        },
+        {
+          "video_id": "u2eBRuQgkfQ",
+          "score": 0.027479766610201392
+        },
+        {
+          "video_id": "xadE8fui3HM",
+          "score": 0.02715098147128967
+        },
+        {
+          "video_id": "cthVYrcPMuU",
+          "score": 0.0264808362369338
+        },
+        {
+          "video_id": "1jm55L-iKSQ",
+          "score": 0.025568181818181816
+        }
+      ]
+    },
+    {
+      "example_id": "6",
+      "seed_embedding_count": 5,
+      "recommendations": [
+        {
+          "video_id": "gnEzAfILbog",
+          "score": 0.03252247488101534
+        },
+        {
+          "video_id": "F0_HWOTptVQ",
+          "score": 0.030776515151515152
+        },
+        {
+          "video_id": "Ql13IeqrW90",
+          "score": 0.030621785881252923
+        },
+        {
+          "video_id": "l_Kxs2YXBBs",
+          "score": 0.02967032967032967
+        },
+        {
+          "video_id": "JEwzguUuSW8",
+          "score": 0.02964426877470356
+        }
+      ]
+    },
+    {
+      "example_id": "7",
+      "seed_embedding_count": 5,
+      "recommendations": [
+        {
+          "video_id": "Coav1tAY3H4",
+          "score": 0.032266458495966696
+        },
+        {
+          "video_id": "pK76GKkEc9o",
+          "score": 0.02928692699490662
+        },
+        {
+          "video_id": "7GIEQ0djOKk",
+          "score": 0.02844551282051282
+        },
+        {
+          "video_id": "jqL7GEJap8k",
+          "score": 0.028381642512077296
+        },
+        {
+          "video_id": "CSD2J8yaMmM",
+          "score": 0.028258706467661692
+        }
+      ]
+    },
+    {
+      "example_id": "8",
+      "seed_embedding_count": 5,
+      "recommendations": [
+        {
+          "video_id": "1ClCpfeIELw",
+          "score": 0.020128824476650563
+        },
+        {
+          "video_id": "qExd-3oCTl4",
+          "score": 0.018688628444726005
+        },
+        {
+          "video_id": "vey0_sCdOEg",
+          "score": 0.01839080459770115
+        },
+        {
+          "video_id": "Yo7SJEDYf_k",
+          "score": 0.01784082502937209
+        },
+        {
+          "video_id": "fjKUPUHNx50",
+          "score": 0.01746986888775168
+        }
+      ]
+    },
+    {
+      "example_id": "9",
+      "seed_embedding_count": 5,
+      "recommendations": [
+        {
+          "video_id": "2481OXYtRc8",
+          "score": 0.02946912242686891
+        },
+        {
+          "video_id": "Hc9lGPfVTpY",
+          "score": 0.026916221033868093
+        },
+        {
+          "video_id": "EjvAa0RxDLo",
+          "score": 0.026515151515151516
+        },
+        {
+          "video_id": "tNMLgD2l2OU",
+          "score": 0.025987006496751626
+        },
+        {
+          "video_id": "TgzcUDoqUmw",
+          "score": 0.025561706284597852
+        }
+      ]
+    },
+    {
+      "example_id": "10",
+      "seed_embedding_count": 5,
+      "recommendations": [
+        {
+          "video_id": "en6PbMp8C9A",
+          "score": 0.021081349206349204
+        },
+        {
+          "video_id": "zQDOIdBZYSY",
+          "score": 0.019930069930069932
+        },
+        {
+          "video_id": "_71w4UA2Oxo",
+          "score": 0.019306752873563218
+        },
+        {
+          "video_id": "N_MqfF0WBsU",
+          "score": 0.01924244547195367
+        },
+        {
+          "video_id": "h04CH9YZcpI",
+          "score": 0.019183718861209963
+        }
+      ]
+    },
+    {
+      "example_id": "11",
+      "seed_embedding_count": 5,
+      "recommendations": [
+        {
+          "video_id": "gsXc35meyc8",
+          "score": 0.03125
+        },
+        {
+          "video_id": "oHOKJa_B2bk",
+          "score": 0.029030910609857977
+        },
+        {
+          "video_id": "lCz268SkPXc",
+          "score": 0.026875901875901876
+        },
+        {
+          "video_id": "c_dayX7qEcg",
+          "score": 0.026333907056798625
+        },
+        {
+          "video_id": "9pC1IGm6CIU",
+          "score": 0.025708635464733027
+        }
+      ]
+    },
+    {
+      "example_id": "12",
+      "seed_embedding_count": 5,
+      "recommendations": [
+        {
+          "video_id": "FkJAfbwnhRk",
+          "score": 0.02821939586645469
+        },
+        {
+          "video_id": "b5ktm_C8v6g",
+          "score": 0.02804284323271665
+        },
+        {
+          "video_id": "odPzuYJruz0",
+          "score": 0.0277569392348087
+        },
+        {
+          "video_id": "RgXHWXgwJko",
+          "score": 0.027071520029266508
+        },
+        {
+          "video_id": "6kNHqkQH8PA",
+          "score": 0.026992753623188405
+        }
+      ]
+    },
+    {
+      "example_id": "13",
+      "seed_embedding_count": 5,
+      "recommendations": [
+        {
+          "video_id": "GEo7W-uJNkc",
+          "score": 0.017857142857142856
+        },
+        {
+          "video_id": "kb2DgAF3egQ",
+          "score": 0.017842717985269662
+        },
+        {
+          "video_id": "yrQC7RFu86U",
+          "score": 0.01764520202020202
+        },
+        {
+          "video_id": "WoPGkzFkp_k",
+          "score": 0.01748060246462802
+        },
+        {
+          "video_id": "MaFG1zXwrig",
+          "score": 0.017176730079955887
+        }
+      ]
+    },
+    {
+      "example_id": "14",
+      "seed_embedding_count": 5,
+      "recommendations": [
+        {
+          "video_id": "KlThh1XDxPg",
+          "score": 0.03047794966520434
+        },
+        {
+          "video_id": "vic2JQR6VD4",
+          "score": 0.02976190476190476
+        },
+        {
+          "video_id": "rZHgUQqiWDI",
+          "score": 0.028205128205128206
+        },
+        {
+          "video_id": "frYLvC0mM50",
+          "score": 0.02694394213381555
+        },
+        {
+          "video_id": "RRAoR3bEuWU",
+          "score": 0.026856524873828405
+        }
+      ]
+    },
+    {
+      "example_id": "15",
+      "seed_embedding_count": 5,
+      "recommendations": [
+        {
+          "video_id": "pEmX5HR9ZxU",
+          "score": 0.032266458495966696
+        },
+        {
+          "video_id": "4TqyGMjeIpA",
+          "score": 0.027820121951219513
+        },
+        {
+          "video_id": "btPJPFnesV4",
+          "score": 0.026709401709401708
+        },
+        {
+          "video_id": "QYHxGBH6o4M",
+          "score": 0.025320462098433298
+        },
+        {
+          "video_id": "PVWqSWmzgYA",
+          "score": 0.025219941348973606
+        }
+      ]
+    },
+    {
+      "example_id": "16",
+      "seed_embedding_count": 5,
+      "recommendations": [
+        {
+          "video_id": "cuOwnrgElZo",
+          "score": 0.026263297872340427
+        },
+        {
+          "video_id": "IlB1HcO-rm4",
+          "score": 0.022528411948104194
+        },
+        {
+          "video_id": "wGxOUubfp3A",
+          "score": 0.022492753623188408
+        },
+        {
+          "video_id": "bV_pFKp2qr8",
+          "score": 0.022203947368421052
+        },
+        {
+          "video_id": "YxzILTR69vs",
+          "score": 0.022000830220008302
+        }
+      ]
+    },
+    {
+      "example_id": "17",
+      "seed_embedding_count": 5,
+      "recommendations": [
+        {
+          "video_id": "3XM4UOjAyF4",
+          "score": 0.026137303556658397
+        },
+        {
+          "video_id": "UZRjMpMW6kw",
+          "score": 0.02607709750566893
+        },
+        {
+          "video_id": "N5GUm_kuKrM",
+          "score": 0.025481764612199396
+        },
+        {
+          "video_id": "SGABu62-GC4",
+          "score": 0.025458570524984188
+        },
+        {
+          "video_id": "AdUBTE9JpgI",
+          "score": 0.025278219395866455
+        }
+      ]
+    },
+    {
+      "example_id": "18",
+      "seed_embedding_count": 5,
+      "recommendations": [
+        {
+          "video_id": "JbEaftzaFWA",
+          "score": 0.020823510922520824
+        },
+        {
+          "video_id": "CGib6okEeZ4",
+          "score": 0.018978233495232956
+        },
+        {
+          "video_id": "nKhN1t_7PEY",
+          "score": 0.017807869779952235
+        },
+        {
+          "video_id": "Ve6xNXf1geg",
+          "score": 0.017612859097127224
+        },
+        {
+          "video_id": "BdwKJ30jits",
+          "score": 0.01748947569843092
+        }
+      ]
+    },
+    {
+      "example_id": "19",
+      "seed_embedding_count": 5,
+      "recommendations": [
+        {
+          "video_id": "AkP6nrzJ47Q",
+          "score": 0.030886196246139225
+        },
+        {
+          "video_id": "XhlOti3H6L0",
+          "score": 0.030798389007344232
+        },
+        {
+          "video_id": "x_kd92JLid4",
+          "score": 0.029877369007803793
+        },
+        {
+          "video_id": "MJWg7BxEPus",
+          "score": 0.029083245521601686
+        },
+        {
+          "video_id": "X2n5M-eLG3I",
+          "score": 0.028949545078577336
+        }
+      ]
+    },
+    {
+      "example_id": "20",
+      "seed_embedding_count": 5,
+      "recommendations": [
+        {
+          "video_id": "6OUTn_Rhl4s",
+          "score": 0.032018442622950824
+        },
+        {
+          "video_id": "4TqyGMjeIpA",
+          "score": 0.029206349206349208
+        },
+        {
+          "video_id": "UbsbqkgzxWM",
+          "score": 0.028790389395194696
+        },
+        {
+          "video_id": "oGpFcHTxjZs",
+          "score": 0.02736726874657909
+        },
+        {
+          "video_id": "--3LNZKHaVM",
+          "score": 0.02694394213381555
+        }
+      ]
+    },
+    {
+      "example_id": "21",
+      "seed_embedding_count": 20,
+      "recommendations": [
+        {
+          "video_id": "0ciHfIvQxM4",
+          "score": 0.03128054740957967
+        },
+        {
+          "video_id": "mfGfnBsuh9s",
+          "score": 0.030330882352941176
+        },
+        {
+          "video_id": "WR9i8CfEziw",
+          "score": 0.028021349599695006
+        },
+        {
+          "video_id": "lPvEWUf_LQk",
+          "score": 0.02792120864410021
+        },
+        {
+          "video_id": "BnAnXYQQA3g",
+          "score": 0.027650648360030512
+        }
+      ]
+    },
+    {
+      "example_id": "22",
+      "seed_embedding_count": 20,
+      "recommendations": [
+        {
+          "video_id": "U3zFsNrpu1o",
+          "score": 0.027972027972027972
+        },
+        {
+          "video_id": "LJwZcfREQiU",
+          "score": 0.02548562548562549
+        },
+        {
+          "video_id": "kSYa8fqKRIU",
+          "score": 0.02481203007518797
+        },
+        {
+          "video_id": "FkJAfbwnhRk",
+          "score": 0.024603608529250955
+        },
+        {
+          "video_id": "kJtr5JwgrHM",
+          "score": 0.02438307873090482
+        }
+      ]
+    },
+    {
+      "example_id": "23",
+      "seed_embedding_count": 20,
+      "recommendations": [
+        {
+          "video_id": "1zpePewGTKk",
+          "score": 0.02632034632034632
+        },
+        {
+          "video_id": "4EAJBYl8s9U",
+          "score": 0.026132699813337858
+        },
+        {
+          "video_id": "8sYMoQwk3VM",
+          "score": 0.0260840108401084
+        },
+        {
+          "video_id": "BptDznVpt6M",
+          "score": 0.025278219395866455
+        },
+        {
+          "video_id": "k2btwdWYAX0",
+          "score": 0.024705882352941175
+        }
+      ]
+    },
+    {
+      "example_id": "24",
+      "seed_embedding_count": 20,
+      "recommendations": [
+        {
+          "video_id": "y08pFwmgKz8",
+          "score": 0.027443609022556388
+        },
+        {
+          "video_id": "z_KKUGsAmNo",
+          "score": 0.027432808155699723
+        },
+        {
+          "video_id": "hDXNccjTirw",
+          "score": 0.02736498731424429
+        },
+        {
+          "video_id": "extNwmcQMtg",
+          "score": 0.027313266443701224
+        },
+        {
+          "video_id": "yCTxqM-aLtE",
+          "score": 0.027118043247075507
+        }
+      ]
+    },
+    {
+      "example_id": "25",
+      "seed_embedding_count": 20,
+      "recommendations": [
+        {
+          "video_id": "5bH95lsXIf0",
+          "score": 0.02813852813852814
+        },
+        {
+          "video_id": "dEx6--zd_XE",
+          "score": 0.027119252873563218
+        },
+        {
+          "video_id": "xadE8fui3HM",
+          "score": 0.026171741361614778
+        },
+        {
+          "video_id": "lfAvlweslo8",
+          "score": 0.025245441795231416
+        },
+        {
+          "video_id": "5aCm5CLooCM",
+          "score": 0.02501516070345664
+        }
+      ]
+    },
+    {
+      "example_id": "26",
+      "seed_embedding_count": 20,
+      "recommendations": [
+        {
+          "video_id": "CpB7-8SGlJ0",
+          "score": 0.032266458495966696
+        },
+        {
+          "video_id": "gnEzAfILbog",
+          "score": 0.03225806451612903
+        },
+        {
+          "video_id": "JGqzKmp_5Bg",
+          "score": 0.03131881575727918
+        },
+        {
+          "video_id": "Ql13IeqrW90",
+          "score": 0.03036576949620428
+        },
+        {
+          "video_id": "F0_HWOTptVQ",
+          "score": 0.029910714285714284
+        }
+      ]
+    },
+    {
+      "example_id": "27",
+      "seed_embedding_count": 20,
+      "recommendations": [
+        {
+          "video_id": "Coav1tAY3H4",
+          "score": 0.031746031746031744
+        },
+        {
+          "video_id": "OnZM-_gRAeA",
+          "score": 0.0287391216352965
+        },
+        {
+          "video_id": "jqL7GEJap8k",
+          "score": 0.028594771241830064
+        },
+        {
+          "video_id": "DY2nc8zGRso",
+          "score": 0.02844551282051282
+        },
+        {
+          "video_id": "pK76GKkEc9o",
+          "score": 0.028309409888357256
+        }
+      ]
+    },
+    {
+      "example_id": "28",
+      "seed_embedding_count": 20,
+      "recommendations": [
+        {
+          "video_id": "fC_q9KPczAg",
+          "score": 0.028850145288501453
+        },
+        {
+          "video_id": "2AJKPKTzuOY",
+          "score": 0.02758751902587519
+        },
+        {
+          "video_id": "Yo7SJEDYf_k",
+          "score": 0.027425373134328357
+        },
+        {
+          "video_id": "TdOhTyePFJ4",
+          "score": 0.026262626262626265
+        },
+        {
+          "video_id": "1Iw1Qx7c2yc",
+          "score": 0.02402703040921036
+        }
+      ]
+    },
+    {
+      "example_id": "29",
+      "seed_embedding_count": 20,
+      "recommendations": [
+        {
+          "video_id": "2481OXYtRc8",
+          "score": 0.027783137179239824
+        },
+        {
+          "video_id": "pvvqweS4mj4",
+          "score": 0.027417840375586856
+        },
+        {
+          "video_id": "EjvAa0RxDLo",
+          "score": 0.024877149877149878
+        },
+        {
+          "video_id": "Hc9lGPfVTpY",
+          "score": 0.023772204806687566
+        },
+        {
+          "video_id": "h_wr-9X47ao",
+          "score": 0.02345679012345679
+        }
+      ]
+    },
+    {
+      "example_id": "30",
+      "seed_embedding_count": 20,
+      "recommendations": [
+        {
+          "video_id": "iJNfMSIEdQE",
+          "score": 0.02
+        },
+        {
+          "video_id": "h04CH9YZcpI",
+          "score": 0.018840434083601285
+        },
+        {
+          "video_id": "en6PbMp8C9A",
+          "score": 0.018511538300456504
+        },
+        {
+          "video_id": "N_MqfF0WBsU",
+          "score": 0.0181478285878631
+        },
+        {
+          "video_id": "zQDOIdBZYSY",
+          "score": 0.018080033174372796
+        }
+      ]
+    },
+    {
+      "example_id": "31",
+      "seed_embedding_count": 20,
+      "recommendations": [
+        {
+          "video_id": "QgIgn34yWm0",
+          "score": 0.02492401215805471
+        },
+        {
+          "video_id": "lLOtGFYoKJk",
+          "score": 0.023157894736842106
+        },
+        {
+          "video_id": "i9daipB3LYc",
+          "score": 0.022548187659110194
+        },
+        {
+          "video_id": "gsXc35meyc8",
+          "score": 0.02247431506849315
+        },
+        {
+          "video_id": "PhFbh6wjrZI",
+          "score": 0.021567717996289426
+        }
+      ]
+    },
+    {
+      "example_id": "32",
+      "seed_embedding_count": 20,
+      "recommendations": [
+        {
+          "video_id": "odPzuYJruz0",
+          "score": 0.027252906976744186
+        },
+        {
+          "video_id": "gnEzAfILbog",
+          "score": 0.025563671006668783
+        },
+        {
+          "video_id": "F0_HWOTptVQ",
+          "score": 0.025219941348973606
+        },
+        {
+          "video_id": "CpB7-8SGlJ0",
+          "score": 0.024386724386724387
+        },
+        {
+          "video_id": "RgXHWXgwJko",
+          "score": 0.024288588674906582
+        }
+      ]
+    },
+    {
+      "example_id": "33",
+      "seed_embedding_count": 20,
+      "recommendations": [
+        {
+          "video_id": "yrQC7RFu86U",
+          "score": 0.030776515151515152
+        },
+        {
+          "video_id": "1cQh1ccqu8M",
+          "score": 0.027984344422700584
+        },
+        {
+          "video_id": "GEo7W-uJNkc",
+          "score": 0.027777777777777776
+        },
+        {
+          "video_id": "kdZDzjd3bvs",
+          "score": 0.025837770122142185
+        },
+        {
+          "video_id": "MaFG1zXwrig",
+          "score": 0.02548562548562549
+        }
+      ]
+    },
+    {
+      "example_id": "34",
+      "seed_embedding_count": 20,
+      "recommendations": [
+        {
+          "video_id": "rTVjnBo96Ug",
+          "score": 0.029138513513513514
+        },
+        {
+          "video_id": "RRAoR3bEuWU",
+          "score": 0.028404512489927477
+        },
+        {
+          "video_id": "vic2JQR6VD4",
+          "score": 0.027777777777777776
+        },
+        {
+          "video_id": "KlThh1XDxPg",
+          "score": 0.025849212924606464
+        },
+        {
+          "video_id": "n_L77bD5WYg",
+          "score": 0.025252525252525256
+        }
+      ]
+    },
+    {
+      "example_id": "35",
+      "seed_embedding_count": 20,
+      "recommendations": [
+        {
+          "video_id": "4TqyGMjeIpA",
+          "score": 0.023689516129032258
+        },
+        {
+          "video_id": "m3-hY-hlhBg",
+          "score": 0.023122039251071508
+        },
+        {
+          "video_id": "unfzfe8f9NI",
+          "score": 0.022149202872094438
+        },
+        {
+          "video_id": "Zi_XLOBDo_Y",
+          "score": 0.021954113924050632
+        },
+        {
+          "video_id": "pIgZ7gMze7A",
+          "score": 0.02187812187812188
+        }
+      ]
+    },
+    {
+      "example_id": "36",
+      "seed_embedding_count": 20,
+      "recommendations": [
+        {
+          "video_id": "IlB1HcO-rm4",
+          "score": 0.025827404887101765
+        },
+        {
+          "video_id": "z5kwKyh1GuU",
+          "score": 0.025503573749187783
+        },
+        {
+          "video_id": "cuOwnrgElZo",
+          "score": 0.022833419823559936
+        },
+        {
+          "video_id": "3dP6pyWe30Y",
+          "score": 0.02150860344137655
+        },
+        {
+          "video_id": "5-C20Z_WZwA",
+          "score": 0.02147344374643061
+        }
+      ]
+    },
+    {
+      "example_id": "37",
+      "seed_embedding_count": 20,
+      "recommendations": [
+        {
+          "video_id": "JY3duDtPOTw",
+          "score": 0.03128054740957967
+        },
+        {
+          "video_id": "icgiMUuogkQ",
+          "score": 0.027056277056277056
+        },
+        {
+          "video_id": "8Z_-ZeyFebg",
+          "score": 0.025728708679368183
+        },
+        {
+          "video_id": "UZRjMpMW6kw",
+          "score": 0.02558175373709354
+        },
+        {
+          "video_id": "v_6USrg4p4A",
+          "score": 0.024393871783430016
+        }
+      ]
+    },
+    {
+      "example_id": "38",
+      "seed_embedding_count": 20,
+      "recommendations": [
+        {
+          "video_id": "nqPLhgy4yLc",
+          "score": 0.02501516070345664
+        },
+        {
+          "video_id": "CGib6okEeZ4",
+          "score": 0.02346002621231979
+        },
+        {
+          "video_id": "CQt4xBGwaI4",
+          "score": 0.023159303882195448
+        },
+        {
+          "video_id": "d49N7QtwrzI",
+          "score": 0.02268649064342476
+        },
+        {
+          "video_id": "33_ld-ZvyzU",
+          "score": 0.02259959141981614
+        }
+      ]
+    },
+    {
+      "example_id": "39",
+      "seed_embedding_count": 20,
+      "recommendations": [
+        {
+          "video_id": "AkP6nrzJ47Q",
+          "score": 0.03009207275993712
+        },
+        {
+          "video_id": "x_kd92JLid4",
+          "score": 0.02919863597612958
+        },
+        {
+          "video_id": "X2n5M-eLG3I",
+          "score": 0.028693528693528692
+        },
+        {
+          "video_id": "XhlOti3H6L0",
+          "score": 0.028438886647841874
+        },
+        {
+          "video_id": "MJWg7BxEPus",
+          "score": 0.02804284323271665
+        }
+      ]
+    },
+    {
+      "example_id": "40",
+      "seed_embedding_count": 20,
+      "recommendations": [
+        {
+          "video_id": "6OUTn_Rhl4s",
+          "score": 0.031754032258064516
+        },
+        {
+          "video_id": "pEmX5HR9ZxU",
+          "score": 0.029551337359792925
+        },
+        {
+          "video_id": "FkJAfbwnhRk",
+          "score": 0.02871794871794872
+        },
+        {
+          "video_id": "--3LNZKHaVM",
+          "score": 0.02804284323271665
+        },
+        {
+          "video_id": "4TqyGMjeIpA",
+          "score": 0.02736726874657909
+        }
+      ]
+    }
+  ]
+}

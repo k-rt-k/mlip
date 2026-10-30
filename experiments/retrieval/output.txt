@@ -1,0 +1,687 @@
+=== FILENAME: build_partial_prompts.py ===
+"""Freeze prompt labels for the v3 partial-playlist inputs.
+
+The labels are authored from the visible seed-song listings, not from hidden
+tracks or source-playlist metadata.  One source-level label is applied to its
+paired five- and twenty-seed examples.
+
+    uv run python -m experiments.retrieval.build_partial_prompts \
+        --output data/youtube_music/partial_examples/v3/prompt_inputs.json
+"""
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+
+
+# These descriptions were written after inspecting only model_inputs.json's
+# seed tracks.  Keep them fixed while evaluating this task.
+PROMPTS_BY_SOURCE = {
+    1: "Expressive solo classical piano, from lyrical nocturnes to dramatic virtuoso Romantic-era pieces.",
+    2: "Warm vintage jazz, swing, and classic vocal standards for an elegant Italian dinner.",
+    3: "Soulful R&B heartbreak ballads by powerful women vocalists, for sitting with a breakup.",
+    4: "Current high-energy pop, dance, and club tracks with a glossy, viral-party feel.",
+    5: "Warm, wistful indie folk and alternative songs with acoustic textures for an open-road escape.",
+    6: "Sophisticated mellow jazz: intimate vocals, piano trios, and relaxed late-night swing.",
+    7: "Golden-era 1990s East Coast hip-hop with jazzy samples, sharp flows, and streetwise grooves.",
+    8: "Feel-good Spanish-language pop and rock singalongs for a nostalgic night with friends.",
+    9: "Atmospheric indie, synth-pop, and alternative tracks for a neon-lit late-night drive.",
+    10: "Timeless 1970s and 1980s singer-songwriter, soft-rock, and classic-rock favorites to sing along with.",
+    11: "Immersive dark ambient, downtempo electronic, and cinematic soundscapes for a solitary night walk.",
+    12: "Gentle classic bossa nova and Brazilian jazz with acoustic guitars, soft vocals, and seaside warmth.",
+    13: "Emotional mid-2000s emo, pop-punk, and alternative rock for dramatic teenage nostalgia.",
+    14: "Tender 1970s slow-jam soul and R&B love songs with smooth harmonies and a romantic mood.",
+    15: "Upbeat early-1980s funk, boogie, and disco-soul for a joyful old-school dance floor.",
+    16: "Tender contemporary Hindi indie-pop and acoustic love songs for a reflective, romantic evening.",
+    17: "Fast, raw early hardcore punk with confrontational energy and short, urgent songs.",
+    18: "Uplifting contemporary Black gospel and praise music with powerful lead vocals and encouragement.",
+    19: "Epic cinematic orchestral and choral music for a heroic fantasy battle or movie-trailer moment.",
+    20: "Roots reggae and dub from the 1970s and 1980s with deep bass, conscious lyrics, and a laid-back sound-system feel.",
+}
+
+
+def load_examples(path: Path) -> list[dict]:
+    """Read the public model inputs; reject anything resembling hidden answers."""
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    examples = raw.get("examples")
+    if not isinstance(examples, list):
+        raise ValueError("expected an object with an examples list")
+    if any("held_out_tracks" in example for example in examples):
+        raise ValueError("prompt construction must use model inputs, never hidden tracks")
+    return examples
+
+
+def build_prompt_inputs(examples: list[dict], prompts: dict[int, str]) -> list[dict]:
+    """Attach one nonempty frozen prompt to every paired partial-playlist input."""
+    source_ids = {int(example["source_example_id"]) for example in examples}
+    if source_ids != set(prompts):
+        raise ValueError("source prompt IDs must exactly match source_example_id values")
+    by_source: dict[int, list[dict]] = {}
+    for example in examples:
+        source_id = int(example["source_example_id"])
+        by_source.setdefault(source_id, []).append(example)
+    for source_id, group in by_source.items():
+        if {int(example["seed_count"]) for example in group} != {5, 20}:
+            raise ValueError(f"source {source_id} must have exactly 5- and 20-seed inputs")
+    return [
+        {
+            "example_id": int(example["example_id"]),
+            "source_example_id": int(example["source_example_id"]),
+            "seed_count": int(example["seed_count"]),
+            "prompt": prompts[int(example["source_example_id"])],
+        }
+        for example in examples
+    ]
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--inputs", type=Path,
+        default=Path("data/youtube_music/partial_examples/v3/model_inputs.json"),
+    )
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args()
+    if args.output.exists():
+        parser.error(f"refusing to overwrite {args.output}")
+    examples = load_examples(args.inputs)
+    prompt_inputs = build_prompt_inputs(examples, PROMPTS_BY_SOURCE)
+    payload = {
+        "schema_version": 1,
+        "input_file": str(args.inputs),
+        "input_sha256": hashlib.sha256(args.inputs.read_bytes()).hexdigest(),
+        "label_policy": "manually authored from visible seed tracks only; one prompt per source example",
+        "examples": prompt_inputs,
+    }
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    print(f"Wrote {len(prompt_inputs)} frozen prompt labels to {args.output}")
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+=== FILENAME: __init__.py ===
+"""Prompt-only retrieval diagnostics; local outputs stay under data/."""
+
+
+
+=== FILENAME: playlist_data.py ===
+"""Input and embedding loaders for seed-only and prompt-conditioned playlist experiments."""
+
+from dataclasses import dataclass, replace
+import json
+from pathlib import Path
+
+import numpy as np
+
+from retrieval.catalog import normalized_vectors
+
+
+@dataclass(frozen=True)
+class PartialExample:
+    example_id: str
+    seed_video_ids: tuple[str, ...]
+    prompt: str
+
+
+def load_video_embeddings(path: Path) -> dict[str, np.ndarray]:
+    """Load normalized CLAP vectors keyed by YouTube video ID."""
+    with np.load(path, allow_pickle=False) as raw:
+        if not {"ids", "vectors"}.issubset(raw.files):
+            raise ValueError(f"{path}: expected ids and vectors arrays")
+        ids = [str(value) for value in raw["ids"]]
+        vectors = normalized_vectors(raw["vectors"])
+    if len(ids) != len(vectors) or len(set(ids)) != len(ids):
+        raise ValueError(f"{path}: invalid or duplicate video IDs")
+    return dict(zip(ids, vectors))
+
+
+def merge_embeddings(sources: list[dict[str, np.ndarray]]) -> tuple[dict[str, np.ndarray], dict[str, int]]:
+    """Overlay vector caches; earlier sources win, and each ID records its source index."""
+    merged, origin = {}, {}
+    for index, source in enumerate(sources):
+        for video_id, vector in source.items():
+            if merged and len(vector) != len(next(iter(merged.values()))):
+                raise ValueError(f"source {index}: inconsistent embedding dimension")
+            if video_id not in merged:
+                merged[video_id], origin[video_id] = vector, index
+    return merged, origin
+
+
+def load_seed_inputs(inputs_path: Path) -> list[PartialExample]:
+    """Load public seed-only inputs (empty prompts); refuse files carrying held-out tracks."""
+    inputs = json.loads(inputs_path.read_text(encoding="utf-8"))
+    if any("held_out_tracks" in row for row in inputs.get("examples", [])):
+        raise ValueError("inputs must not include held-out tracks")
+    examples = []
+    for row in inputs.get("examples", []):
+        example_id = str(row["example_id"])
+        seed_ids = tuple(track["video_id"] for track in row.get("seed_tracks", []))
+        if not seed_ids:
+            raise ValueError(f"example {example_id}: no seed video IDs")
+        examples.append(PartialExample(example_id, seed_ids, ""))
+    return examples
+
+
+def load_partial_examples(inputs_path: Path, prompts_path: Path) -> list[PartialExample]:
+    """Join public seed inputs to frozen prompt labels by example ID."""
+    prompt_rows = json.loads(prompts_path.read_text(encoding="utf-8")).get("examples", [])
+    prompts = {str(row["example_id"]): row["prompt"] for row in prompt_rows}
+    examples = []
+    for example in load_seed_inputs(inputs_path):
+        prompt = prompts.get(example.example_id)
+        if not isinstance(prompt, str) or not prompt.strip():
+            raise ValueError(f"example {example.example_id}: missing frozen prompt")
+        examples.append(replace(example, prompt=prompt))
+    if set(prompts) != {example.example_id for example in examples}:
+        raise ValueError("prompt labels and partial inputs have different example IDs")
+    return examples
+
+
+def load_reference_candidate_ids(path: Path) -> set[str]:
+    """Return the public reference-pool tracks eligible for recommendation."""
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    candidates = {
+        track["video_id"]
+        for prompt in raw.get("prompts", [])
+        for playlist in prompt.get("playlists", [])
+        for track in playlist.get("tracks", [])
+        if isinstance(track, dict) and track.get("video_id")
+    }
+    if not candidates:
+        raise ValueError(f"{path}: no reference candidate IDs")
+    return candidates
+
+
+def candidate_matrix(embeddings: dict[str, np.ndarray], candidate_ids: set[str]) -> tuple[tuple[str, ...], np.ndarray]:
+    """Select embedded public candidates in stable ID order."""
+    ids = tuple(sorted(candidate_ids & set(embeddings)))
+    if not ids:
+        raise ValueError("none of the candidate IDs have embeddings")
+    return ids, np.stack([embeddings[video_id] for video_id in ids])
+
+
+
+=== FILENAME: playlist_model.py ===
+"""No-training query fusion and reranking for playlist continuation."""
+
+from dataclasses import dataclass
+
+import numpy as np
+
+from retrieval.catalog import normalized_vectors
+
+
+@dataclass(frozen=True)
+class Recommendation:
+    video_id: str
+    score: float
+
+
+def mean_seed_vector(seed_ids: tuple[str, ...], embeddings: dict[str, np.ndarray]) -> tuple[np.ndarray | None, tuple[str, ...]]:
+    """Mean-pool available seed vectors and report IDs missing cached audio."""
+    found = [embeddings[video_id] for video_id in seed_ids if video_id in embeddings]
+    missing = tuple(video_id for video_id in seed_ids if video_id not in embeddings)
+    if not found:
+        return None, missing
+    return normalized_vectors(np.mean(found, axis=0, keepdims=True))[0], missing
+
+
+def fused_query(prompt_vector: np.ndarray, seed_vector: np.ndarray | None, prompt_weight: float) -> np.ndarray:
+    """Blend text and playlist intent; no seed vector means transparent text fallback."""
+    if not 0.0 <= prompt_weight <= 1.0:
+        raise ValueError("prompt_weight must lie in [0, 1]")
+    prompt = normalized_vectors(np.asarray(prompt_vector).reshape(1, -1))[0]
+    if seed_vector is None:
+        return prompt
+    seed = normalized_vectors(np.asarray(seed_vector).reshape(1, -1), dimension=len(prompt))[0]
+    return normalized_vectors((prompt_weight * prompt + (1 - prompt_weight) * seed).reshape(1, -1))[0]
+
+
+def rank_candidates(
+    *,
+    candidate_ids: tuple[str, ...],
+    candidate_vectors: np.ndarray,
+    query: np.ndarray,
+    seed_vector: np.ndarray | None,
+    excluded_ids: tuple[str, ...],
+    top_k: int,
+    retrieve_k: int,
+    rerank_seed_weight: float,
+) -> list[Recommendation]:
+    """Retrieve by fused intent then rerank candidates by playlist coherence."""
+    if not 0.0 <= rerank_seed_weight <= 1.0:
+        raise ValueError("rerank_seed_weight must lie in [0, 1]")
+    if top_k <= 0 or retrieve_k < top_k:
+        raise ValueError("retrieve_k must be at least top_k and both must be positive")
+    vectors = normalized_vectors(candidate_vectors)
+    query = normalized_vectors(np.asarray(query).reshape(1, -1), dimension=vectors.shape[1])[0]
+    initial = vectors @ query
+    # Stable secondary key makes ties reproducible without depending on NumPy's sort.
+    rows = sorted(range(len(candidate_ids)), key=lambda row: (-float(initial[row]), candidate_ids[row]))[:retrieve_k]
+    excluded = set(excluded_ids)
+    if seed_vector is not None:
+        seed = normalized_vectors(np.asarray(seed_vector).reshape(1, -1), dimension=vectors.shape[1])[0]
+        seed_scores = vectors @ seed
+    else:
+        seed_scores = initial
+    scored = [
+        Recommendation(candidate_ids[row], float((1 - rerank_seed_weight) * initial[row] + rerank_seed_weight * seed_scores[row]))
+        for row in rows if candidate_ids[row] not in excluded
+    ]
+    return sorted(scored, key=lambda item: (-item.score, item.video_id))[:top_k]
+
+
+
+=== FILENAME: run_playlist_conditioned.py ===
+"""Write evaluator-ready prompt-plus-playlist predictions from cached CLAP vectors.
+
+The candidate catalog is the public prompt-reference pool, so output IDs are
+YouTube Music video IDs and can be passed directly to evaluation/evaluate.py.
+This runner never reads dataset.json or held-out tracks.
+
+Example (on Babel, where the cached eval vectors exist):
+  /path/to/encoder-venv/bin/python -m experiments.retrieval.run_playlist_conditioned \
+    --embeddings /data/user_data/ksnair/mlip/embeddings/ytm-eval/clap.npz \
+    --output predictions/prompt_playlist_clap.json \
+    --report data/retrieval/prompt_playlist_clap/report.json
+"""
+
+import argparse
+import json
+from pathlib import Path
+import sys
+
+import numpy as np
+
+from experiments.retrieval.playlist_data import (
+    candidate_matrix,
+    load_partial_examples,
+    load_reference_candidate_ids,
+    load_video_embeddings,
+)
+from experiments.retrieval.playlist_model import fused_query, mean_seed_vector, rank_candidates
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "spotify" / "src"))
+from embeddings import get_embedder  # noqa: E402
+
+
+def pad(ids: list[str], top_k: int, example_id: str) -> list[str]:
+    return ids + [f"__missing_{example_id}_{rank}__" for rank in range(len(ids), top_k)]
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--inputs", type=Path, default=Path("data/youtube_music/partial_examples/v3/model_inputs.json"))
+    parser.add_argument("--prompts", type=Path, default=Path("data/youtube_music/partial_examples/v3/prompt_inputs.json"))
+    parser.add_argument("--references", type=Path, default=Path("data/youtube_music/references/v2/reference_pools.json"))
+    parser.add_argument("--embeddings", type=Path, required=True, help="cached YTM CLAP NPZ keyed by video ID")
+    parser.add_argument("--output", type=Path, required=True, help="new {example_id: [video_id]} JSON")
+    parser.add_argument("--report", type=Path, required=True, help="new diagnostics JSON")
+    parser.add_argument("--prompt-weight", type=float, default=0.5)
+    parser.add_argument("--rerank-seed-weight", type=float, default=0.25)
+    parser.add_argument("--retrieve-k", type=int, default=100)
+    parser.add_argument("--top-k", type=int, default=5)
+    parser.add_argument("--device", default="cpu")
+    args = parser.parse_args()
+    # if args.output.exists() or args.report.exists():
+    #     parser.error("output and report paths must both be new")
+
+    examples = load_partial_examples(args.inputs, args.prompts)
+    embeddings = load_video_embeddings(args.embeddings)
+    candidate_ids, candidates = candidate_matrix(embeddings, load_reference_candidate_ids(args.references))
+    print(f"Loaded {len(examples)} inputs, {len(embeddings)} song vectors, and {len(candidate_ids)} embedded candidates", flush=True)
+    print("Loading CLAP text encoder…", flush=True)
+    encoder = get_embedder("clap", device=args.device)
+    print("Encoding frozen prompts…", flush=True)
+    prompt_vectors = encoder.embed_text([example.prompt for example in examples])
+    if prompt_vectors.shape != (len(examples), candidates.shape[1]):
+        raise ValueError("text and song embeddings have incompatible dimensions")
+
+    predictions, diagnostics = {}, []
+    for example, prompt_vector in zip(examples, prompt_vectors):
+        seed_vector, missing = mean_seed_vector(example.seed_video_ids, embeddings)
+        query = fused_query(prompt_vector, seed_vector, args.prompt_weight)
+        ranked = rank_candidates(
+            candidate_ids=candidate_ids, candidate_vectors=candidates, query=query,
+            seed_vector=seed_vector, excluded_ids=example.seed_video_ids,
+            top_k=args.top_k, retrieve_k=min(args.retrieve_k, len(candidate_ids)),
+            rerank_seed_weight=args.rerank_seed_weight,
+        )
+        ids = [item.video_id for item in ranked]
+        predictions[example.example_id] = pad(ids, args.top_k, example.example_id)
+        diagnostics.append({
+            "example_id": example.example_id,
+            "seed_count": len(example.seed_video_ids),
+            "embedded_seed_count": len(example.seed_video_ids) - len(missing),
+            "missing_seed_ids": list(missing),
+            "mode": "prompt_only_fallback" if seed_vector is None else "prompt_plus_seed",
+            "recommendations": [{"video_id": item.video_id, "score": item.score} for item in ranked],
+        })
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.report.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(predictions, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(json.dumps({
+        "schema_version": 1,
+        "inputs": str(args.inputs), "prompts": str(args.prompts), "references": str(args.references),
+        "embeddings": str(args.embeddings), "candidate_count": len(candidate_ids),
+        "top_k": args.top_k, "retrieve_k": args.retrieve_k,
+        "prompt_weight": args.prompt_weight, "rerank_seed_weight": args.rerank_seed_weight,
+        "examples": diagnostics,
+    }, indent=2) + "\n", encoding="utf-8")
+    print(f"Wrote {len(predictions)} prediction lists to {args.output}")
+
+
+if __name__ == "__main__":
+    main()
+
+
+# python   -m experiments.retrieval.run_playlist_conditioned   --embeddings /data/user_data/ksnair/mlip/embeddings/ytm-eval/clap.npz   --output predictions/prompt_playlist_clap_fusion.json   --report data/retrieval/prompt_playlist_clap_fusion/report.json   --prompt-weight 0.5   --rerank-seed-weight 0.25 --top-k 10
+
+
+=== FILENAME: run_seed_only.py ===
+"""Write evaluator-ready seed-only predictions from cached CLAP vectors (no text, no training).
+
+Each input's seed vectors are mean-pooled and the embedded public reference pool
+is ranked by cosine similarity to that centroid, excluding the seeds. Pass the
+Deezer-preview cache first and the YouTube-clip seed fallback second; earlier
+files win when both hold an ID. Needs only NumPy (no CLAP model), and never
+reads dataset.json or held-out tracks.
+
+  uv run python -m experiments.retrieval.run_seed_only \
+    --embeddings data/embeddings/clap.npz data/embeddings/seed-youtube-clap.npz \
+    --output predictions/seed_only_clap_v1.json \
+    --report data/retrieval/seed_only_clap_v1/report.json
+  uv run python evaluation/evaluate.py \
+    --predictions predictions/seed_only_clap_v1.json \
+    --output data/retrieval/seed_only_clap_v1/evaluation.json
+
+On Babel the caches are /data/user_data/ksnair/mlip/embeddings/ytm-eval/clap.npz
+and /data/user_data/ksnair/mlip/embeddings/seed-youtube-clap.npz.
+"""
+
+import argparse
+from collections import Counter
+import json
+from pathlib import Path
+
+from experiments.retrieval.playlist_data import (
+    candidate_matrix,
+    load_reference_candidate_ids,
+    load_seed_inputs,
+    load_video_embeddings,
+    merge_embeddings,
+)
+from experiments.retrieval.playlist_model import mean_seed_vector, rank_candidates
+from experiments.retrieval.run_playlist_conditioned import pad
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--inputs", type=Path, default=Path("data/youtube_music/partial_examples/v3/model_inputs.json"))
+    parser.add_argument("--references", type=Path, default=Path("data/youtube_music/references/v2/reference_pools.json"))
+    parser.add_argument("--embeddings", type=Path, nargs="+", required=True,
+                        help="ids/vectors NPZ caches keyed by video ID, highest priority first")
+    parser.add_argument("--output", type=Path, required=True, help="{example_id: [video_id]} JSON")
+    parser.add_argument("--report", type=Path, required=True, help="diagnostics JSON")
+    parser.add_argument("--top-k", type=int, default=5)
+    args = parser.parse_args()
+
+    examples = load_seed_inputs(args.inputs)
+    embeddings, origin = merge_embeddings([load_video_embeddings(path) for path in args.embeddings])
+    candidate_ids, candidates = candidate_matrix(embeddings, load_reference_candidate_ids(args.references))
+    print(f"Loaded {len(examples)} inputs, {len(embeddings)} song vectors, "
+          f"and {len(candidate_ids)} embedded candidates", flush=True)
+
+    predictions, diagnostics = {}, []
+    for example in examples:
+        seed_vector, missing = mean_seed_vector(example.seed_video_ids, embeddings)
+        ranked = [] if seed_vector is None else rank_candidates(
+            candidate_ids=candidate_ids, candidate_vectors=candidates, query=seed_vector,
+            seed_vector=seed_vector, excluded_ids=example.seed_video_ids,
+            top_k=args.top_k, retrieve_k=len(candidate_ids), rerank_seed_weight=0.0,
+        )
+        predictions[example.example_id] = pad([item.video_id for item in ranked], args.top_k, example.example_id)
+        found = [video_id for video_id in example.seed_video_ids if video_id in embeddings]
+        diagnostics.append({
+            "example_id": example.example_id,
+            "seed_count": len(example.seed_video_ids),
+            "embedded_seed_count": len(found),
+            "seed_vector_sources": dict(Counter(str(args.embeddings[origin[v]]) for v in found)),
+            "missing_seed_ids": list(missing),
+            "mode": "no_seed_vectors" if seed_vector is None else "seed_centroid",
+            "recommendations": [{"video_id": item.video_id, "score": item.score} for item in ranked],
+        })
+    unembedded = [row["example_id"] for row in diagnostics if row["mode"] == "no_seed_vectors"]
+    if unembedded:
+        print(f"WARNING: no seed vectors for examples {unembedded}; their lists are padding only", flush=True)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.report.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(predictions, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(json.dumps({
+        "schema_version": 1, "method": "seed_centroid_cosine",
+        "inputs": str(args.inputs), "references": str(args.references),
+        "embeddings": [str(path) for path in args.embeddings],
+        "song_vector_count": len(embeddings), "candidate_count": len(candidate_ids),
+        "top_k": args.top_k, "examples": diagnostics,
+    }, indent=2) + "\n", encoding="utf-8")
+    print(f"Wrote {len(predictions)} prediction lists to {args.output}")
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+=== FILENAME: score_mpd_retrieval.py ===
+"""Score saved MPD prompt retrieval trials and export actual recommendations.
+
+  uv run python -m experiments.retrieval.score_mpd_retrieval --runs-dir /data/user_data/hpoonia/mlip/retrieval/mpd-v1/indexes --tracks /data/user_data/hpoonia/mlip/retrieval/mpd-v1/snapshot/tracks.sqlite --output data/retrieval/mpd-v1
+
+Uses all 20 existing prompt references, with upstream Deezer-match ISRC equality
+instead of cross-namespace video-ID equality. Unmatched gold remains in the
+denominator. Deduplicate recordings in the raw top 100, then score top 1/5/10.
+No candidate is added or filtered using relevance. These are development proxy
+scores, not held-out estimates or directly comparable to old video-ID scores.
+The saved LLM prompt-only baseline is rescored under the same identity policy.
+"""
+
+import argparse
+import csv
+import html
+import json
+from pathlib import Path
+import sqlite3
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from evaluation.recordings import recording_key, score_recordings
+
+
+def mean_metrics(records):
+    """Macro-average existing metric outputs over equally weighted prompts."""
+    return {key: sum(r[key] for r in records) / len(records) for key in records[0]}
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--runs-dir', type=Path, required=True)
+    parser.add_argument('--tracks', type=Path, required=True)
+    parser.add_argument('--references', type=Path, default=Path('data/youtube_music/references/v2/reference_pools.json'))
+    parser.add_argument('--eval-map', type=Path, default=Path('/data/user_data/ksnair/mlip/embeddings/ytm-eval/deezer_map.json'))
+    parser.add_argument('--query-manifest', type=Path, default=Path('data/retrieval/real-run/verified-text-queries.json'))
+    parser.add_argument('--llm', type=Path, default=Path('predictions/llm_qwen_prompt_only.json'))
+    parser.add_argument('--output', type=Path, required=True)
+    args = parser.parse_args()
+    prompts = json.loads(args.references.read_text())['prompts']
+    evidence = json.loads(args.eval_map.read_text())
+    queries = json.loads(args.query_manifest.read_text())
+    texts = dict(zip(queries['query_ids'], queries['texts']))
+    prompt_by_text = {p['prompt']: p for p in prompts}
+    if set(texts.values()) != set(prompt_by_text) or len(texts) != len(prompts):
+        raise ValueError('query texts do not exactly match the frozen prompt set')
+    gold = {str(p['prompt_id']): {recording_key(evidence.get(v, {}), f'yt:{v}')
+                                for v in p['song_support']} for p in prompts}
+    reports = []
+    for file in sorted(args.runs_dir.glob('build-*/results.json')):
+        reports.extend(json.loads(file.read_text()))
+    if not reports:
+        raise ValueError('no completed benchmark builds found')
+    predictions = [json.loads(Path(r['predictions_path']).read_text()) for r in reports]
+    wanted = {tid for p in predictions for row in p['song_ids'] for tid in row if tid}
+    db = sqlite3.connect(f'file:{args.tracks.resolve()}?mode=ro', uri=True)
+    db.row_factory = sqlite3.Row
+    metadata = {}
+    wanted = sorted(wanted)
+    for start in range(0, len(wanted), 800):
+        batch = wanted[start:start+800]
+        for row in db.execute(f"SELECT * FROM tracks WHERE id IN ({','.join('?' for _ in batch)})", batch):
+            metadata[row['id']] = dict(row)
+    if set(wanted) != set(metadata):
+        raise ValueError('recommendations missing MPD recording provenance')
+    gold_isrcs = sorted({k.removeprefix('isrc:') for g in gold.values() for k in g if k.startswith('isrc:')})
+    available = set()
+    for start in range(0, len(gold_isrcs), 800):
+        batch = gold_isrcs[start:start+800]
+        available.update('isrc:' + r[0] for r in db.execute(
+            f"SELECT DISTINCT isrc FROM tracks WHERE isrc IN ({','.join('?' for _ in batch)})", batch))
+    coverage = {pid: dict(reference_recordings=len(g), covered_recordings=len(g & available),
+                          fraction=len(g & available)/len(g),
+                          ceilings=score_recordings(sorted(g & available), g))
+                for pid, g in gold.items()}
+    trials = []
+    for number, (report, prediction) in enumerate(zip(reports, predictions)):
+        per_prompt = {}
+        for qid, tids, scores in zip(prediction['query_ids'], prediction['song_ids'], prediction['scores']):
+            prompt = prompt_by_text[texts[qid]]
+            pid = str(prompt['prompt_id'])
+            unique = {}
+            for tid, score in zip(tids, scores):
+                if tid is None:
+                    continue
+                info = metadata[tid]
+                key = recording_key(info, f'mpd:{tid}')
+                unique.setdefault(key, dict(spotify_id=tid, artist=info['artist'], title=info['title'],
+                                           isrc=info['isrc'], deezer_id=info['deezer_id'],
+                                           cosine_score=score, reference_hit=key in gold[pid]))
+            per_prompt[pid] = dict(prompt=prompt['prompt'], metrics=score_recordings(unique, gold[pid]),
+                                   recommendations=list(unique.values())[:10])
+        if set(per_prompt) != set(gold):
+            raise ValueError('trial does not cover every prompt')
+        trials.append(dict(trial=number, benchmark=report,
+                           mean_cosine_at_5=sum(sum(row[:5])/5 for row in prediction['scores'])/len(prompts),
+                           mean_metrics=mean_metrics([p['metrics'] for p in per_prompt.values()]),
+                           per_prompt=per_prompt))
+    llm = json.loads(args.llm.read_text())
+    llm_per_prompt = {pid: score_recordings(
+        [recording_key(evidence.get(v, {}), f'yt:{v}') for v in llm.get(pid, [])], g)
+        for pid, g in gold.items()}
+    result = dict(
+        interpretation='20 development prompts; recording-level reference overlap; unmatched gold retained',
+        identity_policy='valid ISRC from upstream metadata match, otherwise namespaced ID; duplicates collapsed',
+        ranking_policy='first 10 unique recordings from raw top 100; no reference-based filtering',
+        coverage=coverage, trials=trials,
+        llm_same_policy=dict(mean_metrics=mean_metrics(list(llm_per_prompt.values())), per_prompt=llm_per_prompt),
+    )
+    eligible = [t for t in trials if t['benchmark']['ann_recall_at_cutoffs']['5'] >= .95
+                and t['benchmark']['ann_recall_at_cutoffs']['100'] >= .95]
+    result['fastest_at_95pct_ann_recall'] = min(
+        eligible, key=lambda t: t['benchmark']['latency_ms']['p95'])['trial'] if eligible else None
+    result['best_development_ndcg_at_5'] = max(t['mean_metrics']['ndcg@5'] for t in trials)
+    result['quality_ties'] = [t['trial'] for t in trials
+                              if t['mean_metrics']['ndcg@5'] == result['best_development_ndcg_at_5']]
+    args.output.mkdir(parents=True, exist_ok=True)
+    (args.output / 'scored-trials.json').write_text(json.dumps(result, indent=2) + '\n')
+    with (args.output / 'per-prompt.csv').open('w') as stream:
+        writer = csv.DictWriter(stream, fieldnames=['trial', 'prompt_id', 'prompt', 'precision@5', 'hit_rate@5', 'ndcg@5'])
+        writer.writeheader()
+        for t in trials:
+            for pid, p in t['per_prompt'].items():
+                writer.writerow(dict(trial=t['trial'], prompt_id=pid, prompt=p['prompt'],
+                                     **{k: p['metrics'][k] for k in ['precision@5', 'hit_rate@5', 'ndcg@5']}))
+    rows = ['| Trial | Method | nlist / M | nprobe / efSearch | ANN recall@5 / @100 | Mean cosine@5 | P@5 | HR@5 | NDCG@5 | p95 ms | Build s | Index GiB | Peak GiB |',
+            '|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|']
+    for t in trials:
+        b, m = t['benchmark'], t['mean_metrics']
+        c = b['config']
+        rows.append(f"| {t['trial']} | {c['method']} | {c['nlist'] or c['m'] or '—'} | {c['nprobe'] or c['ef_search'] or '—'} | {b['ann_recall_at_cutoffs']['5']:.3f} / {b['ann_recall_at_cutoffs']['100']:.3f} | {t['mean_cosine_at_5']:.4f} | {m['precision@5']:.3f} | {m['hit_rate@5']:.3f} | {m['ndcg@5']:.4f} | {b['latency_ms']['p95']:.3f} | {b['construction_seconds']:.1f} | {b['index_file_bytes']/2**30:.3f} | {b['process_peak_rss_bytes']/2**30:.3f} |")
+    rows.extend(['', 'LLM prompt-only, rescored under the same recording policy: ' +
+                 json.dumps(result['llm_same_policy']['mean_metrics']), '',
+                 'All results are development proxy scores. Index memory is serialized size; peak RSS includes loading/training.'])
+    (args.output / 'comparison.md').write_text('\n'.join(rows) + '\n')
+    body = ['<!doctype html><meta charset="utf-8"><title>MPD prompt recommendations</title>',
+            '<style>body{font:16px system-ui;max-width:1100px;margin:32px auto;padding:16px}summary{cursor:pointer;padding:12px;background:#eee}li{padding:4px}small{color:#555}</style>',
+            '<h1>MPD prompt recommendations</h1><p>Development set · 1,025,994 candidates · ISRC reference-overlap proxy. Cosine similarity is not a probability.</p>']
+    for t in trials:
+        body.append('<details><summary>Trial ' + str(t['trial']) + ': ' + html.escape(json.dumps(t['benchmark']['config'])) +
+                    f" · NDCG@5 {t['mean_metrics']['ndcg@5']:.4f}</summary>")
+        for pid, p in t['per_prompt'].items():
+            body.append('<h3>' + html.escape(pid + '. ' + p['prompt']) + '</h3><ol>')
+            for rec in p['recommendations'][:5]:
+                body.append(f'<li><a href="https://open.spotify.com/track/{rec["spotify_id"]}">' +
+                            html.escape(rec['artist'] + ' — ' + rec['title']) +
+                            f'</a> <small>cosine {rec["cosine_score"]:.4f}' +
+                            (' · reference match' if rec['reference_hit'] else '') + '</small></li>')
+            body.append('</ol>')
+        body.append('</details>')
+    (args.output / 'recommendations.html').write_text('\n'.join(body))
+    print('\n'.join(rows))
+
+
+
+=== FILENAME: test_playlist_model.py ===
+import json
+
+import numpy as np
+import pytest
+
+from experiments.retrieval.playlist_data import load_seed_inputs, merge_embeddings
+from experiments.retrieval.playlist_model import fused_query, mean_seed_vector, rank_candidates
+
+
+def test_merge_embeddings_keeps_earlier_sources_first():
+    primary = {"a": np.array([1.0, 0.0])}
+    fallback = {"a": np.array([0.0, 1.0]), "b": np.array([0.0, 1.0])}
+    merged, sources = merge_embeddings([primary, fallback])
+    np.testing.assert_allclose(merged["a"], [1.0, 0.0])
+    assert sources == {"a": 0, "b": 1}
+    with pytest.raises(ValueError):
+        merge_embeddings([primary, {"c": np.array([1.0, 0.0, 0.0])}])
+
+
+def test_seed_inputs_need_no_prompts_and_reject_hidden_tracks(tmp_path):
+    path = tmp_path / "inputs.json"
+    path.write_text(json.dumps({"examples": [{"example_id": 1, "seed_tracks": [{"video_id": "a"}]}]}))
+    [example] = load_seed_inputs(path)
+    assert example.example_id == "1" and example.seed_video_ids == ("a",) and example.prompt == ""
+    path.write_text(json.dumps({"examples": [{"example_id": 1, "seed_tracks": [{"video_id": "a"}],
+                                              "held_out_tracks": []}]}))
+    with pytest.raises(ValueError):
+        load_seed_inputs(path)
+
+
+def test_seed_mean_and_fusion_are_normalized():
+    vectors = {"a": np.array([1.0, 0.0]), "b": np.array([0.0, 1.0])}
+    seed, missing = mean_seed_vector(("a", "b", "missing"), vectors)
+    assert missing == ("missing",)
+    np.testing.assert_allclose(seed, [2**-0.5, 2**-0.5])
+    query = fused_query(np.array([1.0, 0.0]), seed, 0.5)
+    np.testing.assert_allclose(np.linalg.norm(query), 1.0)
+
+
+def test_ranking_excludes_seeds_and_reranks_first_stage():
+    ranked = rank_candidates(
+        candidate_ids=("seed", "text", "both", "outside"),
+        candidate_vectors=np.array([[1., 0.], [1., .1], [.8, .8], [0., 1.]]),
+        query=np.array([1., 0.]), seed_vector=np.array([0., 1.]),
+        excluded_ids=("seed",), top_k=2, retrieve_k=3, rerank_seed_weight=.5,
+    )
+    assert [item.video_id for item in ranked] == ["both", "text"]
+
+
+

@@ -1,0 +1,36 @@
+# All inference choices for the training-free prompt + playlist experiment.
+paths:
+  inputs: data/youtube_music/partial_examples/v3/model_inputs.json
+  prompts: data/youtube_music/partial_examples/v3/prompt_inputs.json
+  references: data/youtube_music/references/v2/reference_pools.json
+  embeddings:
+    - /data/user_data/ksnair/mlip/embeddings/ytm-eval/clap.npz
+    - /data/user_data/ksnair/mlip/embeddings/ytm-eval/seed-youtube-clap.npz
+  output: predictions/prompt_playlist_configured.json
+  report: data/retrieval/prompt_playlist_configured/report.json
+encoder:
+  name: clap
+  repository: laion/larger_clap_music_and_speech
+  dimension: 512
+coverage:
+  require_all_seed_embeddings: true
+seed_aggregation:
+  method: mean # mean | prompt_weighted_mean | top_k_mean
+  top_k: 5
+  temperature: 0.1
+retrieval:
+  method: multi_query # text_only | seed_only | early_fusion | multi_query
+  candidate_k: 100
+  prompt_weight: 0.5
+ranking:
+  method: weighted_score # cosine | weighted_score | rrf
+  prompt_weight: 0.6
+  seed_similarity: mean # mean | max | top_k_mean
+  seed_top_k: 3
+  rrf_k: 60
+  cooccurrence_weight: 0.0
+filtering:
+  exclude_seed_ids: true
+  mmr_lambda: 1.0 # 1.0 disables diversity reranking
+output:
+  top_k: 5
