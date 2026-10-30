@@ -4,6 +4,31 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables:
 [initial ML solution](../milestones/initial_ml_solution.md),
 [baselines milestone](../milestones/baselines.md).
 
+## 2026-10-30 — Prompt-only playlist-search baseline scored
+
+- **Ready:** `baselines/playlist_search.py` uses each original prompt to search
+  public YouTube Music community playlists. Fixed before scoring: inspect 20
+  results, exclude the prompt's three reference playlists, retain the first five
+  distinct remaining playlists, and inspect at most 100 tracks per playlist.
+  Reuse the existing cleaning rules (including the 15-minute cap); rank by the
+  number of playlists containing a song, breaking ties by video ID. No tuning.
+- **Results (@5, 20 prompts):** precision **0.02**, hit rate **0.10**, NDCG
+  **0.0170**: two reference-song matches in 100 slots. Ambient and bossa-nova
+  prompts have no eligible candidates; the punk prompt returns no search
+  results. All three count as misses. The zero-shot LLM remains ahead at
+  precision **0.04** and hit rate **0.15**.
+- **Artifacts:** [predictions](../predictions/playlist_search_v1.json),
+  [evaluation and run settings](../results/playlist_search_v1.json). Search and
+  playlist snapshots remain local in
+  `data/youtube_music/playlist_search/v1/snapshot.json` (93 unique playlists).
+  Ten slots are exported for evaluator compatibility; unfilled slots are
+  padded with non-song IDs. All 20 prompts are scored with the shared evaluator.
+- **Validation and limits:** 29 baseline/YouTube Music tests pass; a cache audit
+  reproduces every prediction and verifies reference exclusion and filtering.
+  Results use live search on October 30 and the frozen reference pools, with
+  incomplete positives and a 100-track collection cap. Platform search order
+  is opaque; the added song-ranking rule uses no learned model.
+
 ## 2026-10-29 — Prompt + playlist CLAP fusion scored (Spandan)
 
 - **Ready:** `experiments/retrieval/run_playlist_conditioned.py` fuses a CLAP
@@ -322,9 +347,9 @@ the Overleaf project (`baselines.tex` remains the baselines report).
   0.13 / 0.40 with five seeds; 0.08 / 0.20 vs 0.08 / 0.30 with twenty).
 - [x] Baselines grading received: proposal revisions, split, metric, and
   baseline descriptions meet expectations.
-- [ ] Revise baseline results (scored 1): add the promised prompt-only non-ML
-  baseline (playlist title/description search, excluding each prompt's three
-  reference playlists) and score it on the 20 prompts.
+- [x] Revise baseline results (scored 1): the prompt-only playlist-search
+  baseline excludes each prompt's three reference playlists and is scored on
+  all 20 prompts (P@5 **0.02**, Hit@5 **0.10**); results added to the writeup.
 - [ ] Revise the deployment bar (scored 1). Decided: precision@5 and hit
   rate@5 are primary, NDCG@5 still reported; the user study judges per-song
   acceptance, so song order is secondary.
