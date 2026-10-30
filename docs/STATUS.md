@@ -4,6 +4,23 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables:
 [initial ML solution](../milestones/initial_ml_solution.md),
 [baselines milestone](../milestones/baselines.md).
 
+## 2026-10-29 — Prompt + playlist CLAP fusion scored (Spandan)
+
+- **Ready:** `experiments/retrieval/run_playlist_conditioned.py` fuses a CLAP
+  text embedding of a per-source prompt with the mean seed CLAP vector (prompt
+  weight 0.5), retrieves from the embedded reference pool, then reranks by seed
+  similarity (seed weight 0.25). No training. Prompts in
+  `partial_examples/v3/prompt_inputs.json` were written by hand from visible seed
+  metadata (`build_partial_prompts.py`); the 5- and 20-seed inputs of a source
+  share one prompt. It reads only `ytm-eval/clap.npz`; the run report records
+  missing seed vectors and prompt-only fallbacks.
+  [Predictions](../predictions/prompt_playlist_clap_fusion.json),
+  [evaluation](../results/prompt_playlist_clap_fusion.txt); usage in README.
+- **Results (@5, five/twenty seeds):** precision **0.11 / 0.07**, hit rate
+  **0.25 / 0.20**, NDCG **0.1182 / 0.0851**, below seed-only CLAP at both sizes.
+- **Limitations:** one weight setting; same reference-pool ceiling as seed-only
+  CLAP (26/40 inputs have any reachable hidden song).
+
 ## 2026-10-29 — Seed-only CLAP retrieval scored (Ayush)
 
 - **Ready:** `experiments/retrieval/run_seed_only.py` mean-pools seed CLAP
@@ -182,31 +199,6 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables:
   policy in `spotify/src/mpd.py` (+~19% on a no-match sample) is implemented
   but not run over MPD.
 
-## 2026-10-05 — Radio Pool baseline scored
-
-- **Ready:** public song-radio aggregation (`baselines/candidates.py`,
-  `build_candidate_pools.py`, `run_radio_pool.py`) and
-  [Radio Pool predictions](../predictions/radio_pool.json) for all 40 paired
-  five/twenty-seed inputs. Continuation comparison owner: Spandan.
-- **Method:** collect up to 50 cleaned radio tracks per seed, union with
-  reference-corpus co-occurrence candidates (no popularity fallback), exclude
-  seeds, and rank by number of supporting seed radios, first-seen radio position,
-  then video ID. Retain 60 candidates and recommend the first five. Hidden songs
-  enter only downstream ceiling/scoring, never candidate construction.
-- **Results (@5, five/twenty seeds):** precision **0.23 / 0.20**, hit rate
-  **0.45 / 0.60**, NDCG **0.2250 / 0.1921**. Pool ceilings: **0.85 / 1.00**.
-  All 40 lists contain five unique non-seed IDs; 399 unique seed radios were
-  cached with zero collection errors.
-- **Handoff:** [radio data ZIP](../datasets/radio-pool-v1.zip) and
-  [checksum/provenance manifest](../datasets/radio-pool-v1.manifest.json)
-  supplement the existing v4 dataset. They contain normalized radio tracks,
-  frozen pools/settings, and the full evaluation, with no credentials.
-  Extraction: [README](../README.md); commands and comparison: [evaluation](evaluation.md).
-- **Limitations:** this is our aggregation heuristic over YouTube Music's own
-  radio algorithm, distinct from native playlist suggestions. Exact-ID recovery
-  remains an offline proxy; paired inputs are not independent playlists. LLM
-  Rerank is deferred and is not part of this completed baseline.
-
 ## 2026-10-05 — Evaluation pipeline and continuation baselines scored (Spandan)
 
 - **Ready:** `evaluation/evaluate.py` + `evaluation/metrics.py` score predictions
@@ -257,7 +249,10 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables:
   credits rarely resolve. Temperature 0 is not repeatable on these endpoints (a
   rerun of examples 11–20 shared 0–4 of 10 songs), so single-run scores are noisy.
 - **Remaining:** prompt + seeds generation (needs a written request per partial
-  input); prompt constraint/validity checks.
+  input); prompt constraint/validity checks. A local DeepSeek V4 Flash run
+  (`--backend local`, `data/llm/runs/deepseek-local-v1/`) covers only the 20
+  prompts and five-seed ids 1–20, so it is **excluded from the model
+  comparison**: do not report it in results tables.
 
 ## 2026-10-05 — Datasets and collection pipelines ready (Harsh)
 
@@ -310,16 +305,37 @@ Scope: [SCOPE.md](SCOPE.md). Deliverables:
 
 ## Initial ML solution — current checklist
 
-**Prompt-only retrieval owner:** Harsh. **State:** search infrastructure shared;
-learned retrieval remains exploratory. Due October 29; see the
-[assignment](../milestones/initial_ml_solution.md).
+**Prompt-only retrieval owner:** Harsh; other items shared. **State:** search
+infrastructure shared; learned retrieval remains exploratory. Due October 29; see the
+[assignment](../milestones/initial_ml_solution.md). **Draft:** `initial_ml.tex` in
+the Overleaf project (`baselines.tex` remains the baselines report).
 
 - [x] Implement and benchmark exact/IVF/HNSW over the full audio-covered MPD catalog.
 - [x] Audit recording-overlap coverage and raw-CLAP development recommendations.
 - [x] Explore metadata/title-supervised retrieval and record validation comparisons locally.
 - [ ] Select a final method with independent constraint/relevance evidence.
 - [ ] Compare the chosen ML method and baselines on the same split and metric.
-- [ ] Complete seed-conditioned modeling/evaluation and the milestone writeup.
+- [x] Score seed-conditioned retrieval on all 40 inputs: seed-only CLAP and
+  prompt + playlist fusion (entries above).
+- [ ] Milestone writeup: on precision@5 / hit rate@5, seed-only CLAP is above
+  co-occurrence and the LLM, level with or below YouTube Music (0.14 / 0.35 vs
+  0.13 / 0.40 with five seeds; 0.08 / 0.20 vs 0.08 / 0.30 with twenty).
+- [x] Baselines grading received: proposal revisions, split, metric, and
+  baseline descriptions meet expectations.
+- [ ] Revise baseline results (scored 1): add the promised prompt-only non-ML
+  baseline (playlist title/description search, excluding each prompt's three
+  reference playlists) and score it on the 20 prompts.
+- [ ] Revise the deployment bar (scored 1). Decided: precision@5 and hit
+  rate@5 are primary, NDCG@5 still reported; the user study judges per-song
+  acceptance, so song order is secondary.
+- [ ] Answer split questions: reference playlists are weak positives, not
+  ground truth; release years are unavailable (MPD playlists date from
+  2010–2017); decide whether to grow the continuation set (grader: curation can
+  be automated) and re-run baselines if so.
+- [ ] Continuation overlap with MPD (on Babel): eval seeds/hidden songs in the
+  embedded catalog and the reachable-hidden ceiling per input (max hit rate).
+- [ ] Define a held-out split for continuation model selection.
+- [ ] Compile the PDF and verify instructor/TA access to the GitHub repository.
 
 ## Baselines milestone — current checklist
 
@@ -331,7 +347,8 @@ learned retrieval remains exploratory. Due October 29; see the
 - [x] Prepare partial examples, hidden answers, verified seed-only copies, and handoff.
 - [x] Prepare plan for implementation and evaluation of baselines.
 - [x] Shared evaluation pipeline for partial-playlist continuation (`evaluation/`).
-- [ ] Agree the reported split and constrained metric (e.g. hit rate/precision@5).
+- [x] Agree the reported split and constrained metric: precision@5 and hit rate@5
+  primary, NDCG@5 also reported.
 
 ### 2. LLM baseline
 **Owner:** Ayush. **State:** prompt-only (20) and seeds-only (all 40 partial inputs) generated and scored.
@@ -345,24 +362,20 @@ learned retrieval remains exploratory. Due October 29; see the
 
 ### 3. Playlist-continuation baselines
 
-**Owner:** Spandan. **State:** YouTube Music, co-occurrence, and Radio Pool scored
-on all 40 inputs.
+**Owner:** Spandan. **State:** YouTube Music and co-occurrence scored on all
+40 inputs. Radio Pool (per-seed radio aggregation) is excluded from the baseline
+comparison as unfair: it relies on YouTube Music's recommender, which may have
+learned from the hidden source playlists ([SCOPE](SCOPE.md)). Its code, predictions
+and `datasets/radio-pool-v1.zip` remain.
 
 - [x] Complete the YouTube Music continuation experiment on seed-only copies.
 - [x] Implement and run the required non-ML baseline (seed-song co-occurrence).
   Prompt-based retrieval and LLM reranking are optional.
-- [x] Collect, freeze, and score Radio Pool on all 40 inputs; share its cached
-  radios, pools, predictions, and evaluation.
 - [ ] LLM Rerank over the same candidates (deferred, separate baseline).
 - [x] Score all comparable methods (including the LLM) on the same 40 inputs at K = 5.
 - [ ] Report results, failures, and proxy limitations in the writeup.
 
 ### 4. Writeup and submission
 
-**Owner:** unassigned/shared. **State:** not started.
-
-- [ ] Obtain grading feedback; revise answers scored 1 with original/revision/change notes,
-  including any necessary corrections to platform-capability claims.
-- [ ] Make slides for presentation
-- [ ] Explain baselines, split, constrained metrics, results, limitations, and improvement needed to justify deployment. Participant satisfaction remains the eventual product eval.
-- [ ] Produce the short PDF and GitHub code link; verify instructor/TA access and reproducibility.
+**Owner:** shared. **State:** baselines report submitted and graded; its
+revisions are due with the initial ML solution (above).
