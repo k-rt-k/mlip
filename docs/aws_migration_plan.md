@@ -26,7 +26,9 @@ with **40 GiB of encrypted gp3 disk**. The instance has 4 vCPUs and 16 GiB RAM.
   and one warm synthetic request per mode returned 15 candidates
   for text only (0.04 s), text plus seeds (0.04 s), and seeds only (0.01 s).
   These are worker response times. The three services' individual peak
-  memory use was about 2.3, 2.3, and 0.05 GiB respectively.
+  memory use was about 2.3, 2.3, and 0.05 GiB respectively. During bootstrap,
+  the app began listening about 21 seconds after the services were started.
+  This measurement covers service startup after dependency installation.
 - EC2 Instance Connect worked with a fresh Ed25519 key under the deployment
   operator's AWS profile. The web app returned HTTP 200 through the SSH tunnel.
   The guest's initial automatic stop was scheduled

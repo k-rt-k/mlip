@@ -117,6 +117,40 @@ def test_youtube_music_skips_combined_rounds_and_pair_metrics_exclude_them(tmp_p
     assert youtube["paired_shown"] == rows["retrieval"]["paired_shown"] == 10
 
 
+def test_paired_keep_rate_requires_offers_on_both_sides(tmp_path, monkeypatch):
+    class PartiallyFilledBackends(RehearsalBackends):
+        def recommend(self, arm, prompt, seeds, exclusions):
+            tracks = super().recommend(arm, prompt, seeds, exclusions)
+            if arm == "llm":
+                return [] if prompt == "empty baseline" else tracks[:2]
+            return tracks
+
+    monkeypatch.setattr("evaluation_app.study.choice", lambda options: options[0])
+    db = tmp_path / "study.sqlite"
+    client = create_app(db, rehearsal=True, backends=PartiallyFilledBackends()).test_client()
+    start(client)
+
+    first = suggest(client, "empty baseline")["round"]
+    assert first["panels"][1]["status"] == "ok" and first["panels"][1]["offers"] == []
+    assert client.post("/api/action", json={
+        "round_id": first["id"], "position": 0, "action": "keep",
+        "video_id": first["panels"][0]["offers"][0]["video_id"],
+    }).status_code == 200
+    paired = suggest(client, "partially filled baseline")["round"]
+    assert len(paired["panels"][1]["offers"]) == 2
+
+    export = tmp_path / "export.json"
+    monkeypatch.setattr(sys, "argv", ["evaluation_app", "--db", str(db), "--export", str(export)])
+    main()
+    rows = {row["arm"]: row for row in json.loads(export.read_text())["participant_arm_summary"]}
+    retrieval, llm = rows["retrieval"], rows["llm"]
+    assert (retrieval["shown"], retrieval["kept"]) == (10, 1)
+    assert (retrieval["paired_shown"], retrieval["paired_kept"]) == (5, 0)
+    assert llm["paired_shown"] == 2
+    assert llm["empty_slots"] == 8
+    assert llm["failed_panels"] == 0
+
+
 @pytest.mark.parametrize("suggestions_fail", [False, True])
 def test_seed_only_youtube_uses_a_private_temporary_playlist(tmp_path, monkeypatch, suggestions_fail):
     browser = tmp_path / "browser.json"

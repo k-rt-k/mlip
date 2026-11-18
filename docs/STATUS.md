@@ -16,8 +16,7 @@ end-to-end pilot with real participants.
   HNSW catalog. All six serving files passed checksum verification. The web
   app and CPU retrieval passed smoke checks for text, text plus seeds, and
   seeds alone. Ayush can resume the existing instance and configure
-  OpenRouter and YouTube Music credentials. Full EC2 acceptance with both
-  study pairings and participant sessions remains pending.
+  OpenRouter and YouTube Music credentials.
   [AWS migration plan](aws_migration_plan.md)
 - **Public retrieval preview (2026-11-18).** The AWS-assigned HTTPS URL is
   available while the EC2 instance runs. Browser and API checks passed for
@@ -41,17 +40,28 @@ end-to-end pilot with real participants.
   and native suggestions from temporary private copies for playlist-only rounds.
   It skips combined requests. Native suggestions still need a live check with
   the team account's browser credentials.
-- **Validation.** Chromium rehearsal passed on desktop and mobile. On a Babel
-  allocation with GPUs hidden, live CLAP HNSW returned five offers in each
-  of the three input modes for a synthetic test. The rounds took 0.99–2.02 s.
-  The index and encoder processes peaked at about
-  2.32 GiB and 0.77 GiB RSS respectively. OpenRouter DeepSeek V4 Flash 0731
-  also returned five offers in all three modes, and both live pairings passed
-  an opening round. These are smoke measurements.
+- **Validation.** Desktop and mobile Chromium rehearsals verified the two-panel
+  layout, playback controls, mirrored Keep, restart persistence, and export.
+  Two simultaneous synthetic sessions used a local copy of the paired app,
+  the AWS CPU worker, and OpenRouter. Both pairings showed five songs per
+  panel on their opening rounds. Retrieval plus OpenRouter also showed five
+  per panel in text-plus-playlist and playlist-only rounds. YouTube Music
+  skipped the combined round and recorded the missing credential in the
+  playlist-only round as unavailable. The paired keep rate now uses rounds
+  with at least one song shown in each panel.
 - **Handoff.** Setup in [README](../README.md#evaluation-app), choices in
   [assumptions and decisions](../assumptions_and_decisions.md), and unresolved
   study inputs in [questions](../questions.md). Participant sessions remain
   pending.
+
+### Remaining pilot work
+
+- [ ] Configure live credentials on the private EC2 app and verify native
+  YouTube Music suggestions from a temporary private playlist and its cleanup.
+- [ ] Run an end-to-end participant pilot. Start with one completed session per
+  pairing. Confirm the facilitator, export owner, and retention before recruiting.
+- [ ] Finish the field evaluation writeup, including participant outcomes and
+  the proposed full study's sample size and power.
 
 ## 2026-10-30 — Prompt-only playlist-search baseline scored
 

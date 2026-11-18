@@ -266,10 +266,11 @@ uv run python -m evaluation_app --export data/evaluation_app/pilot-export.json
 
 Use a new export filename for each snapshot. To select a different study database
 throughout a run, pass `--db` when launching and exporting. The export includes
-keep rate over shown tracks, paired keep rates over rounds both arms served,
+keep rate over shown tracks, paired keep rates over rounds where both arms
+showed at least one song,
 empty slots, unavailable panels, and skipped panels, grouped by participant and
-recommender. These commands run
-local development servers for the pilot. Public hosting requires a production
+recommender. These commands run local development servers for the pilot.
+Public hosting requires a production
 WSGI server and deployment configuration. The
 [AWS migration guide](docs/aws_migration_plan.md#public-retrieval-preview)
 has the live retrieval preview and operator instructions.

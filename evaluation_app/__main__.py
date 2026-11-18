@@ -43,7 +43,7 @@ def main():
                        GROUP BY p.round_id, p.position
                    ), paired_rounds AS (
                        SELECT round_id FROM panel_counts GROUP BY round_id
-                       HAVING count(*) = 2 AND sum(status = 'ok') = 2
+                       HAVING count(*) = 2 AND sum(status = 'ok' AND shown > 0) = 2
                    )
                    SELECT session_id, arm, sum(shown) AS shown, sum(kept) AS kept,
                           1.0 * sum(kept) / nullif(sum(shown), 0) AS keep_rate,
