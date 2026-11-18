@@ -15,9 +15,10 @@ end-to-end pilot with real participants.
   sessions. Serve the retrieval model from an allocated Babel compute node and
   connect to it through an SSH tunnel.
 - **AWS migration.** CloudFormation and app setup scripts are ready for review.
-  The two-hour private CPU trial has a validated change-set preview. Staging
-  the Babel serving files, starting EC2, and checking readiness, memory, and
-  response time remain pending. [AWS migration plan](aws_migration_plan.md)
+  The original two-hour private CPU trial preview is validated and unexecuted.
+  The handoff IAM user is configured. Verifying their sign-in, preparing a
+  fresh preview, staging the Babel serving files, and testing EC2 remain
+  pending. [AWS migration plan](aws_migration_plan.md)
 
 ### Evaluation app implementation (2026-11-18)
 

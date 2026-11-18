@@ -175,17 +175,23 @@ test feedback, and credentials.
 
 ## Hand off to a teammate
 
-- Give the teammate a named AWS identity with MFA and short-lived CLI sign-in.
-  In a standalone account, an individual IAM console user can use `aws login`
-  with `SignInLocalDevelopmentAccess`. Grant project-only stack and instance
-  management through a scoped deployment permission set or role. CloudFormation
-  also needs a scoped execution role or the underlying EC2, VPC, and public AMI
-  parameter permissions. Keep account-owner and billing access separate.
-  [Creating IAM users](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html)
-  · [CloudFormation permissions](https://docs.aws.amazon.com/prescriptive-guidance/latest/least-privilege-cloudformation/permissions-use-cloudformation.html)
+- The account owner created a named IAM console user for the teammate and
+  attached `SignInLocalDevelopmentAccess` and `PowerUserAccess`. This is the
+  simplified setup for the class project. `PowerUserAccess` allows changes to
+  resources across the account and can incur charges. Remove it when the
+  teammate no longer needs deployment access.
+  [PowerUserAccess policy](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/PowerUserAccess.html)
+- Share the IAM sign-in URL and username, and deliver the temporary password
+  through the team's password manager. The teammate resets the password on first
+  sign-in, can enroll MFA, and verifies their own CLI profile using the commands
+  in section 2. Sign-in and MFA enrollment are unverified. The CLI identity
+  should be the teammate's IAM user in the project account.
+  [IAM user sign-in](https://docs.aws.amazon.com/signin/latest/userguide/introduction-to-iam-user-sign-in-tutorial.html)
 - Have the teammate generate an Ed25519 key on their SSH machine. Create a new
-  change-set preview using their public key and public IPv4 address. The private
-  key stays with them. For later shared shell access, create separate Linux users
+  change-set preview using their public key and public IPv4 address. Use a new
+  stack name such as `playlist-lab-team-trial` to distinguish it from the
+  unexecuted `playlist-lab-trial` preview for the original operator. The private
+  key stays with the teammate. For later shared shell access, create separate Linux users
   with individual keys and grant administrator access to operators who need it.
   [EC2 Linux users](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/managing-users.html)
 - Share the draft PR, the serving artifact paths, and the AWS region and stack
@@ -208,7 +214,7 @@ test feedback, and credentials.
   Stopping the instance pauses compute charges while retained storage still
   incurs charges. [EC2 lifecycle and billing](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-lifecycle.html)
 
-**Open before provisioning.** Confirm who owns the AWS account and its budget,
-who can stage and verify the artifacts from Babel, who can provide the team
-YouTube Music browser credential, and whether the first trial is facilitator-only
-or needs a participant-facing URL.
+**Open before provisioning.** Verify the teammate's AWS sign-in and new preview,
+and stage the serving bundle once a Babel compute allocation is available. The
+first trial is private and lasts two hours. The team YouTube Music browser
+credential is needed for the live playlist-only test.
