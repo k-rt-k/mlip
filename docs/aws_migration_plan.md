@@ -3,8 +3,9 @@
 The private CPU trial is deployed in **`playlist-lab-migration`** in **`us-east-1`**.
 Ayush can [resume the existing instance](#take-over-the-migrated-instance)
 with its app, model files, and SQLite database on disk. The web app is available
-through an SSH tunnel. The rest of this guide also covers rebuilding the stack
-and preparing participant-facing hosting.
+through an SSH tunnel for paired sessions or the
+[public HTTPS link](#public-retrieval-preview) for retrieval. The rest of this
+guide covers rebuilding and cleaning up both deployments.
 
 The starting assumptions are a team-owned AWS account in **US East (N. Virginia)**
 and an **On-Demand m7i.xlarge** running **Ubuntu Server 24.04 LTS, x86_64**,
@@ -44,13 +45,13 @@ with **40 GiB of encrypted gp3 disk**. The instance has 4 vCPUs and 16 GiB RAM.
    agreed trial budget and make sure the billing owner receives it. Budget
    alerts notify the owner. The owner still needs to stop the instance.
    [AWS Budgets](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-create.html)
-3. Check the live Linux On-Demand quote in the AWS Pricing Calculator. Multiply
-   the instance rate by the expected running hours and add the disk and public
-   IPv4 charges. For scale, at an illustrative `$0.20/hour`, eight hours of
-   compute, eight hours of public IPv4, and one day of 40 GiB gp3 are about
-   **$1.75** before transfer, storage snapshots, taxes, or OpenRouter usage.
-   Continuous hosting at that illustrative rate is about **$151 per 30 days**
-   for those three AWS items. Confirm the actual regional rate before launching.
+3. The November 18 list rates in `us-east-1` were `$0.2016/hour` for the
+   Linux On-Demand instance, `$0.005/hour` for its public IPv4 address, and
+   `$3.20/month` for the 40 GiB gp3 disk at baseline performance. Two running
+   hours cost about **$0.41** for compute and IPv4. The disk keeps billing
+   through stops. Continuous use is about **$154** for a 730-hour month,
+   before credits, transfer, snapshots, taxes, or OpenRouter usage. Confirm
+   the current regional rate for future launches.
    [EC2 On-Demand Pricing](https://aws.amazon.com/ec2/pricing/on-demand/)
    · [AWS Pricing Calculator](https://calculator.aws/)
    · [EBS pricing](https://aws.amazon.com/ebs/pricing/)
@@ -213,6 +214,11 @@ test feedback, and credentials.
 - Ayush handles his own AWS sign-in, SSH key, and service credentials. Use the
   steps below to resume the existing deployment. For a fresh deployment, use a
   new stack name and pass the operator's own public key and IPv4 address.
+- For another teammate who will operate AWS, create a separate IAM console
+  user and choose **Copy permissions** from the existing operator at the
+  permissions step. Each teammate uses their own AWS login and SSH key.
+  People trying the public preview can use its link directly.
+  [Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html)
 - Share the draft PR, the serving artifact paths, and the AWS region and stack
   name. Share runtime secrets through the team's private credential channel.
 
@@ -266,6 +272,9 @@ single live retrieval recommender, search for music, and build a playlist.
 The paired study runs on port 8060 over the SSH tunnel. Public preview sessions
 have secure cookies and a dedicated `/var/lib/playlist-lab/preview.sqlite`
 database. Export this database individually if the demo feedback is useful.
+The HTTPS browser and API checks passed on November 18 for session start,
+text-only suggestions, song search, text with seeds, seed-only suggestions,
+and Keep.
 
 ```sh
 aws --profile mlip --region us-east-1 cloudformation describe-stacks \

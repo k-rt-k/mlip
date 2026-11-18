@@ -270,4 +270,6 @@ keep rate over shown tracks, paired keep rates over rounds both arms served,
 empty slots, unavailable panels, and skipped panels, grouped by participant and
 recommender. These commands run
 local development servers for the pilot. Public hosting requires a production
-WSGI server and deployment configuration.
+WSGI server and deployment configuration. The
+[AWS migration guide](docs/aws_migration_plan.md#public-retrieval-preview)
+has the live retrieval preview and operator instructions.

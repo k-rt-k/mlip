@@ -17,8 +17,13 @@ end-to-end pilot with real participants.
   app and CPU retrieval passed smoke checks for text, text plus seeds, and
   seeds alone. Ayush can resume the existing instance and configure
   OpenRouter and YouTube Music credentials. Full EC2 acceptance with both
-  study pairings, participant sessions, and public HTTPS remain pending.
+  study pairings and participant sessions remains pending.
   [AWS migration plan](aws_migration_plan.md)
+- **Public retrieval preview (2026-11-18).** The AWS-assigned HTTPS URL is
+  available while the EC2 instance runs. Browser and API checks passed for
+  live retrieval, song search, and playlist updates. Preview feedback goes
+  into a separate SQLite database. December 15 is the manual export and
+  cleanup date. [Preview and cleanup](aws_migration_plan.md#public-retrieval-preview)
 
 ### Evaluation app implementation (2026-11-18)
 
@@ -45,8 +50,8 @@ end-to-end pilot with real participants.
   an opening round. These are smoke measurements.
 - **Handoff.** Setup in [README](../README.md#evaluation-app), choices in
   [assumptions and decisions](../assumptions_and_decisions.md), and unresolved
-  study inputs in [questions](../questions.md). Participant sessions and
-  public CPU hosting remain pending.
+  study inputs in [questions](../questions.md). Participant sessions remain
+  pending.
 
 ## 2026-10-30 — Prompt-only playlist-search baseline scored
 
