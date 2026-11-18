@@ -11,14 +11,14 @@ Due November 19, 2026, at 11:30pm. The assignment calls for revisions to the
 offline evaluation, a two-page randomized field evaluation design, and an
 end-to-end pilot with real participants.
 
-- **Pilot hosting.** Run the app and feedback storage on a laptop for in-person
-  sessions. Serve the retrieval model from an allocated Babel compute node and
-  connect to it through an SSH tunnel.
-- **AWS migration.** CloudFormation and app setup scripts are ready for review.
-  The original two-hour private CPU trial preview is validated and unexecuted.
-  The handoff IAM user is configured. Verifying their sign-in, preparing a
-  fresh preview, staging the Babel serving files, and testing EC2 remain
-  pending. [AWS migration plan](aws_migration_plan.md)
+- **Private CPU hosting (2026-11-18).** Playlist Lab is installed on
+  `playlist-lab-migration` in `us-east-1` with the full 1.03 million-track
+  HNSW catalog. All six serving files passed checksum verification. The web
+  app and CPU retrieval passed smoke checks for text, text plus seeds, and
+  seeds alone. Ayush can resume the existing instance and configure
+  OpenRouter and YouTube Music credentials. Full EC2 acceptance with both
+  study pairings, participant sessions, and public HTTPS remain pending.
+  [AWS migration plan](aws_migration_plan.md)
 
 ### Evaluation app implementation (2026-11-18)
 

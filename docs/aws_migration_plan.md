@@ -1,18 +1,38 @@
 # AWS migration plan for Playlist Lab
 
-Start with one private CPU-only EC2 pilot. Run the web app, SQLite feedback
-database, CLAP encoder, and FAISS index on that instance. The facilitator can
-open the app over an SSH tunnel. This removes the live dependency on Babel
-once the model artifacts have been transferred. Turn on participant-facing
-HTTPS after the private deployment passes the checks below.
+The private CPU trial is deployed in **`playlist-lab-migration`** in **`us-east-1`**.
+Ayush can [resume the existing instance](#take-over-the-migrated-instance)
+with its app, model files, and SQLite database on disk. The web app is available
+through an SSH tunnel. The rest of this guide also covers rebuilding the stack
+and preparing participant-facing hosting.
 
 The starting assumptions are a team-owned AWS account in **US East (N. Virginia)**
 and an **On-Demand m7i.xlarge** running **Ubuntu Server 24.04 LTS, x86_64**,
 with **40 GiB of encrypted gp3 disk**. The instance has 4 vCPUs and 16 GiB RAM.
-The earlier synthetic Babel probe on a GPU-masked allocation measured about
-2.32 GiB RSS for the index and 0.77 GiB for the encoder. This gives us a starting
-size, with EC2 cold-start, memory, latency, and concurrency still to measure.
 [EC2 instance specifications](https://aws.amazon.com/ec2/instance-types/m7i/)
+
+## Private trial results · November 18, 2026
+
+- The deployment used the CloudFormation template and app snapshot `2d485ef`.
+  The earlier `playlist-lab-trial` preview remains unexecuted.
+- The 2.3 GiB bundle was staged on Babel at
+  `/data/user_data/hpoonia/mlip/aws-serving-v1` and uploaded to
+  `/opt/playlist-lab/artifacts`. All six serving file checksums matched.
+  The app lives in `/opt/playlist-lab/app` and the fresh SQLite database in
+  `/var/lib/playlist-lab/study.sqlite`.
+- Bootstrap installed CPU-only PyTorch and enabled the encoder, HNSW worker,
+  and web app. The app returned HTTP 200. The index loaded 1,025,994 tracks,
+  and one warm synthetic request per mode returned 15 candidates
+  for text only (0.04 s), text plus seeds (0.04 s), and seeds only (0.01 s).
+  These are worker response times. The three services' individual peak
+  memory use was about 2.3, 2.3, and 0.05 GiB respectively.
+- EC2 Instance Connect worked with a fresh Ed25519 key under the deployment
+  operator's AWS profile. The web app returned HTTP 200 through the SSH tunnel.
+  The guest's initial automatic stop was scheduled
+  for 22:56 UTC on November 18. See the handoff below for the next start.
+- Ayush will configure runtime credentials and run the remaining
+  [acceptance checks](#4-install-start-and-verify-privately). This trial used
+  synthetic probes and left the instance ready for private follow-up.
 
 ## 1. Confirm the account and spending limit
 
@@ -147,11 +167,14 @@ test feedback, and credentials.
    systemd services with an unprivileged service account. The encoder listens
    on loopback **8062**, FAISS on **8061**, and the Waitress app on **8060**.
    The SQLite DB lives in `/var/lib/playlist-lab`.
-2. Configure `OPENROUTER_API_KEY` in an owner-only
-   `/etc/playlist-lab/app.env` on EC2. For live playlist-only YouTube Music,
-   install the team browser credential at `/etc/playlist-lab/browser.json`
-   with owner `root`, group `playlist-lab`, and mode `0640`. Restart
-   `playlist-lab-app.service` after configuring it.
+2. Prepare `/etc/playlist-lab/app.env` on EC2 with
+   `sudo touch /etc/playlist-lab/app.env` and
+   `sudo chmod 0600 /etc/playlist-lab/app.env`.
+   Use `sudoedit /etc/playlist-lab/app.env` to set `OPENROUTER_API_KEY`.
+   For live playlist-only YouTube Music, install the team browser credential at
+   `/etc/playlist-lab/browser.json` with owner `root`, group `playlist-lab`, and
+   mode `0640`. The service already reads that path. Run
+   `sudo systemctl restart playlist-lab-app.service` after configuring credentials.
 3. For the first private smoke test, connect from a laptop and open
    `http://127.0.0.1:8060`. If an instance is stopped and restarted, look up
    its current address before reconnecting.
@@ -187,17 +210,51 @@ test feedback, and credentials.
   in section 2. Sign-in and MFA enrollment are unverified. The CLI identity
   should be the teammate's IAM user in the project account.
   [IAM user sign-in](https://docs.aws.amazon.com/signin/latest/userguide/introduction-to-iam-user-sign-in-tutorial.html)
-- Have the teammate generate an Ed25519 key on their SSH machine. Create a new
-  change-set preview using their public key and public IPv4 address. Use a new
-  stack name such as `playlist-lab-team-trial` to distinguish it from the
-  unexecuted `playlist-lab-trial` preview for the original operator. The private
-  key stays with the teammate. For later shared shell access, create separate Linux users
-  with individual keys and grant administrator access to operators who need it.
-  [EC2 Linux users](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/managing-users.html)
+- Ayush handles his own AWS sign-in, SSH key, and service credentials. Use the
+  steps below to resume the existing deployment. For a fresh deployment, use a
+  new stack name and pass the operator's own public key and IPv4 address.
 - Share the draft PR, the serving artifact paths, and the AWS region and stack
   name. Share runtime secrets through the team's private credential channel.
-  Confirm that the new operator can see the stack and reach the serving files
-  before beginning the timed test.
+
+### Take over the migrated instance
+
+Ayush can sign in using his own AWS profile and manage the `playlist-lab-migration`
+stack in `us-east-1`. Get the current instance ID and public address from AWS,
+especially after stopping and starting the instance.
+
+```sh
+trial_instance=$(aws --profile mlip --region us-east-1 cloudformation \
+  describe-stack-resource --stack-name playlist-lab-migration \
+  --logical-resource-id TrialInstance --query StackResourceDetail.PhysicalResourceId --output text)
+trial_host=$(aws --profile mlip --region us-east-1 ec2 describe-instances \
+  --instance-ids "$trial_instance" --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
+```
+
+If the instance is stopped, start it in the EC2 console, wait for it to run,
+and look up its current IP again. In **EC2 → Instances → Security**, open
+the instance's security group and add an inbound **SSH (TCP 22)** rule with
+source **My IP** if the browser and SSH client are on the same machine. For
+a different SSH client, run `curl -4 -fsSL https://checkip.amazonaws.com` on
+that machine and use its IPv4 address with a `/32` suffix. Create the SSH key
+once with `ssh-keygen -t ed25519 -f ~/.ssh/playlist-lab-aws`, or use an existing
+key. EC2 Instance Connect sends his public key for the `ubuntu` account.
+Connect within 60 seconds. The private key stays on his machine.
+[EC2 Instance Connect](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-connect-methods.html)
+
+```sh
+trial_key="$HOME/.ssh/playlist-lab-aws"
+aws --profile mlip --region us-east-1 ec2-instance-connect send-ssh-public-key \
+  --instance-id "$trial_instance" --instance-os-user ubuntu --ssh-public-key "file://$trial_key.pub"
+ssh -i "$trial_key" ubuntu@"$trial_host"
+```
+
+For later sessions, Ayush can repeat the Instance Connect step. To open the
+app locally, use the same key and add `-L 8060:127.0.0.1:8060` to the SSH
+command, then visit `http://127.0.0.1:8060`. If he connects from a compute
+node, use the second tunnel described in section 4. For a resumed trial, run
+`sudo shutdown -P +120` on EC2 to schedule another two-hour stop. The initial
+timer only covers the original launch window. The app, model files, and
+database remain on the EBS volume between starts.
 
 ## 5. Cut over or shut down
 
@@ -213,8 +270,3 @@ test feedback, and credentials.
   over and check for remaining volumes, snapshots, or reserved public IPs.
   Stopping the instance pauses compute charges while retained storage still
   incurs charges. [EC2 lifecycle and billing](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-lifecycle.html)
-
-**Open before provisioning.** Verify the teammate's AWS sign-in and new preview,
-and stage the serving bundle once a Babel compute allocation is available. The
-first trial is private and lasts two hours. The team YouTube Music browser
-credential is needed for the live playlist-only test.

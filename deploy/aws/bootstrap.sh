@@ -24,7 +24,7 @@ done
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get install -y ca-certificates curl libgomp1 libsndfile1 python3.12 rsync
+apt-get install -y ca-certificates curl ec2-instance-connect libgomp1 libsndfile1 python3.12 rsync
 
 if [[ ! -x /usr/local/bin/uv ]]; then
     curl -fsSL https://astral.sh/uv/0.9.26/install.sh |

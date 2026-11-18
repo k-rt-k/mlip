@@ -30,4 +30,5 @@ install -m 0644 "${required[@]:3}" "$bundle"
     cd "$bundle"
     sha256sum index/index.faiss index/catalog.json index/metadata.json \
         evaluation-app-lookup.sqlite clap.npz seed-youtube-clap.npz > SHA256SUMS
+    chmod 0644 SHA256SUMS
 )
