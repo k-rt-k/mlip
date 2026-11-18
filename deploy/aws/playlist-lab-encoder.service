@@ -1,0 +1,18 @@
+[Unit]
+Description=Playlist Lab CPU CLAP encoder
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=playlist-lab
+WorkingDirectory=/opt/playlist-lab/app
+Environment=HF_HOME=/var/lib/playlist-lab/huggingface
+Environment=CUDA_VISIBLE_DEVICES=
+Environment=OMP_NUM_THREADS=4
+Environment=OPENBLAS_NUM_THREADS=1
+ExecStart=/opt/playlist-lab/encoder-venv/bin/python -m evaluation_app.encoder_service --revision 195c3a3e68faebb3e2088b9a79e79b43ddbda76b
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

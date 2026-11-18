@@ -10,7 +10,7 @@
 - **Primary task outcome.** Compare each participant's keep rate over tracks shown in rounds both panels served. The full-session export also reports keep rates for each arm and separates unfilled slots, unavailable panels, and rounds where an arm does not apply. Participants end the session whenever they want. Round five offers an optional satisfaction check, and the final rating remains separate.
 - **YouTube Music baseline.** Use public community playlist search for text-only rounds and native playlist suggestions for playlist-only rounds. Leave the panel in its assigned position for combined rounds, with an explanation that it supports each input separately. Combined rounds still contribute to the session record.
 - **LLM provider.** Use OpenRouter for the pilot. DeepSeek V4 Flash 0731 is the initial low-cost, versioned model with structured output and reasoning disabled to reserve its output budget for the song list. The app requests zero-data-retention providers, denies provider data collection, and requires support for submitted API parameters. This is a different model from the Qwen offline baseline.
-- **Hosting.** Run the app and study database locally for in-person sessions. Serve the CPU retrieval stack on Babel through an SSH tunnel. Public CPU hosting on AWS or another provider is a later task after measurement and review.
+- **Hosting.** The initial app can use a laptop and a remote CPU retrieval worker. The AWS trial runs all three services and SQLite on one CPU instance, with SSH access through Babel and a two-hour automatic stop. Participant-facing hosting follows private validation and review.
 
 ## Implementation choices to review
 

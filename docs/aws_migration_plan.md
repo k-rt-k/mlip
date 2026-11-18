@@ -36,7 +36,59 @@ size, with EC2 cold-start, memory, latency, and concurrency still to measure.
    · [EBS pricing](https://aws.amazon.com/ebs/pricing/)
    · [Public IPv4 pricing](https://aws.amazon.com/vpc/pricing/)
 
-## 2. Launch the CPU instance
+## 2. Preview and launch the CPU instance
+
+Run the CLI from the operator's terminal. For an IAM console sign-in, use
+AWS CLI v2.32 or newer. Omit `--remote` on a machine with a local browser.
+An existing IAM Identity Center profile can use `aws sso login`.
+[AWS CLI sign-in](https://docs.aws.amazon.com/signin/latest/userguide/command-line-sign-in.html)
+
+```sh
+aws login --remote --profile mlip --region us-east-1
+aws sts get-caller-identity --profile mlip
+```
+
+The [CloudFormation template](../deploy/aws/trial.yaml) creates the network,
+operator key entry, and trial instance. The SSH rule takes one public IPv4
+address. Run the IP lookup from the machine that will open the SSH connection.
+Use the operator's existing dedicated Ed25519 key or generate a new one with
+`ssh-keygen -t ed25519 -f ~/.ssh/playlist-lab-aws`. Pass its `.pub` file only.
+
+```sh
+trial_stack=playlist-lab-trial
+trial_key="$HOME/.ssh/playlist-lab-aws"
+trial_ssh_cidr="$(curl -4 -fsSL https://checkip.amazonaws.com)/32"
+
+aws --profile mlip --region us-east-1 cloudformation deploy \
+  --stack-name "$trial_stack" --template-file deploy/aws/trial.yaml \
+  --parameter-overrides "OperatorCidr=$trial_ssh_cidr" \
+    "OperatorPublicKey=$(cat "$trial_key.pub")" TrialMinutes=120 \
+  --no-execute-changeset
+```
+
+This prepares a preview. Stage the model bundle below before executing it. Use
+the change-set identifier printed by `deploy` to inspect and execute that preview:
+
+```sh
+aws --profile mlip --region us-east-1 cloudformation describe-change-set \
+  --change-set-name "$trial_change_set"
+aws --profile mlip --region us-east-1 cloudformation execute-change-set \
+  --change-set-name "$trial_change_set"
+aws --profile mlip --region us-east-1 cloudformation wait stack-create-complete \
+  --stack-name "$trial_stack"
+aws --profile mlip --region us-east-1 cloudformation describe-stacks \
+  --stack-name "$trial_stack" --query 'Stacks[0].Outputs'
+```
+
+Set `trial_change_set` to the printed ARN first. For a new deployment, take
+`InitialPublicIp` from the stack output. The guest timer schedules one stop two
+hours after its first boot configuration. Check it with
+`systemctl list-timers playlist-lab-trial-stop.timer`. For a later restart, get
+the current public IP from EC2 and schedule a new stop if needed. A stopped
+instance retains its EBS disk.
+[AWS change sets](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/deploy.html)
+
+### Console option
 
 1. In the [EC2 console](https://console.aws.amazon.com/ec2/), set the region to
    **N. Virginia**, choose **Instances → Launch instances**, and name it
@@ -69,24 +121,37 @@ size, with EC2 cold-start, memory, latency, and concurrency still to measure.
 | Runtime credentials | Provision `OPENROUTER_API_KEY` and the team YouTube Music browser credential file separately. Set `MLIP_YTM_AUTH_FILE` to the latter's path. Keep both outside Git with owner-only permissions and supply them to the app process only. |
 | Study feedback | Start with a fresh SQLite file on encrypted storage. Move real study data only if a prior session database needs to be carried over and the team approves the owner and retention. Export or back up the DB before removing the instance. |
 
-Stage only the files above from an approved Babel compute or data-transfer
-host once they are available. Generate a SHA-256 manifest there for the serving
-bundle. Use resumable `rsync` over SSH, directly if the source host can reach EC2
-or via the operator's laptop, and verify the manifest on EC2 before serving.
-The full `corpus.npz`, source audio, training artifacts, evaluation datasets,
-Python virtual environments, and local test feedback are unnecessary for serving.
+Stage the serving files from an approved Babel compute or data-transfer host,
+using a bundle directory on data storage. The script writes a SHA-256 manifest.
+Run the upload from a host that can read the staged bundle and reach the EC2 SSH
+rule. If the transfer host has a different public IP, use a preview with its
+address or relay the bundle through the authorized operator.
+
+```sh
+bash deploy/aws/stage-artifacts.sh "$trial_bundle" \
+  /data/user_data/hpoonia/mlip/retrieval/mpd-v1 \
+  /data/user_data/ksnair/mlip/embeddings/ytm-eval
+bash deploy/aws/upload-trial.sh "$trial_bundle" "ubuntu@$trial_host" "$trial_key"
+```
+
+Set `trial_bundle` to the chosen staging directory and `trial_host` to the EC2
+address. The upload sends a committed snapshot of the app source and transfers
+the model artifacts with resumable `rsync`. The serving bundle excludes the
+full `corpus.npz`, audio, training files, evaluation data, virtual environments,
+test feedback, and credentials.
 
 ## 4. Install, start, and verify privately
 
-1. Install Git and `uv` on Ubuntu and clone the repo. Use one directory such as
-   `/srv/mlip/artifacts` for read-only model files and another such as
-   `/var/lib/playlist-lab` for the writable study database. Use an unprivileged
-   service account. Set `MLIP_STUDY_DB` to its persistent database path.
-2. Start the encoder on loopback **8062**, then the FAISS worker on **8061** with
-   the copied index, lookup, and two seed files. Start the app on loopback
-   **8060**. Adapt the commands in [the app setup](../README.md#live-laptop-and-babel-setup)
-   to use EC2 paths. Keep encoder and FAISS in separate Python environments
-   and processes because their local wheels conflict through OpenMP.
+1. Run `sudo bash /opt/playlist-lab/app/deploy/aws/bootstrap.sh` on EC2. It
+   verifies the model bundle, installs CPU dependencies, and starts the three
+   systemd services with an unprivileged service account. The encoder listens
+   on loopback **8062**, FAISS on **8061**, and the Waitress app on **8060**.
+   The SQLite DB lives in `/var/lib/playlist-lab`.
+2. Configure `OPENROUTER_API_KEY` in an owner-only
+   `/etc/playlist-lab/app.env` on EC2. For live playlist-only YouTube Music,
+   install the team browser credential at `/etc/playlist-lab/browser.json`
+   with owner `root`, group `playlist-lab`, and mode `0640`. Restart
+   `playlist-lab-app.service` after configuring it.
 3. For the first private smoke test, connect from a laptop and open
    `http://127.0.0.1:8060`. If an instance is stopped and restarted, look up
    its current address before reconnecting.
@@ -95,11 +160,11 @@ Python virtual environments, and local test feedback are unnecessary for serving
    ssh -N -i ~/.ssh/mlip-ec2.pem -L 8060:127.0.0.1:8060 ubuntu@EC2_HOST
    ```
 
-4. Before participant use, run the app under a production WSGI server and
-   supervise all three processes with `systemd`. Set bounded restart behavior,
-   wait for worker health before starting sessions, and record service logs
-   without request bodies or credentials. [Flask deployment](https://flask.palletsprojects.com/en/stable/deploying/)
-5. Complete CPU-only acceptance on EC2. Check that the CPU encoder and full
+   For a Babel operator and laptop browser, open that tunnel on Babel first.
+   Then forward laptop port 8060 to the same Babel host's loopback port 8060
+   in a second SSH session.
+
+4. Complete CPU-only acceptance on EC2. Check that the CPU encoder and full
    index load, then run all supported modes and both paired assignments. Measure
    readiness from cold start, combined memory including the app, repeat-query
    latency, and responsiveness with at least two simultaneous test sessions.
@@ -107,6 +172,26 @@ Python virtual environments, and local test feedback are unnecessary for serving
    that a playlist-only round creates and removes its temporary private copy,
    and that search, playback, Keep/Reject, ratings, and export work after a
    service restart. Pick a smaller instance only after measuring headroom.
+
+## Hand off to a teammate
+
+- Give the teammate a named AWS identity with MFA and short-lived CLI sign-in.
+  In a standalone account, an individual IAM console user can use `aws login`
+  with `SignInLocalDevelopmentAccess`. Grant project-only stack and instance
+  management through a scoped deployment permission set or role. CloudFormation
+  also needs a scoped execution role or the underlying EC2, VPC, and public AMI
+  parameter permissions. Keep account-owner and billing access separate.
+  [Creating IAM users](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html)
+  · [CloudFormation permissions](https://docs.aws.amazon.com/prescriptive-guidance/latest/least-privilege-cloudformation/permissions-use-cloudformation.html)
+- Have the teammate generate an Ed25519 key on their SSH machine. Create a new
+  change-set preview using their public key and public IPv4 address. The private
+  key stays with them. For later shared shell access, create separate Linux users
+  with individual keys and grant administrator access to operators who need it.
+  [EC2 Linux users](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/managing-users.html)
+- Share the draft PR, the serving artifact paths, and the AWS region and stack
+  name. Share runtime secrets through the team's private credential channel.
+  Confirm that the new operator can see the stack and reach the serving files
+  before beginning the timed test.
 
 ## 5. Cut over or shut down
 

@@ -4,14 +4,15 @@ import argparse
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 
-from spotify.src.embeddings import get_embedder
+from spotify.src.embeddings import Clap
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port", type=int, default=8062)
+    parser.add_argument("--revision", help="Hugging Face checkpoint revision matching the FAISS index")
     args = parser.parse_args()
-    encoder = get_embedder("clap", device="cpu")
+    encoder = Clap(device="cpu", revision=args.revision)
 
     class Handler(BaseHTTPRequestHandler):
         def reply(self, status, data):

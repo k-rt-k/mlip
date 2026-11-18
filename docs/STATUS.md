@@ -14,10 +14,10 @@ end-to-end pilot with real participants.
 - **Pilot hosting.** Run the app and feedback storage on a laptop for in-person
   sessions. Serve the retrieval model from an allocated Babel compute node and
   connect to it through an SSH tunnel.
-- **Migration plan.** Move serving off Babel to a private CPU-only EC2 trial.
-  Transfer the prebuilt index, lookup and model dependencies, then measure
-  readiness, memory and response time before opening participant access.
-  [AWS migration plan](aws_migration_plan.md)
+- **AWS migration.** CloudFormation and app setup scripts are ready for review.
+  The two-hour private CPU trial has a validated change-set preview. Staging
+  the Babel serving files, starting EC2, and checking readiness, memory, and
+  response time remain pending. [AWS migration plan](aws_migration_plan.md)
 
 ### Evaluation app implementation (2026-11-18)
 
