@@ -11,16 +11,41 @@ Due November 19, 2026, at 11:30pm. The assignment calls for revisions to the
 offline evaluation, a two-page randomized field evaluation design, and an
 end-to-end pilot with real participants.
 
-- **Pilot scope.** Build a small web app for text requests and up to five
-  playable suggestions. Participants can keep or reject songs and refine their
-  request. Connect the LLM baseline, YouTube Music playlist search, and the
-  team's retrieval model through the same interface.
 - **Pilot hosting.** Run the app and feedback storage on a laptop for in-person
   sessions. Serve the retrieval model from an allocated Babel compute node and
   connect to it through an SSH tunnel.
-- **Longer study.** If a persistent link is needed, test CPU-only EC2 with the
-  prebuilt index, encoder, and track metadata from Babel. Measure peak memory
-  and end-to-end response time for the selected model before sizing the instance.
+- **Migration plan.** Move serving off Babel to a private CPU-only EC2 trial.
+  Transfer the prebuilt index, lookup and model dependencies, then measure
+  readiness, memory and response time before opening participant access.
+  [AWS migration plan](aws_migration_plan.md)
+
+### Evaluation app implementation (2026-11-18)
+
+- **Ready locally.** The paired app opens with a participant-written text
+  request, then accepts text plus playlist and playlist-only rounds. It compares
+  retrieval with one baseline using randomized panel positions, a shared
+  playlist, and mirrored feedback for matching recordings. It exposes a single
+  recommender picker for team tests and exports per-participant keep rates,
+  empty slots, unavailable panels, and skipped panels. Ratings at round five
+  and at session end are optional and recorded separately.
+- **Playback and search.** Public YouTube Music lookup supports songs outside
+  the audio catalog. Search results mark available seed embeddings. YouTube
+  embeds have a direct playback link and Deezer previews for eligible recordings.
+  The YouTube Music baseline uses public playlist search for text-only requests
+  and native suggestions from temporary private copies for playlist-only rounds.
+  It skips combined requests. Native suggestions still need a live check with
+  the team account's browser credentials.
+- **Validation.** Chromium rehearsal passed on desktop and mobile. On a Babel
+  allocation with GPUs hidden, live CLAP HNSW returned five offers in each
+  of the three input modes for a synthetic test. The rounds took 0.99–2.02 s.
+  The index and encoder processes peaked at about
+  2.32 GiB and 0.77 GiB RSS respectively. OpenRouter DeepSeek V4 Flash 0731
+  also returned five offers in all three modes, and both live pairings passed
+  an opening round. These are smoke measurements.
+- **Handoff.** Setup in [README](../README.md#evaluation-app), choices in
+  [assumptions and decisions](../assumptions_and_decisions.md), and unresolved
+  study inputs in [questions](../questions.md). Participant sessions and
+  public CPU hosting remain pending.
 
 ## 2026-10-30 — Prompt-only playlist-search baseline scored
 

@@ -183,3 +183,91 @@ git config core.hooksPath scripts/git-hooks
 - Music tags and metadata powered by [Last.fm](https://www.last.fm/) via the
   [Last.fm API](https://www.last.fm/api)
 - Listening history via the [Spotify Web API](https://developer.spotify.com/)
+
+## Evaluation app
+
+Run the paired interface with example suggestions from the repository root:
+
+```sh
+uv sync
+uv run python -m evaluation_app --rehearsal
+```
+
+Open **http://127.0.0.1:8060**. Add `--setup manual` for the facilitator's
+single-recommender picker. The paired setup starts with a text request and then
+supports text plus playlist and playlist-only rounds. Rehearsal feedback is
+identified in a separate gitignored SQLite file. Study decisions and open
+questions are in [assumptions_and_decisions.md](assumptions_and_decisions.md)
+and [questions.md](questions.md).
+
+### Live laptop and Babel setup
+
+On an allocated Babel CPU node, run this in Bash from the repo root. It prepares
+the recording lookup if needed and starts the encoder and FAISS in separate
+processes. Use the same model and index artifacts for comparable sessions.
+
+```sh
+MLIP_STORAGE=/data/user_data/hpoonia/mlip
+MPD_ROOT="$MLIP_STORAGE/retrieval/mpd-v1"
+
+if [ ! -f "$MPD_ROOT/evaluation-app-lookup.sqlite" ]; then
+  uv run python -m evaluation_app.retrieval_service \
+    --build-lookup "$MPD_ROOT/snapshot/tracks.sqlite" \
+    --lookup "$MPD_ROOT/evaluation-app-lookup.sqlite"
+fi
+
+OMP_NUM_THREADS=4 "$MLIP_STORAGE/encoder-venv/bin/python" -m evaluation_app.encoder_service &
+encoder_pid=$!
+trap 'kill "$encoder_pid" 2>/dev/null || true' EXIT
+
+uv run python -m evaluation_app.retrieval_service \
+  --index "$MPD_ROOT/indexes/build-04/index" \
+  --lookup "$MPD_ROOT/evaluation-app-lookup.sqlite" \
+  --seed-embeddings /data/user_data/ksnair/mlip/embeddings/ytm-eval/clap.npz \
+  --seed-embeddings /data/user_data/ksnair/mlip/embeddings/ytm-eval/seed-youtube-clap.npz
+```
+
+Both workers bind to loopback. From the laptop, forward port 8061 to the
+allocated Babel node with SSH, adding your normal jump host if needed.
+
+```sh
+ssh -N -L 8061:127.0.0.1:8061 <allocated-babel-node>
+```
+
+In another laptop terminal, set `OPENROUTER_API_KEY` in the environment or the
+ignored `llm/.env` and launch the app from the checkout.
+
+```sh
+uv run python -m evaluation_app
+```
+
+The default OpenRouter model is `deepseek/deepseek-v4-flash-0731`. Set
+`MLIP_LLM_MODEL` to override it. Set `MLIP_LLM_ENV_FILE` to the path of an existing
+ignored `.env` when launching from a separate Git worktree. An alternative
+OpenAI-compatible adapter accepts
+`MLIP_LLM_URL` (full completions URL), `MLIP_LLM_MODEL` and `MLIP_LLM_KEY`.
+The live paired setup requires the CPU worker and LLM configuration. Use
+`--setup manual` to exercise a single live recommender independently.
+
+The YouTube Music baseline searches public playlists for text-only rounds. For
+playlist-only rounds, it creates a temporary private playlist on the team
+account, fetches native suggestions, and attempts to delete the copy. Prepare
+browser authentication with [setup_auth.py](youtube_music/scripts/setup_auth.py)
+while signed in to the team account. The app defaults to
+`data/youtube_music/browser.json`. Set `MLIP_YTM_AUTH_FILE` to use a credential
+file from another checkout. Credentials are required for playlist-only rounds.
+The YouTube Music panel is skipped for combined rounds.
+
+Export local feedback after the study. Keep the export in gitignored storage.
+
+```sh
+uv run python -m evaluation_app --export data/evaluation_app/pilot-export.json
+```
+
+Use a new export filename for each snapshot. To select a different study database
+throughout a run, pass `--db` when launching and exporting. The export includes
+keep rate over shown tracks, paired keep rates over rounds both arms served,
+empty slots, unavailable panels, and skipped panels, grouped by participant and
+recommender. These commands run
+local development servers for the pilot. Public hosting requires a production
+WSGI server and deployment configuration.
