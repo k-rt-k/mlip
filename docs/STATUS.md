@@ -1,8 +1,26 @@
 # Project Status
 
 Scope: [SCOPE.md](SCOPE.md). Deliverables:
+[field evaluation design and model revision](../milestones/field_evaluation_design_and_model_revision.md),
 [initial ML solution](../milestones/initial_ml_solution.md),
 [baselines milestone](../milestones/baselines.md).
+
+## Field evaluation design and model revision — current milestone
+
+Due November 19, 2026, at 11:30pm. The assignment calls for revisions to the
+offline evaluation, a two-page randomized field evaluation design, and an
+end-to-end pilot with real participants.
+
+- **Pilot scope.** Build a small web app for text requests and up to five
+  playable suggestions. Participants can keep or reject songs and refine their
+  request. Connect the LLM baseline, YouTube Music playlist search, and the
+  team's retrieval model through the same interface.
+- **Pilot hosting.** Run the app and feedback storage on a laptop for in-person
+  sessions. Serve the retrieval model from an allocated Babel compute node and
+  connect to it through an SSH tunnel.
+- **Longer study.** If a persistent link is needed, test CPU-only EC2 with the
+  prebuilt index, encoder, and track metadata from Babel. Measure peak memory
+  and end-to-end response time for the selected model before sizing the instance.
 
 ## 2026-10-30 — Prompt-only playlist-search baseline scored
 
