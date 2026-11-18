@@ -290,11 +290,31 @@ cookies and disables caching. The private connection keeps the same origin
 when a stop and start changes the instance's public SSH address.
 [CloudFront VPC origins](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-vpc-origins.html)
 
-The first two-hour EC2 stop still applies. The HTTPS URL will resume serving
-after the instance and its services start again. The CloudFront distribution
-uses pay-as-you-go pricing with AWS's shared free allowance. EC2 and disk
-charges follow the original trial rates.
+The CloudFront distribution uses pay-as-you-go pricing with AWS's shared free
+allowance. EC2 and disk charges follow the original trial rates.
 [CloudFront pricing](https://aws.amazon.com/cloudfront/pricing/)
+
+#### Restart the existing preview
+
+Use your signed-in AWS profile from any terminal with AWS CLI v2 and curl.
+The script starts the existing EC2 instance, waits for the HTTPS app, and
+prints the same CloudFront URL. The preview and its services start on boot.
+The EC2 console can also start the instance directly. Expect the instance
+boot and model load on each start, while CloudFront and its certificate
+keep serving the same hostname.
+
+```sh
+bash deploy/aws/preview-instance.sh start mlip
+bash deploy/aws/preview-instance.sh stop mlip
+```
+
+Run the second command when the preview session is done. The first two-hour
+timer only applies to the original launch. Later starts stay up until an
+operator stops them or sets a new timer. While stopped, the link is offline
+and the server keeps its installed files, database, and private address.
+[EC2 stop and start](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Stop_Start.html)
+
+#### Rebuild on a replacement instance
 
 To rebuild the preview on a fresh EC2 instance, upload the app revision
 including `deploy/aws`, run bootstrap, and install the preview's units:
@@ -326,7 +346,10 @@ aws --profile mlip --region us-east-1 cloudformation deploy \
     "OriginPrivateDns=$trial_private_dns"
 ```
 
-Check the HTTPS URL, session cookie, and a live recommendation before sharing.
+Updating the existing `playlist-lab-preview` stack keeps its hostname and
+requires the new origin configuration to propagate. Recreating the
+distribution assigns a new hostname. Check the HTTPS URL, session cookie,
+and a live recommendation before sharing.
 
 ### December 15 cleanup
 
