@@ -258,15 +258,76 @@ database remain on the EBS volume between starts.
 
 ## 5. Cut over or shut down
 
-- For an in-person pilot, keep the SSH tunnel setup. For remote participants,
-  agree on the audience and feedback retention, attach a team-controlled DNS
-  name, and serve HTTPS through a reverse proxy. Open only web ports on the
-  public side, scope admin SSH to the operator, and keep app and model ports on
-  loopback. Verify the secure session cookie and playback from a separate
-  device before sharing the URL.
-- Use a fresh study database for this recommender policy. Verify a feedback
-  export or encrypted backup before shutdown. Stop the instance between use
-  periods if the team wants to retain the disk. Terminate it when the trial is
-  over and check for remaining volumes, snapshots, or reserved public IPs.
-  Stopping the instance pauses compute charges while retained storage still
-  incurs charges. [EC2 lifecycle and billing](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-lifecycle.html)
+### Public retrieval preview
+
+The `playlist-lab-preview` CloudFormation stack in `us-east-1` publishes
+an AWS-assigned `cloudfront.net` HTTPS URL. Anyone with the link can try the
+single live retrieval recommender, search for music, and build a playlist.
+The paired study runs on port 8060 over the SSH tunnel. Public preview sessions
+have secure cookies and a dedicated `/var/lib/playlist-lab/preview.sqlite`
+database. Export this database individually if the demo feedback is useful.
+
+```sh
+aws --profile mlip --region us-east-1 cloudformation describe-stacks \
+  --stack-name playlist-lab-preview \
+  --query 'Stacks[0].Outputs[?OutputKey==`Url`].OutputValue' --output text
+```
+
+CloudFront forwards requests to the instance's private address through the
+`playlist-lab-preview` VPC origin. Its service-managed security group is the
+source of the only inbound rule on preview port 8080. NGINX applies request
+limits and proxies to Waitress on loopback 8063. CloudFront forwards session
+cookies and disables caching. The private connection keeps the same origin
+when a stop and start changes the instance's public SSH address.
+[CloudFront VPC origins](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-vpc-origins.html)
+
+The first two-hour EC2 stop still applies. The HTTPS URL will resume serving
+after the instance and its services start again. The CloudFront distribution
+uses pay-as-you-go pricing with AWS's shared free allowance. EC2 and disk
+charges follow the original trial rates.
+[CloudFront pricing](https://aws.amazon.com/cloudfront/pricing/)
+
+To rebuild the preview on a fresh EC2 instance, upload the app revision
+including `deploy/aws`, run bootstrap, and install the preview's units:
+
+```sh
+cd /opt/playlist-lab/app
+sudo apt-get update
+sudo apt-get install -y nginx
+sudo install -m 0644 deploy/aws/playlist-lab-preview.service /etc/systemd/system/
+sudo install -m 0644 deploy/aws/playlist-lab-preview.nginx /etc/nginx/conf.d/playlist-lab-preview.conf
+sudo nginx -t
+sudo systemctl daemon-reload
+sudo systemctl enable --now playlist-lab-preview.service nginx
+sudo systemctl reload nginx
+```
+
+Create an EC2 VPC origin in CloudFront using the instance ARN, IPv4, and
+HTTP port 8080, with **HTTP only** for the private origin connection. When
+the origin is deployed, use the origin ID and EC2 private DNS name for
+`origin_id` and `trial_private_dns`. Set `trial_group` to the instance's
+existing security group ID and `origin_group` to the ID of
+`CloudFront-VPCOrigins-Service-SG` in that VPC.
+
+```sh
+aws --profile mlip --region us-east-1 cloudformation deploy \
+  --stack-name playlist-lab-preview --template-file deploy/aws/preview.yaml \
+  --parameter-overrides "InstanceSecurityGroup=$trial_group" \
+    "CloudFrontSecurityGroup=$origin_group" "OriginId=$origin_id" \
+    "OriginPrivateDns=$trial_private_dns"
+```
+
+Check the HTTPS URL, session cookie, and a live recommendation before sharing.
+
+### December 15 cleanup
+
+December 15, 2026 is the team's export and cleanup date. The root disk is
+retained on stop. Deletion requires an operator action. To bring the trial to
+an end, export the feedback needed for the project and verify the export.
+Delete the `playlist-lab-preview` stack first and wait for it to finish.
+Then delete its VPC origin in the CloudFront console and wait for AWS to
+remove its service-managed network interface. Delete
+`playlist-lab-migration` only after confirming the existing instance and
+its disk can be removed. The root disk is set to delete on termination.
+Check for any remaining volumes or snapshots retained by the team.
+[EC2 lifecycle and billing](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-lifecycle.html)

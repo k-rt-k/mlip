@@ -1,0 +1,30 @@
+# The security group admits 8080 only from CloudFront's VPC origin.
+limit_req_zone $binary_remote_addr zone=playlist_lab_viewer:1m rate=60r/m;
+limit_req_zone $server_name zone=playlist_lab_api:1m rate=8r/s;
+
+server {
+    listen 8080 default_server;
+    server_name _;
+    access_log off;
+    client_max_body_size 32k;
+    limit_req_status 429;
+    add_header Strict-Transport-Security "max-age=31536000" always;
+
+    # CloudFront supplies the visitor's address on its VPC connection.
+    set_real_ip_from 10.75.0.0/24;
+    real_ip_header CloudFront-Viewer-Address;
+
+    proxy_set_header Host $host;
+    proxy_read_timeout 60s;
+    proxy_http_version 1.1;
+
+    location /api/ {
+        limit_req zone=playlist_lab_viewer burst=12 nodelay;
+        limit_req zone=playlist_lab_api burst=12 nodelay;
+        proxy_pass http://127.0.0.1:8063;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:8063;
+    }
+}

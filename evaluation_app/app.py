@@ -33,28 +33,43 @@ def endpoint(value):
     return value.rstrip("/")
 
 
-def create_app(db_path=None, *, setup="paired", rehearsal=False, backends=None):
+def create_retrieval_preview():
+    """Serve the public single-recommender preview."""
+    return create_app(preview=True)
+
+
+def create_app(db_path=None, *, setup="paired", rehearsal=False, backends=None, preview=False):
+    if preview:
+        setup = "manual"
     if setup not in SETUPS:
         raise ValueError("Unknown study setup")
-    default_env = Path(__file__).resolve().parents[1] / "llm" / ".env"
-    load_dotenv(os.getenv("MLIP_LLM_ENV_FILE") or default_env)
+
+    if not preview:
+        default_env = Path(__file__).resolve().parents[1] / "llm" / ".env"
+        load_dotenv(os.getenv("MLIP_LLM_ENV_FILE") or default_env)
+
     site = Flask(__name__)
     site.config.update(MAX_CONTENT_LENGTH=32 * 1024)
-    study = Study(db_path or os.getenv("MLIP_STUDY_DB", "data/evaluation_app/study.sqlite"))
+    default_db = "data/evaluation_app/preview.sqlite" if preview else "data/evaluation_app/study.sqlite"
+    study = Study(db_path or os.getenv("MLIP_STUDY_DB", default_db))
     signer = URLSafeTimedSerializer(os.getenv("MLIP_STUDY_SIGNING_KEY") or token_bytes(32))
+    arms = ("retrieval",) if preview else ARMS
     if backends is None:
-        llm_url = endpoint(os.getenv("MLIP_LLM_URL") or OPENROUTER_URL)
-        llm_model = os.getenv("MLIP_LLM_MODEL")
-        llm_key = os.getenv("MLIP_LLM_KEY")
-        if llm_url == OPENROUTER_URL:
-            llm_model = llm_model or OPENROUTER_MODEL
-            llm_key = llm_key or os.getenv("OPENROUTER_API_KEY")
-        ytm_auth = Path(os.getenv("MLIP_YTM_AUTH_FILE") or "data/youtube_music/browser.json").expanduser()
-        backends = RehearsalBackends() if rehearsal else Backends(
-            endpoint(os.getenv("MLIP_RETRIEVAL_URL", "http://127.0.0.1:8061")),
-            llm_url, llm_model, llm_key, ytm_auth=ytm_auth,
-        )
-    secure_cookie = os.getenv("MLIP_SECURE_COOKIE") == "1"
+        retrieval_url = endpoint(os.getenv("MLIP_RETRIEVAL_URL", "http://127.0.0.1:8061"))
+        if rehearsal:
+            backends = RehearsalBackends()
+        elif preview:
+            backends = Backends(retrieval_url)
+        else:
+            llm_url = endpoint(os.getenv("MLIP_LLM_URL")) or OPENROUTER_URL
+            llm_model = os.getenv("MLIP_LLM_MODEL")
+            llm_key = os.getenv("MLIP_LLM_KEY")
+            if llm_url == OPENROUTER_URL:
+                llm_model = llm_model or OPENROUTER_MODEL
+                llm_key = llm_key or os.getenv("OPENROUTER_API_KEY")
+            ytm_auth = Path(os.getenv("MLIP_YTM_AUTH_FILE") or "data/youtube_music/browser.json").expanduser()
+            backends = Backends(retrieval_url, llm_url, llm_model, llm_key, ytm_auth=ytm_auth)
+    secure_cookie = preview or os.getenv("MLIP_SECURE_COOKIE") == "1"
 
     def error(message, code=400):
         return jsonify(error=message), code
@@ -68,7 +83,8 @@ def create_app(db_path=None, *, setup="paired", rehearsal=False, backends=None):
     def session():
         session_id = request.cookies.get(COOKIE, "")
         row = study.session(session_id) if 0 < len(session_id) <= 64 else None
-        if row and bool(row["rehearsal"]) == rehearsal and row["setup"] == setup:
+        if (row and bool(row["rehearsal"]) == rehearsal and row["setup"] == setup
+                and (not preview or json.loads(row["arms"]) == list(arms))):
             return row
         return None
 
@@ -104,7 +120,7 @@ def create_app(db_path=None, *, setup="paired", rehearsal=False, backends=None):
 
     @site.get("/")
     def index():
-        return render_template("index.html", setup=setup, rehearsal=rehearsal, arms=ARM_LABELS,
+        return render_template("index.html", setup=setup, rehearsal=rehearsal, preview=preview, arms=ARM_LABELS,
                                openrouter=getattr(backends, "llm_url", None) == OPENROUTER_URL)
 
     @site.get("/api/session")
@@ -123,9 +139,9 @@ def create_app(db_path=None, *, setup="paired", rehearsal=False, backends=None):
         if old_session and not old_session["finished_at"]:
             return error("A session is already in progress in this browser.", 409)
         arm = data.get("arm")
-        if setup == "manual" and arm not in ARMS:
+        if setup == "manual" and arm not in arms:
             return error("Choose a recommender.")
-        available = list(ARMS) if setup == "paired" else [arm]
+        available = list(arms) if setup == "paired" else [arm]
         missing = backends.ready(available)
         if missing:
             return error("The facilitator needs to configure " + " and ".join(missing) + ".", 503)
@@ -174,7 +190,7 @@ def create_app(db_path=None, *, setup="paired", rehearsal=False, backends=None):
         return study.state(row["id"])
 
     @site.post("/api/preview")
-    def preview():
+    def audio_preview():
         row = active()
         data = payload()
         selection = data.get("selection")

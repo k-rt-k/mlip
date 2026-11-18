@@ -13,6 +13,7 @@
     <div class="brand"><span class="brand-mark" aria-hidden="true">♫</span> Playlist Lab</div>
     <div class="header-meta">
       {% if rehearsal %}<span class="rehearsal">Rehearsal</span>{% endif %}
+      {% if preview %}<span class="rehearsal">Public retrieval preview</span>{% endif %}
       <button id="end-session" class="secondary" type="button" hidden>Finish session</button>
     </div>
   </header>
@@ -22,7 +23,9 @@
       <h1>Make a playlist<br>with a request.</h1>
       <p class="intro-copy">Start with music you’d like to hear. Listen to the suggestions, keep the songs that fit, and refine your request as your playlist takes shape.</p>
       <form id="start-form" class="start-form">
-        {% if setup == "manual" %}
+        {% if preview %}
+        <input type="hidden" id="arm" value="retrieval">
+        {% elif setup == "manual" %}
         <label class="field-label" for="arm">Recommender for this test</label>
         <select id="arm" required>
           {% for value, label in arms.items() %}
@@ -35,6 +38,8 @@
         </label>
         {% if rehearsal %}
         <p class="small">This mode uses example suggestions. Its results are labeled as rehearsal data.</p>
+        {% elif preview %}
+        <p class="small">Search and playback use YouTube. Optional audio previews use Deezer. Please leave out names and other identifying details.</p>
         {% else %}
         <p class="small">An account is unnecessary. Song search and playback use YouTube. For playlist-only suggestions, YouTube Music may receive a temporary private copy of your song list on the study account. Optional audio previews use Deezer.{% if openrouter %} The language-model recommender uses OpenRouter.{% endif %} Please leave out names and other identifying details.</p>
         {% endif %}

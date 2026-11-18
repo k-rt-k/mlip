@@ -25,6 +25,20 @@ def suggest(client, prompt=""):
     return response.get_json()
 
 
+def test_public_preview_uses_retrieval_and_a_secure_cookie(tmp_path):
+    client = create_app(tmp_path / "preview.sqlite", preview=True, backends=RehearsalBackends()).test_client()
+    page = client.get("/")
+    assert b"Public retrieval preview" in page.data
+    assert b"LLM baseline" not in page.data
+    assert client.post("/api/session", json={"consent": True, "arm": "llm"}).status_code == 400
+    response = client.post("/api/session", json={"consent": True, "arm": "retrieval"})
+    assert response.status_code == 200
+    assert "; Secure;" in response.headers["Set-Cookie"]
+    panels = suggest(client, "jazz")["round"]["panels"]
+    assert len(panels) == 1
+    assert panels[0]["status"] == "ok"
+
+
 def test_paired_session_with_three_modes_and_mirrored_feedback(tmp_path, monkeypatch):
     monkeypatch.setattr("evaluation_app.study.choice", lambda options: options[0])
     db = tmp_path / "pilot.sqlite"
