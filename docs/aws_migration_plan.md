@@ -278,6 +278,77 @@ The HTTPS browser and API checks passed on November 18 for session start,
 text-only suggestions, song search, text with seeds, seed-only suggestions,
 and Keep.
 
+#### Switch the existing HTTPS link to the paired study
+
+The public study uses the same CloudFront address and NGINX origin. Its separate
+Waitress service listens on loopback port 8063 and writes to
+`/var/lib/playlist-lab/live.sqlite`. The private acceptance database
+(`study.sqlite`) and old preview database (`preview.sqlite`) remain separate.
+The paired study requires both baseline credentials. Complete these steps before
+sharing the link with participants:
+
+1. Refresh the team account's local browser credentials with
+   `uv run python youtube_music/scripts/setup_auth.py --refresh`. Use a fresh
+   **Copy as fetch (Node.js)** request from `mlip.team0@gmail.com`. The command
+   checks the account before replacing the local file. Do not commit or paste
+   the headers into chat.
+2. Start the existing EC2 instance with `bash deploy/aws/preview-instance.sh
+   start mlip`. Look up its current public IP, then connect with the operator's
+   SSH key as described in [the takeover steps](#take-over-the-migrated-instance).
+   Upload the reviewed app revision from the repository root:
+
+   ```sh
+   git archive HEAD .python-version pyproject.toml uv.lock deploy/aws evaluation_app \
+     baselines retrieval llm/src spotify/src youtube_music/src | \
+     ssh -i "$trial_key" ubuntu@"$trial_host" \
+       'tar -xf - -C /opt/playlist-lab/app'
+   scp -i "$trial_key" data/youtube_music/browser.json \
+     ubuntu@"$trial_host":/tmp/playlist-lab-browser.json
+   ```
+
+3. On EC2, put the OpenRouter key in `/etc/playlist-lab/app.env` using
+   `sudoedit /etc/playlist-lab/app.env`, with one line
+   `OPENROUTER_API_KEY=<your key>`. Do not place the value in a shell command or
+   Git. Install the browser file for the service account:
+
+   ```sh
+   sudo chmod 0600 /etc/playlist-lab/app.env
+   sudo install -o root -g playlist-lab -m 0640 \
+     /tmp/playlist-lab-browser.json /etc/playlist-lab/browser.json
+   rm -f /tmp/playlist-lab-browser.json
+   sudo systemctl restart playlist-lab-app.service
+   ```
+
+4. Verify the team account privately with
+   `sudo -u playlist-lab /opt/playlist-lab/app/.venv/bin/python -c
+   'from youtube_music.src.playlists import make_client;
+   assert make_client("/etc/playlist-lab/browser.json").get_account_info().get("accountName")'`
+   from `/opt/playlist-lab/app`. Complete a paired test session in each
+   assignment, including a playlist-only YouTube Music round. Confirm that its
+   temporary private playlist was deleted and export the private test database.
+5. Run `sudo bash /opt/playlist-lab/app/deploy/aws/activate-public-study.sh`.
+   The script checks that both credential files exist, stops the old preview
+   service, starts the paired service, and restores the preview if startup fails.
+   Verify the HTTPS page and `/api/session` response before sharing it. Use the
+   first two real participants, one per baseline assignment, as the supervised
+   end-to-end pilot through that link; then verify both panels, playback,
+   Keep/Reject, finish, and an export. The app sets a secure session cookie and
+   does not store raw requests or search queries.
+
+The study owner is Spandan. Run collection for one or two days, then export
+`/var/lib/playlist-lab/live.sqlite` from `/opt/playlist-lab/app` on EC2:
+
+```sh
+sudo -u playlist-lab .venv/bin/python -m evaluation_app \
+  --db /var/lib/playlist-lab/live.sqlite \
+  --export /var/lib/playlist-lab/live-export-YYYYMMDD.json
+```
+
+Copy that export through the operator's private SSH connection and analyze it
+with the commands in [README](../README.md#analyze-participant-results). Keep it private and
+confirm its participant screening counts before stopping the instance. The
+December 15 cleanup deadline remains the latest date for manual disk removal.
+
 ```sh
 aws --profile mlip --region us-east-1 cloudformation describe-stacks \
   --stack-name playlist-lab-preview \

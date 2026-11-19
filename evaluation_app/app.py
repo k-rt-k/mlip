@@ -38,9 +38,19 @@ def create_retrieval_preview():
     return create_app(preview=True)
 
 
-def create_app(db_path=None, *, setup="paired", rehearsal=False, backends=None, preview=False):
+def create_public_study():
+    """Serve the paired study over HTTPS with secure session cookies."""
+    return create_app(public_study=True)
+
+
+def create_app(db_path=None, *, setup="paired", rehearsal=False, backends=None,
+               preview=False, public_study=False):
+    if preview and public_study:
+        raise ValueError("Choose one public app mode")
     if preview:
         setup = "manual"
+    elif public_study:
+        setup = "paired"
     if setup not in SETUPS:
         raise ValueError("Unknown study setup")
 
@@ -69,7 +79,7 @@ def create_app(db_path=None, *, setup="paired", rehearsal=False, backends=None, 
                 llm_key = llm_key or os.getenv("OPENROUTER_API_KEY")
             ytm_auth = Path(os.getenv("MLIP_YTM_AUTH_FILE") or "data/youtube_music/browser.json").expanduser()
             backends = Backends(retrieval_url, llm_url, llm_model, llm_key, ytm_auth=ytm_auth)
-    secure_cookie = preview or os.getenv("MLIP_SECURE_COOKIE") == "1"
+    secure_cookie = preview or public_study or os.getenv("MLIP_SECURE_COOKIE") == "1"
 
     def error(message, code=400):
         return jsonify(error=message), code

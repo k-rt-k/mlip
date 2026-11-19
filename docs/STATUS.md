@@ -21,8 +21,10 @@ end-to-end pilot with real participants.
 - **Public retrieval preview (2026-11-18).** The AWS-assigned HTTPS URL is
   available while the EC2 instance runs. Browser and API checks passed for
   live retrieval, song search, and playlist updates. Preview feedback goes
-  into a separate SQLite database. December 15 is the manual export and
-  cleanup date. [Preview and cleanup](aws_migration_plan.md#public-retrieval-preview)
+  into a separate SQLite database. A public paired-study service is prepared
+  locally but has not replaced the preview. The EC2 instance was stopped at
+  the November 19 check. December 15 is the manual cleanup deadline.
+  [Preview and study cutover](aws_migration_plan.md#public-retrieval-preview)
 
 ### Evaluation app implementation (2026-11-18)
 
@@ -64,10 +66,13 @@ end-to-end pilot with real participants.
 
 ### Remaining pilot work
 
-- [ ] Configure live credentials on the private EC2 app and verify native
-  YouTube Music suggestions from a temporary private playlist and its cleanup.
+- [ ] Refresh the team YouTube Music browser credentials, configure them and
+  OpenRouter on EC2, and verify native suggestions and private-copy cleanup.
+- [ ] Complete paired live acceptance on a test database, then switch the
+  existing CloudFront address to the public paired service and verify its export.
 - [ ] Run an end-to-end participant pilot. Start with one completed session per
-  pairing. Confirm the facilitator, export owner, and retention before recruiting.
+  pairing. Spandan owns the export after one or two days of collection; confirm
+  the facilitator and exact retention date before recruiting.
 - [ ] Finish the field evaluation writeup, including participant outcomes and
   the proposed full study's sample size and power.
 

@@ -39,6 +39,18 @@ def test_public_preview_uses_retrieval_and_a_secure_cookie(tmp_path):
     assert panels[0]["status"] == "ok"
 
 
+def test_public_study_is_paired_and_uses_a_secure_cookie(tmp_path):
+    client = create_app(tmp_path / "study.sqlite", public_study=True,
+                        backends=RehearsalBackends()).test_client()
+    page = client.get("/")
+    assert b"Public retrieval preview" not in page.data
+    assert b"Recommender for this test" not in page.data
+    response = client.post("/api/session", json={"consent": True})
+    assert response.status_code == 200
+    assert "; Secure;" in response.headers["Set-Cookie"]
+    assert len(suggest(client, "jazz")["round"]["panels"]) == 2
+
+
 def test_paired_session_with_three_modes_and_mirrored_feedback(tmp_path, monkeypatch):
     monkeypatch.setattr("evaluation_app.study.choice", lambda options: options[0])
     db = tmp_path / "pilot.sqlite"
@@ -259,6 +271,20 @@ def test_live_session_stops_when_arm_is_missing(tmp_path):
     assert response.status_code == 503
     assert "LLM" in response.get_json()["error"]
     assert not client.get("/api/session").get_json()["started"]
+
+
+def test_live_study_requires_youtube_music_auth_file(tmp_path, monkeypatch):
+    class Healthy:
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"ready": True}
+
+    monkeypatch.setattr("evaluation_app.backends.requests.get", lambda *args, **kwargs: Healthy())
+    backends = Backends("http://127.0.0.1:8061", OPENROUTER_URL, OPENROUTER_MODEL,
+                        "configured-key", ytm_auth=tmp_path / "missing.json")
+    assert backends.ready(["retrieval", "playlist_search"]) == ["YouTube Music browser credentials"]
 
 
 def test_openrouter_combined_prompt_keeps_privacy_controls(monkeypatch):

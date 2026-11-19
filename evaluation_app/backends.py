@@ -66,6 +66,8 @@ class Backends:
 
     def ready(self, arms):
         missing = []
+        if "playlist_search" in arms and (self.ytm_auth is None or not self.ytm_auth.is_file()):
+            missing.append("YouTube Music browser credentials")
         if "llm" in arms:
             if not (self.llm_url and self.llm_model):
                 missing.append("LLM endpoint and model")
