@@ -274,3 +274,48 @@ Public hosting requires a production
 WSGI server and deployment configuration. The
 [AWS migration guide](docs/aws_migration_plan.md#public-retrieval-preview)
 has the live retrieval preview and operator instructions.
+
+### Analyze participant results
+
+Export from the **same database path used to launch the app**. Keep the export and
+analysis files in gitignored storage; they contain pseudonymous session IDs,
+song choices, ratings, and optional comments. Use a new output filename each
+time. For example:
+
+```sh
+uv run python -m evaluation_app --db data/evaluation_app/study.sqlite \
+  --export data/evaluation_app/pilot-export.json
+uv run python -m evaluation_app.results \
+  --input data/evaluation_app/pilot-export.json \
+  --output data/evaluation_app/pilot-metrics.json \
+  --participants-csv data/evaluation_app/pilot-participants.csv
+```
+
+The results command validates event references and panel assignments, then
+includes **completed, non-rehearsal paired sessions** by default. It excludes
+manual tests, unfinished sessions, and sessions with no round where both panels
+were available and showed at least one song. The `screening` counts show these
+exclusions. Use `--cohort rehearsal` to analyze rehearsal exports separately;
+never combine those outcomes with live participants.
+
+The primary result is the **mean across participants** of `(retrieval keeps /
+retrieval songs shown) - (assigned baseline keeps / baseline songs shown)`.
+Each participant's rates use only eligible paired rounds, including their
+refinements; each participant contributes one difference. The JSON reports
+results separately for the LLM and YouTube Music comparisons. A positive
+difference favors retrieval. Mirrored Keep/Reject decisions count once in each
+panel's rate, but their two offers are not independent observations. Sessions
+with fewer than ten eligible participants per comparison receive no confidence
+interval; larger samples get a fixed-seed participant bootstrap interval.
+
+The JSON participant rows also report shown, kept, rejected, undecided, judged
+fraction, play clicks, overlapping recordings, round modes, mode-specific paired
+counts, final playlist size, empty slots, unavailable and skipped panels,
+duration, and optional ratings. The CSV gives a compact participant-level table
+of the primary rates and session context.
+Unjudged offers remain in the `shown` denominator. A play click means an
+attempt, not confirmed audio playback. Final and fifth-round ratings describe
+the whole shared-playlist session and must not be attributed to either panel.
+The `all_rounds` breakdown is diagnostic; the primary paired comparison
+excludes rounds with an empty, unavailable, or inapplicable panel. These are
+descriptive pilot results, not a causal or significance claim on their own.

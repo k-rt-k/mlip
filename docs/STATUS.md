@@ -54,6 +54,14 @@ end-to-end pilot with real participants.
   study inputs in [questions](../questions.md). Participant sessions remain
   pending.
 
+- **Participant results analysis (2026-11-19, Spandan).**
+  `evaluation_app.results` validates JSON exports and produces participant-level
+  paired keep-rate comparisons, baseline summaries, screening counts, and
+  diagnostic feedback/coverage metrics as JSON plus optional CSV. Live and
+  rehearsal cohorts are separate; six focused tests pass, and the existing
+  rehearsal export was analyzed. No live participant outcomes are available yet.
+  [Usage and metric definitions](../README.md#analyze-participant-results)
+
 ### Remaining pilot work
 
 - [ ] Configure live credentials on the private EC2 app and verify native
