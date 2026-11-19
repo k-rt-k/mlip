@@ -21,9 +21,9 @@ end-to-end pilot with real participants.
 - **Public retrieval preview (2026-11-18).** The AWS-assigned HTTPS URL is
   available while the EC2 instance runs. Browser and API checks passed for
   live retrieval, song search, and playlist updates. Preview feedback goes
-  into a separate SQLite database. A public paired-study service is prepared
-  locally but has not replaced the preview. The EC2 instance was stopped at
-  the November 19 check. December 15 is the manual cleanup deadline.
+  into a separate SQLite database. The public paired-study source has been
+  uploaded to EC2 but has not replaced the preview. The instance is running
+  for setup on November 19. December 15 is the manual cleanup deadline.
   [Preview and study cutover](aws_migration_plan.md#public-retrieval-preview)
 
 ### Evaluation app implementation (2026-11-18)
@@ -40,9 +40,10 @@ end-to-end pilot with real participants.
   embeds have a direct playback link and Deezer previews for eligible recordings.
   The YouTube Music baseline uses public playlist search for text-only requests
   and native suggestions from temporary private copies for playlist-only rounds.
-  It skips combined requests. A November 19 local team-account check created a
-  private five-seed copy, returned 15 native suggestions, and confirmed cleanup;
-  the EC2 credential install and paired acceptance remain pending.
+  It skips combined requests. On November 19, the refreshed team-account
+  credentials passed local and EC2 checks: each five-seed private-copy test
+  returned 15 native suggestions and confirmed cleanup. Paired acceptance
+  remains pending.
 - **Validation.** Desktop and mobile Chromium rehearsals verified the two-panel
   layout, playback controls, mirrored Keep, restart persistence, and export.
   Two simultaneous synthetic sessions used a local copy of the paired app,
@@ -67,9 +68,8 @@ end-to-end pilot with real participants.
 
 ### Remaining pilot work
 
-- [ ] Install the refreshed team YouTube Music browser credentials and
-  OpenRouter key on EC2, then verify native suggestions and private-copy cleanup
-  from the server.
+- [ ] Install the OpenRouter key on EC2 and verify live LLM generation. The
+  YouTube Music credential and server-side native suggestion check are ready.
 - [ ] Complete paired live acceptance on a test database, then switch the
   existing CloudFront address to the public paired service and verify its export.
 - [ ] Run an end-to-end participant pilot. Start with one completed session per

@@ -1,7 +1,7 @@
 # AWS migration plan for Playlist Lab
 
 The private CPU trial is deployed in **`playlist-lab-migration`** in **`us-east-1`**.
-Ayush can [resume the existing instance](#take-over-the-migrated-instance)
+An operator can [connect from Babel](#connect-to-the-migrated-instance-from-babel)
 with its app, model files, and SQLite database on disk. The web app is available
 through an SSH tunnel for paired sessions or the
 [public HTTPS link](#public-retrieval-preview) for retrieval. The rest of this
@@ -224,45 +224,48 @@ test feedback, and credentials.
 - Share the draft PR, the serving artifact paths, and the AWS region and stack
   name. Share runtime secrets through the team's private credential channel.
 
-### Take over the migrated instance
+### Connect to the migrated instance from Babel
 
-Ayush can sign in using his own AWS profile and manage the `playlist-lab-migration`
-stack in `us-east-1`. Get the current instance ID and public address from AWS,
-especially after stopping and starting the instance.
+The SSH key at `~/.ssh/playlist-lab-aws` stays on Babel. Create it only once.
+Each EC2 start can change the public IP. From a **Babel Bash shell**, copy this
+block for each SSH session:
 
 ```sh
-trial_instance=$(aws --profile mlip --region us-east-1 cloudformation \
-  describe-stack-resource --stack-name playlist-lab-migration \
-  --logical-resource-id TrialInstance --query StackResourceDetail.PhysicalResourceId --output text)
-trial_host=$(aws --profile mlip --region us-east-1 ec2 describe-instances \
-  --instance-ids "$trial_instance" --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
+trial_instance=$(aws --no-cli-pager --profile mlip --region us-east-1 \
+  cloudformation describe-stack-resource --stack-name playlist-lab-migration \
+  --logical-resource-id TrialInstance \
+  --query StackResourceDetail.PhysicalResourceId --output text)
+trial_host=$(aws --no-cli-pager --profile mlip --region us-east-1 \
+  ec2 describe-instances --instance-ids "$trial_instance" \
+  --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
+trial_key="$HOME/.ssh/playlist-lab-aws"
+printf 'EC2 host: %s; Babel outbound IP: ' "$trial_host"
+curl -4 -fsSL https://checkip.amazonaws.com
+aws --no-cli-pager --profile mlip --region us-east-1 \
+  ec2-instance-connect send-ssh-public-key --instance-id "$trial_instance" \
+  --instance-os-user ubuntu --ssh-public-key "file://$trial_key.pub" \
+  --query Success --output text
+ssh -o IdentitiesOnly=yes -i "$trial_key" ubuntu@"$trial_host"
 ```
 
-If the instance is stopped, start it in the EC2 console, wait for it to run,
-and look up its current IP again. In **EC2 → Instances → Security**, open
-the instance's security group and add an inbound **SSH (TCP 22)** rule with
-source **My IP** if the browser and SSH client are on the same machine. For
-a different SSH client, run `curl -4 -fsSL https://checkip.amazonaws.com` on
-that machine and use its IPv4 address with a `/32` suffix. Create the SSH key
-once with `ssh-keygen -t ed25519 -f ~/.ssh/playlist-lab-aws`, or use an existing
-key. EC2 Instance Connect sends his public key for the `ubuntu` account.
-Connect within 60 seconds. The private key stays on his machine.
+Start the instance first if `trial_host` prints `None`. EC2 Instance Connect
+accepts the public key for about 60 seconds, so run SSH immediately after the
+`True` response. In **EC2 → Instances → Security**, use the security group
+*attached to this instance* and allow SSH from **Babel's outbound IPv4/32**;
+"My IP" in a browser on another computer is a different address. On November
+19, the attached group was `sg-049d2e302b8c18482`, Babel's address was
+`128.2.155.230`, and port 22 was reachable. Recheck after changing Babel nodes
+or networks. The key file is private; do not copy it to EC2 or Git.
 [EC2 Instance Connect](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-connect-methods.html)
 
-```sh
-trial_key="$HOME/.ssh/playlist-lab-aws"
-aws --profile mlip --region us-east-1 ec2-instance-connect send-ssh-public-key \
-  --instance-id "$trial_instance" --instance-os-user ubuntu --ssh-public-key "file://$trial_key.pub"
-ssh -i "$trial_key" ubuntu@"$trial_host"
-```
-
-For later sessions, Ayush can repeat the Instance Connect step. To open the
-app locally, use the same key and add `-L 8060:127.0.0.1:8060` to the SSH
-command, then visit `http://127.0.0.1:8060`. If he connects from a compute
-node, use the second tunnel described in section 4. For a resumed trial, run
-`sudo shutdown -P +120` on EC2 to schedule another two-hour stop. The initial
-timer only covers the original launch window. The app, model files, and
-database remain on the EBS volume between starts.
+For the private app, add `-L 8060:127.0.0.1:8060` to the `ssh` line. This puts
+the tunnel on Babel's loopback; a laptop browser needs a second tunnel into
+Babel, as described in section 4. For a short setup session, run
+`sudo shutdown -P +120` on EC2 to schedule a two-hour stop. Cancel that timer
+with `sudo shutdown -c` before the one- or two-day participant collection.
+The OpenRouter environment file and YouTube Music browser file remain on EC2
+between stop and start. Reinstall the browser file only when its headers expire;
+the SSH key stays on Babel and needs no regeneration.
 
 ## 5. Cut over or shut down
 
@@ -294,7 +297,7 @@ sharing the link with participants:
    the headers into chat.
 2. Start the existing EC2 instance with `bash deploy/aws/preview-instance.sh
    start mlip`. Look up its current public IP, then connect with the operator's
-   SSH key as described in [the takeover steps](#take-over-the-migrated-instance).
+   SSH key as described in [the Babel connection steps](#connect-to-the-migrated-instance-from-babel).
    Upload the reviewed app revision from the repository root:
 
    ```sh
