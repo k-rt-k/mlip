@@ -149,7 +149,9 @@ class Backends:
                 try:
                     result = client.delete_playlist(playlist_id)
                     if result != "STATUS_SUCCEEDED":
-                        LOG.warning("Check cleanup of temporary YouTube Music playlist %s", playlist_id)
+                        remaining = client.get_library_playlists(limit=None)
+                        if any(item.get("playlistId") == playlist_id for item in remaining):
+                            LOG.warning("Check cleanup of temporary YouTube Music playlist %s", playlist_id)
                 except Exception:
                     LOG.warning("Could not confirm cleanup of temporary YouTube Music playlist %s", playlist_id)
 

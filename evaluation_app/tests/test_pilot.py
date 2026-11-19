@@ -164,7 +164,9 @@ def test_paired_keep_rate_requires_offers_on_both_sides(tmp_path, monkeypatch):
 
 
 @pytest.mark.parametrize("suggestions_fail", [False, True])
-def test_seed_only_youtube_uses_a_private_temporary_playlist(tmp_path, monkeypatch, suggestions_fail):
+@pytest.mark.parametrize("cleanup_dict", [False, True])
+def test_seed_only_youtube_uses_a_private_temporary_playlist(tmp_path, monkeypatch,
+                                                               suggestions_fail, cleanup_dict):
     browser = tmp_path / "browser.json"
     browser.touch()
     seed_ids = ["seedvideo01", "seedvideo02"]
@@ -191,7 +193,12 @@ def test_seed_only_youtube_uses_a_private_temporary_playlist(tmp_path, monkeypat
         def delete_playlist(self, playlist_id):
             assert playlist_id == "PLtemporary"
             events.append("delete")
-            return "STATUS_SUCCEEDED"
+            return {} if cleanup_dict else "STATUS_SUCCEEDED"
+
+        def get_library_playlists(self, *, limit):
+            assert limit is None
+            events.append("list")
+            return []
 
     def client_for(auth):
         assert auth == browser
@@ -204,7 +211,7 @@ def test_seed_only_youtube_uses_a_private_temporary_playlist(tmp_path, monkeypat
     assert timed_recommend(backends, "playlist_search", "faster", seeds, set())["status"] == "not_applicable"
     assert not events
     panel = timed_recommend(backends, "playlist_search", "", seeds, set())
-    assert events == ["create", "verify", "suggest", "delete"]
+    assert events == ["create", "verify", "suggest", "delete"] + (["list"] if cleanup_dict else [])
     if suggestions_fail:
         assert panel["status"] == "unavailable" and panel["tracks"] == []
     else:

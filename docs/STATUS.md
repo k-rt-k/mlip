@@ -40,8 +40,9 @@ end-to-end pilot with real participants.
   embeds have a direct playback link and Deezer previews for eligible recordings.
   The YouTube Music baseline uses public playlist search for text-only requests
   and native suggestions from temporary private copies for playlist-only rounds.
-  It skips combined requests. Native suggestions still need a live check with
-  the team account's browser credentials.
+  It skips combined requests. A November 19 local team-account check created a
+  private five-seed copy, returned 15 native suggestions, and confirmed cleanup;
+  the EC2 credential install and paired acceptance remain pending.
 - **Validation.** Desktop and mobile Chromium rehearsals verified the two-panel
   layout, playback controls, mirrored Keep, restart persistence, and export.
   Two simultaneous synthetic sessions used a local copy of the paired app,
@@ -66,8 +67,9 @@ end-to-end pilot with real participants.
 
 ### Remaining pilot work
 
-- [ ] Refresh the team YouTube Music browser credentials, configure them and
-  OpenRouter on EC2, and verify native suggestions and private-copy cleanup.
+- [ ] Install the refreshed team YouTube Music browser credentials and
+  OpenRouter key on EC2, then verify native suggestions and private-copy cleanup
+  from the server.
 - [ ] Complete paired live acceptance on a test database, then switch the
   existing CloudFront address to the public paired service and verify its export.
 - [ ] Run an end-to-end participant pilot. Start with one completed session per
