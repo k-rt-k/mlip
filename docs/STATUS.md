@@ -27,6 +27,11 @@ end-to-end pilot with real participants.
   sessions, owns the export after one or two days, and will delete the database
   December 15 after reviewing the export.
   [Public site and operations](aws_migration_plan.md#public-paired-study)
+- **AWS operations handoff (2026-11-19).** [AWS_OPERATIONS.md](AWS_OPERATIONS.md)
+  and `scripts/operations/` document fresh-terminal login, lifecycle, SSH,
+  read-only live-data backup/export, credential checks, deployment rollback,
+  diagnostics, and teardown. Local shell syntax and data-path review passed; live
+  AWS verification awaits a usable `mlip` sign-in/network session.
 
 ### Evaluation app implementation (2026-11-18)
 
