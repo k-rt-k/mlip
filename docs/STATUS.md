@@ -11,20 +11,22 @@ Due November 19, 2026, at 11:30pm. The assignment calls for revisions to the
 offline evaluation, a two-page randomized field evaluation design, and an
 end-to-end pilot with real participants.
 
-- **Private CPU hosting (2026-11-18).** Playlist Lab is installed on
+- **Private CPU hosting (2026-11-19).** Playlist Lab is installed on
   `playlist-lab-migration` in `us-east-1` with the full 1.03 million-track
-  HNSW catalog. All six serving files passed checksum verification. The web
-  app and CPU retrieval passed smoke checks for text, text plus seeds, and
-  seeds alone. Ayush can resume the existing instance and configure
-  OpenRouter and YouTube Music credentials.
+  HNSW catalog. All six serving files passed checksum verification. OpenRouter
+  and team YouTube Music credentials are installed. EC2 synthetic paired checks
+  passed both baseline assignments across supported input modes; a catalog-
+  ineligible kept seed produced an empty retrieval continuation, as expected.
   [AWS migration plan](aws_migration_plan.md)
-- **Public retrieval preview (2026-11-18).** The AWS-assigned HTTPS URL is
-  available while the EC2 instance runs. Browser and API checks passed for
-  live retrieval, song search, and playlist updates. Preview feedback goes
-  into a separate SQLite database. The public paired-study source has been
-  uploaded to EC2 but has not replaced the preview. The instance is running
-  for setup on November 19. December 15 is the manual cleanup deadline.
-  [Preview and study cutover](aws_migration_plan.md#public-retrieval-preview)
+- **Public paired study (2026-11-19).** The existing CloudFront HTTPS address
+  now serves the randomized two-panel app. The public page and session-state
+  API respond; the study service is active and the retrieval preview is stopped.
+  Public feedback uses fresh `live.sqlite` with zero sessions at cutover;
+  private acceptance and old preview data remain separate. The instance is
+  running with no shutdown scheduled. Spandan facilitates the first two real
+  sessions, owns the export after one or two days, and will delete the database
+  December 15 after reviewing the export.
+  [Public site and operations](aws_migration_plan.md#public-paired-study)
 
 ### Evaluation app implementation (2026-11-18)
 
@@ -42,17 +44,16 @@ end-to-end pilot with real participants.
   and native suggestions from temporary private copies for playlist-only rounds.
   It skips combined requests. On November 19, the refreshed team-account
   credentials passed local and EC2 checks: each five-seed private-copy test
-  returned 15 native suggestions and confirmed cleanup. Paired acceptance
-  remains pending.
+  returned 15 native suggestions and confirmed cleanup.
 - **Validation.** Desktop and mobile Chromium rehearsals verified the two-panel
   layout, playback controls, mirrored Keep, restart persistence, and export.
-  Two simultaneous synthetic sessions used a local copy of the paired app,
-  the AWS CPU worker, and OpenRouter. Both pairings showed five songs per
-  panel on their opening rounds. Retrieval plus OpenRouter also showed five
-  per panel in text-plus-playlist and playlist-only rounds. YouTube Music
-  skipped the combined round and recorded the missing credential in the
-  playlist-only round as unavailable. The paired keep rate now uses rounds
-  with at least one song shown in each panel.
+  On EC2, synthetic sessions showed five songs per panel on opening rounds for
+  both pairings; the YouTube Music panel skipped combined input, and the LLM
+  pairing served combined input. With a catalog-eligible seed, both LLM and
+  retrieval returned five playlist-only suggestions. The paired keep rate uses
+  rounds with at least one song shown in each panel. Public HTTPS has passed
+  page and session-state checks. Private synthetic acceptance data exported and
+  analyzed successfully; a real participant flow remains untested.
 - **Handoff.** Setup in [README](../README.md#evaluation-app), choices in
   [assumptions and decisions](../assumptions_and_decisions.md), and unresolved
   study inputs in [questions](../questions.md). Participant sessions remain
@@ -68,13 +69,10 @@ end-to-end pilot with real participants.
 
 ### Remaining pilot work
 
-- [ ] Install the OpenRouter key on EC2 and verify live LLM generation. The
-  YouTube Music credential and server-side native suggestion check are ready.
-- [ ] Complete paired live acceptance on a test database, then switch the
-  existing CloudFront address to the public paired service and verify its export.
 - [ ] Run an end-to-end participant pilot. Start with one completed session per
-  pairing. Spandan owns the export after one or two days of collection; confirm
-  the facilitator and exact retention date before recruiting.
+  pairing through public HTTPS; verify feedback and export from `live.sqlite`.
+- [ ] After one or two days, export and analyze live results. Confirm the
+  participant screening counts and delete the database December 15 after review.
 - [ ] Finish the field evaluation writeup, including participant outcomes and
   the proposed full study's sample size and power.
 

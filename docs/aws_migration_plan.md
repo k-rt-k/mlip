@@ -3,8 +3,8 @@
 The private CPU trial is deployed in **`playlist-lab-migration`** in **`us-east-1`**.
 An operator can [connect from Babel](#connect-to-the-migrated-instance-from-babel)
 with its app, model files, and SQLite database on disk. The web app is available
-through an SSH tunnel for paired sessions or the
-[public HTTPS link](#public-retrieval-preview) for retrieval. The rest of this
+through an SSH tunnel for private acceptance or the
+[public HTTPS link](#public-paired-study) for participant sessions. The rest of this
 guide covers rebuilding and cleaning up both deployments.
 
 The starting assumptions are a team-owned AWS account in **US East (N. Virginia)**
@@ -269,17 +269,14 @@ the SSH key stays on Babel and needs no regeneration.
 
 ## 5. Cut over or shut down
 
-### Public retrieval preview
+### Public paired study
 
 The `playlist-lab-preview` CloudFormation stack in `us-east-1` publishes
-an AWS-assigned `cloudfront.net` HTTPS URL. Anyone with the link can try the
-single live retrieval recommender, search for music, and build a playlist.
-The paired study runs on port 8060 over the SSH tunnel. Public preview sessions
-have secure cookies and a dedicated `/var/lib/playlist-lab/preview.sqlite`
-database. Export this database individually if the demo feedback is useful.
-The HTTPS browser and API checks passed on November 18 for session start,
-text-only suggestions, song search, text with seeds, seed-only suggestions,
-and Keep.
+the AWS-assigned `https://d262qnc2nmnhhz.cloudfront.net` address. On November
+19, the same link began serving the paired study. The public app uses secure
+cookies and `/var/lib/playlist-lab/live.sqlite`; private acceptance and old
+preview databases remain separate. Public page and session-state checks passed
+after cutover. The first two real sessions will verify the participant flow.
 
 #### Switch the existing HTTPS link to the paired study
 
@@ -338,7 +335,8 @@ sharing the link with participants:
    Keep/Reject, finish, and an export. The app sets a secure session cookie and
    does not store raw requests or search queries.
 
-The study owner is Spandan. Run collection for one or two days, then export
+Spandan facilitates the first two real sessions and owns the export. Run
+collection for one or two days, then export
 `/var/lib/playlist-lab/live.sqlite` from `/opt/playlist-lab/app` on EC2:
 
 ```sh
@@ -350,7 +348,9 @@ sudo -u playlist-lab .venv/bin/python -m evaluation_app \
 Copy that export through the operator's private SSH connection and analyze it
 with the commands in [README](../README.md#analyze-participant-results). Keep it private and
 confirm its participant screening counts before stopping the instance. The
-December 15 cleanup deadline remains the latest date for manual disk removal.
+team will delete the feedback database on December 15 after reviewing the
+export. The instance remains running until an operator stops it; no shutdown
+was scheduled at the November 19 cutover check.
 
 ```sh
 aws --profile mlip --region us-east-1 cloudformation describe-stacks \

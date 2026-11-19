@@ -272,7 +272,7 @@ empty slots, unavailable panels, and skipped panels, grouped by participant and
 recommender. These commands run local development servers for the pilot.
 Public hosting requires a production
 WSGI server and deployment configuration. The
-[AWS migration guide](docs/aws_migration_plan.md#public-retrieval-preview)
+[AWS migration guide](docs/aws_migration_plan.md#public-paired-study)
 has the live retrieval preview, public paired-study cutover, and operator
 instructions. The public study uses `/var/lib/playlist-lab/live.sqlite` on EC2;
 the private acceptance app and retrieval preview use separate databases.

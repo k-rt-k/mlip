@@ -21,7 +21,8 @@ systemd-analyze verify /etc/systemd/system/playlist-lab-study.service
 systemctl daemon-reload
 systemctl disable --now playlist-lab-preview.service
 if ! systemctl enable --now playlist-lab-study.service ||
-    ! curl -fsS --max-time 5 http://127.0.0.1:8063/api/session >/dev/null; then
+    ! curl -fs --retry 12 --retry-delay 1 --retry-all-errors \
+        --retry-max-time 25 --max-time 4 http://127.0.0.1:8063/api/session >/dev/null; then
     systemctl disable --now playlist-lab-study.service || true
     systemctl enable --now playlist-lab-preview.service
     printf 'Study service failed; restored the retrieval preview.\n' >&2
