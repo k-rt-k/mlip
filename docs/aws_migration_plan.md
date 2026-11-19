@@ -360,7 +360,7 @@ aws --profile mlip --region us-east-1 cloudformation describe-stacks \
 
 CloudFront forwards requests to the instance's private address through the
 `playlist-lab-preview` VPC origin. Its service-managed security group is the
-source of the only inbound rule on preview port 8080. NGINX applies request
+source of the inbound rule on origin port 8080. NGINX applies request
 limits and proxies to Waitress on loopback 8063. CloudFront forwards session
 cookies and disables caching. The private connection keeps the same origin
 when a stop and start changes the instance's public SSH address.
@@ -370,11 +370,11 @@ The CloudFront distribution uses pay-as-you-go pricing with AWS's shared free
 allowance. EC2 and disk charges follow the original trial rates.
 [CloudFront pricing](https://aws.amazon.com/cloudfront/pricing/)
 
-#### Restart the existing preview
+#### Restart or stop the public study
 
 Use your signed-in AWS profile from any terminal with AWS CLI v2 and curl.
 The script starts the existing EC2 instance, waits for the HTTPS app, and
-prints the same CloudFront URL. The preview and its services start on boot.
+prints the same CloudFront URL. The paired-study service starts on boot.
 The EC2 console can also start the instance directly. Expect the instance
 boot and model load on each start, while CloudFront and its certificate
 keep serving the same hostname.
@@ -384,7 +384,7 @@ bash deploy/aws/preview-instance.sh start mlip
 bash deploy/aws/preview-instance.sh stop mlip
 ```
 
-Run the second command when the preview session is done. The first two-hour
+Run the second command when collection and export checks are done. The first two-hour
 timer only applies to the original launch. Later starts stay up until an
 operator stops them or sets a new timer. While stopped, the link is offline
 and the server keeps its installed files, database, and private address.
@@ -392,8 +392,8 @@ and the server keeps its installed files, database, and private address.
 
 #### Rebuild on a replacement instance
 
-To rebuild the preview on a fresh EC2 instance, upload the app revision
-including `deploy/aws`, run bootstrap, and install the preview's units:
+To rebuild the public origin on a fresh EC2 instance, upload the app revision
+including `deploy/aws`, run bootstrap, and install the staging preview's units:
 
 ```sh
 cd /opt/playlist-lab/app
@@ -406,6 +406,10 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now playlist-lab-preview.service nginx
 sudo systemctl reload nginx
 ```
+
+Install the two runtime credentials and run
+`sudo bash /opt/playlist-lab/app/deploy/aws/activate-public-study.sh` before
+recruiting participants.
 
 Create an EC2 VPC origin in CloudFront using the instance ARN, IPv4, and
 HTTP port 8080, with **HTTP only** for the private origin connection. When
