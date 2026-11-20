@@ -105,7 +105,7 @@ body[data-setup="manual"] .panels { grid-template-columns: minmax(0, 1fr); }
 .panel > .small { padding-top: .5rem; }
 .playlist-help { margin-bottom: .45rem; }
 .next-step {
-  margin-top: .85rem; padding: .9rem 1rem; border: 1px solid var(--lime); border-radius: 12px;
+  margin-bottom: .8rem; padding: .9rem 1rem; border: 1px solid var(--lime); border-radius: 12px;
   display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; justify-content: space-between;
 }
 .next-step > div { flex: 1 1 320px; }
