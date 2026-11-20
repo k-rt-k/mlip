@@ -103,6 +103,13 @@ body[data-setup="manual"] .panels { grid-template-columns: minmax(0, 1fr); }
 .panel { min-height: 128px; }
 .panel h3 { font-size: .9rem; margin: 0 0 .45rem; font-weight: 690; color: var(--lavender); }
 .panel > .small { padding-top: .5rem; }
+.playlist-help { margin-bottom: .45rem; }
+.next-step {
+  margin-top: .85rem; padding: .9rem 1rem; border: 1px solid var(--lime); border-radius: 12px;
+  display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; justify-content: space-between;
+}
+.next-step > div { flex: 1 1 320px; }
+.next-step h3 { font-size: .95rem; margin: 0 0 .25rem; }
 #checkpoint-status, .checkpoint { margin-top: .85rem; }
 .checkpoint { border: 1px solid var(--border); border-radius: 12px; padding: .9rem; }
 .checkpoint-input { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .55rem; }

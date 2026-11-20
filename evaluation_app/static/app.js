@@ -184,7 +184,7 @@ function renderPanels() {
     text_and_playlist: "Text + playlist",
     playlist_only: "Playlist only",
   };
-  label.textContent = modes[state.round.mode];
+  label.textContent = "Round " + state.round.number + " · " + modes[state.round.mode];
   container.replaceChildren(...state.round.panels.map((panel, index) => {
     const section = node("section", "panel");
     if (paired) {
@@ -220,6 +220,16 @@ function renderPanels() {
   }));
 }
 
+// Tells the user what the next round will use, since kept songs feed it.
+function requestHelp() {
+  const size = state.playlist.length;
+  if (!size) return "Start with a request in your own words.";
+  const songs = size === 1 ? "your 1 playlist song" : "your " + size + " playlist songs";
+  return promptInput.value.trim()
+    ? "Next suggestions will use your request and " + songs + "."
+    : "Type a request to refine, or leave it blank for more songs like " + songs + ".";
+}
+
 function sync() {
   element("intro").hidden = state.started;
   element("workspace").hidden = !state.started || state.finished;
@@ -228,9 +238,10 @@ function sync() {
   element("end-session").disabled = working || recommending;
   if (!state.started || state.finished) return;
   element("suggest").disabled = working || recommending || (!promptInput.value.trim() && !state.playlist.length);
-  element("request-help").textContent = !state.playlist.length
-    ? "Start with a request in your own words."
-    : "Refine your request, or leave it blank for playlist-based suggestions.";
+  element("request-heading").textContent = state.round ? "What would you like to hear next?" : "What would you like to hear?";
+  element("request-help").textContent = requestHelp();
+  element("playlist-help").hidden = !state.playlist.length;
+  element("next-step").hidden = !state.round;
   element("search-form").hidden = paired && !state.round;
   const checkpoint = state.round?.number === 5;
   element("checkpoint-form").hidden = !checkpoint || state.round_five_rating != null;
@@ -288,6 +299,11 @@ element("request-form").addEventListener("submit", (event) => {
 promptInput.addEventListener("input", () => {
   if (promptInput.value.trim()) clearTimeout(seedTimer);
   element("suggest").disabled = working || recommending || (!promptInput.value.trim() && !state.playlist.length);
+  element("request-help").textContent = requestHelp();
+});
+element("next-refine").addEventListener("click", () => {
+  promptInput.scrollIntoView({ behavior: "smooth", block: "center" });
+  promptInput.focus({ preventScroll: true });
 });
 
 element("search-form").addEventListener("submit", async (event) => {
