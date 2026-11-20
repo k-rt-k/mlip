@@ -11,16 +11,65 @@ Due November 19, 2026, at 11:30pm. The assignment calls for revisions to the
 offline evaluation, a two-page randomized field evaluation design, and an
 end-to-end pilot with real participants.
 
-- **Pilot scope.** Build a small web app for text requests and up to five
-  playable suggestions. Participants can keep or reject songs and refine their
-  request. Connect the LLM baseline, YouTube Music playlist search, and the
-  team's retrieval model through the same interface.
-- **Pilot hosting.** Run the app and feedback storage on a laptop for in-person
-  sessions. Serve the retrieval model from an allocated Babel compute node and
-  connect to it through an SSH tunnel.
-- **Longer study.** If a persistent link is needed, test CPU-only EC2 with the
-  prebuilt index, encoder, and track metadata from Babel. Measure peak memory
-  and end-to-end response time for the selected model before sizing the instance.
+- **Private CPU hosting (2026-11-18).** Playlist Lab is installed on
+  `playlist-lab-migration` in `us-east-1` with the full 1.03 million-track
+  HNSW catalog. All six serving files passed checksum verification. The web
+  app and CPU retrieval passed smoke checks for text, text plus seeds, and
+  seeds alone. Ayush can resume the existing instance and configure
+  OpenRouter and YouTube Music credentials.
+  [AWS migration plan](aws_migration_plan.md)
+- **Public retrieval preview (2026-11-18).** The AWS-assigned HTTPS URL is
+  available while the EC2 instance runs. Browser and API checks passed for
+  live retrieval, song search, and playlist updates. Preview feedback goes
+  into a separate SQLite database. December 15 is the manual export and
+  cleanup date. [Preview and cleanup](aws_migration_plan.md#public-retrieval-preview)
+
+### Evaluation app implementation (2026-11-18)
+
+- **Ready locally.** The paired app opens with a participant-written text
+  request, then accepts text plus playlist and playlist-only rounds. It compares
+  retrieval with one baseline using randomized panel positions, a shared
+  playlist, and mirrored feedback for matching recordings. It exposes a single
+  recommender picker for team tests and exports per-participant keep rates,
+  empty slots, unavailable panels, and skipped panels. Ratings at round five
+  and at session end are optional and recorded separately.
+- **Playback and search.** Public YouTube Music lookup supports songs outside
+  the audio catalog. Search results mark available seed embeddings. YouTube
+  embeds have a direct playback link and Deezer previews for eligible recordings.
+  The YouTube Music baseline uses public playlist search for text-only requests
+  and native suggestions from temporary private copies for playlist-only rounds.
+  It skips combined requests. Native suggestions still need a live check with
+  the team account's browser credentials.
+- **Validation.** Desktop and mobile Chromium rehearsals verified the two-panel
+  layout, playback controls, mirrored Keep, restart persistence, and export.
+  Two simultaneous synthetic sessions used a local copy of the paired app,
+  the AWS CPU worker, and OpenRouter. Both pairings showed five songs per
+  panel on their opening rounds. Retrieval plus OpenRouter also showed five
+  per panel in text-plus-playlist and playlist-only rounds. YouTube Music
+  skipped the combined round and recorded the missing credential in the
+  playlist-only round as unavailable. The paired keep rate now uses rounds
+  with at least one song shown in each panel.
+- **Handoff.** Setup in [README](../README.md#evaluation-app), choices in
+  [assumptions and decisions](../assumptions_and_decisions.md), and unresolved
+  study inputs in [questions](../questions.md). Participant sessions remain
+  pending.
+
+- **Participant results analysis (2026-11-19, Spandan).**
+  `evaluation_app.results` validates JSON exports and produces participant-level
+  paired keep-rate comparisons, baseline summaries, screening counts, and
+  diagnostic feedback/coverage metrics as JSON plus optional CSV. Live and
+  rehearsal cohorts are separate; six focused tests pass, and the existing
+  rehearsal export was analyzed. No live participant outcomes are available yet.
+  [Usage and metric definitions](../README.md#analyze-participant-results)
+
+### Remaining pilot work
+
+- [ ] Configure live credentials on the private EC2 app and verify native
+  YouTube Music suggestions from a temporary private playlist and its cleanup.
+- [ ] Run an end-to-end participant pilot. Start with one completed session per
+  pairing. Confirm the facilitator, export owner, and retention before recruiting.
+- [ ] Finish the field evaluation writeup, including participant outcomes and
+  the proposed full study's sample size and power.
 
 ## 2026-10-30 — Prompt-only playlist-search baseline scored
 

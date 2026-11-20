@@ -1,0 +1,16 @@
+[Unit]
+Description=Playlist Lab CPU FAISS retrieval
+Wants=playlist-lab-encoder.service
+After=playlist-lab-encoder.service
+
+[Service]
+User=playlist-lab
+WorkingDirectory=/opt/playlist-lab/app
+Environment=OMP_NUM_THREADS=4
+Environment=OPENBLAS_NUM_THREADS=1
+ExecStart=/opt/playlist-lab/app/.venv/bin/python -m evaluation_app.retrieval_service --index /opt/playlist-lab/artifacts/index --lookup /opt/playlist-lab/artifacts/evaluation-app-lookup.sqlite --seed-embeddings /opt/playlist-lab/artifacts/clap.npz --seed-embeddings /opt/playlist-lab/artifacts/seed-youtube-clap.npz
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

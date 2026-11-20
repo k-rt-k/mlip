@@ -1,0 +1,20 @@
+[Unit]
+Description=Playlist Lab web app
+Wants=playlist-lab-retrieval.service
+After=playlist-lab-retrieval.service
+
+[Service]
+User=playlist-lab
+WorkingDirectory=/opt/playlist-lab/app
+Environment=MLIP_STUDY_DB=/var/lib/playlist-lab/study.sqlite
+Environment=MLIP_YTM_AUTH_FILE=/etc/playlist-lab/browser.json
+EnvironmentFile=-/etc/playlist-lab/app.env
+UMask=0077
+TimeoutStartSec=180
+ExecStartPre=/usr/bin/curl -fsS --output /dev/null --retry 60 --retry-delay 2 --retry-max-time 150 --retry-all-errors --max-time 4 http://127.0.0.1:8061/health
+ExecStart=/opt/playlist-lab/app/.venv/bin/waitress-serve --listen=127.0.0.1:8060 --call evaluation_app.app:create_app
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -146,14 +146,14 @@ class Clap(Embedder):
     repo = "laion/larger_clap_music_and_speech"
     window_seconds = 10
 
-    def __init__(self, device=None):
+    def __init__(self, device=None, *, revision=None):
         import torch
         from transformers import ClapModel, ClapProcessor
 
         self._torch = torch
         self.device = pick_device(device)
-        self._model = ClapModel.from_pretrained(self.repo).eval().to(self.device)
-        self._processor = ClapProcessor.from_pretrained(self.repo)
+        self._model = ClapModel.from_pretrained(self.repo, revision=revision).eval().to(self.device)
+        self._processor = ClapProcessor.from_pretrained(self.repo, revision=revision)
 
     def embed_audio(self, paths, batch_size=None, on_error=None):
         rows = []

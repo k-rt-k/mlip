@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Build a playlist and evaluate music suggestions.">
+  <title>Playlist Lab</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</head>
+<body data-setup="{{ setup }}">
+  <header class="header">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">♫</span> Playlist Lab</div>
+    <div class="header-meta">
+      {% if rehearsal %}<span class="rehearsal">Rehearsal</span>{% endif %}
+      {% if preview %}<span class="rehearsal">Public retrieval preview</span>{% endif %}
+      <button id="end-session" class="secondary" type="button" hidden>Finish session</button>
+    </div>
+  </header>
+  <main>
+    <section id="intro" class="intro" hidden>
+      <p class="course">CMU · Machine Learning in Practice</p>
+      <h1>Make a playlist<br>with a request.</h1>
+      <p class="intro-copy">Start with music you’d like to hear. Listen to the suggestions, keep the songs that fit, and refine your request as your playlist takes shape.</p>
+      <form id="start-form" class="start-form">
+        {% if preview %}
+        <input type="hidden" id="arm" value="retrieval">
+        {% elif setup == "manual" %}
+        <label class="field-label" for="arm">Recommender for this test</label>
+        <select id="arm" required>
+          {% for value, label in arms.items() %}
+          <option value="{{ value }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+        {% endif %}
+        <label class="consent"><input type="checkbox" id="consent" required>
+          <span>I agree to take part and have my song choices and optional feedback recorded.</span>
+        </label>
+        {% if rehearsal %}
+        <p class="small">This mode uses example suggestions. Its results are labeled as rehearsal data.</p>
+        {% elif preview %}
+        <p class="small">Search and playback use YouTube. Optional audio previews use Deezer. Please leave out names and other identifying details.</p>
+        {% else %}
+        <p class="small">An account is unnecessary. Song search and playback use YouTube. For playlist-only suggestions, YouTube Music may receive a temporary private copy of your song list on the study account. Optional audio previews use Deezer.{% if openrouter %} The language-model recommender uses OpenRouter.{% endif %} Please leave out names and other identifying details.</p>
+        {% endif %}
+        <button class="primary" type="submit">Start session <span aria-hidden="true">→</span></button>
+      </form>
+    </section>
+    <div id="workspace" hidden>
+      <section class="request-area" aria-labelledby="request-heading">
+        <h1 id="request-heading">What would you like to hear?</h1>
+        <form id="request-form" class="request-form">
+          <label for="request" class="sr-only">Describe what you want to hear</label>
+          <textarea id="request" rows="2" maxlength="1000" placeholder="Try: upbeat house for a late-night drive"></textarea>
+          <div class="request-controls">
+            <p id="request-help">Start with a request in your own words.</p>
+            <button class="primary" id="suggest" type="submit">Suggest songs <span aria-hidden="true">→</span></button>
+          </div>
+        </form>
+      </section>
+      <div class="workbench">
+        <section class="playlist-card" aria-labelledby="playlist-heading">
+          <div class="card-heading">
+            <h2 id="playlist-heading">Your playlist</h2><span id="track-count"></span>
+          </div>
+          <p class="coverage" id="coverage" hidden></p>
+          <ul id="playlist" class="track-list"></ul>
+          <div id="empty-playlist" class="empty-playlist">
+            <span aria-hidden="true">♫</span>
+            <p id="empty-playlist-copy">Keep a suggestion to start your playlist.</p>
+          </div>
+          <form id="search-form" class="search-form">
+            <label for="search" class="field-label">Add a song</label>
+            <div class="search-input">
+              <input type="search" id="search" maxlength="160" placeholder="Song or artist" required autocomplete="off">
+              <button class="secondary" type="submit">Search</button>
+            </div>
+          </form>
+          <p id="search-status" class="small" role="status"></p>
+          <ul id="search-results" class="track-list"></ul>
+        </section>
+        <section class="suggestion-area" aria-labelledby="suggestions-heading">
+          <div class="section-heading">
+            <h2 id="suggestions-heading">Suggestions</h2>
+            <p id="round-label" class="small"></p>
+          </div>
+          <div id="suggestion-status" class="small" role="status"></div>
+          <div id="panels" class="panels"></div>
+          <form id="checkpoint-form" class="checkpoint" hidden>
+            <label for="checkpoint-rating" class="field-label">How satisfied are you with your playlist so far? <span class="small">Optional</span></label>
+            <div class="checkpoint-input">
+              <select id="checkpoint-rating" required>
+                <option value="">Select a rating</option>
+                <option value="1">1 · Very dissatisfied</option>
+                <option value="2">2 · Dissatisfied</option>
+                <option value="3">3 · Neutral</option>
+                <option value="4">4 · Satisfied</option>
+                <option value="5">5 · Very satisfied</option>
+              </select>
+              <button class="secondary" type="submit">Save rating</button>
+            </div>
+          </form>
+          <p id="checkpoint-status" class="small" role="status" hidden>Rating saved. You can keep building your playlist.</p>
+        </section>
+      </div>
+    </div>
+    <section id="finished" class="intro finished" hidden>
+      <h1>Thanks for listening.</h1>
+      <p class="intro-copy" id="finish-copy">Your feedback has been saved.</p>
+      <button class="secondary" id="new-session" type="button">Start another session</button>
+    </section>
+    <p id="error" class="error" role="alert" hidden></p>
+  </main>
+  <dialog id="player-dialog" aria-labelledby="player-title">
+    <div class="dialog-heading">
+      <h2 id="player-title">Now playing</h2>
+      <button class="icon-button" id="close-player" type="button" aria-label="Close player">×</button>
+    </div>
+    <iframe id="player" title="YouTube player" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    <div class="player-actions">
+      <a id="external-play" target="_blank" rel="noopener" class="secondary external">Open in YouTube Music ↗</a>
+      <button id="preview-button" class="secondary" type="button" hidden>Deezer preview</button>
+    </div>
+    <p id="preview-status" class="small" role="status"></p>
+    <audio id="preview-audio" controls hidden></audio>
+  </dialog>
+  <dialog id="feedback-dialog" aria-labelledby="feedback-title">
+    <div class="dialog-heading">
+      <h2 id="feedback-title">How was your session?</h2>
+      <button class="icon-button" id="close-feedback" type="button" aria-label="Cancel finishing session">×</button>
+    </div>
+    <form id="feedback-form" class="feedback-form">
+      <label for="rating" class="field-label">Overall satisfaction <span class="small">Optional</span></label>
+      <select id="rating">
+        <option value="">Select a rating</option>
+        <option value="1">1 · Very dissatisfied</option>
+        <option value="2">2 · Dissatisfied</option>
+        <option value="3">3 · Neutral</option>
+        <option value="4">4 · Satisfied</option>
+        <option value="5">5 · Very satisfied</option>
+      </select>
+      <label for="comments" class="field-label">Comments <span class="small">Optional</span></label>
+      <textarea id="comments" maxlength="500" rows="3" placeholder="What worked or could be better? Please leave out identifying details."></textarea>
+      <p id="feedback-error" class="small feedback-error" role="alert"></p>
+      <button class="primary" type="submit">Save and finish</button>
+    </form>
+  </dialog>
+</body>
+</html>

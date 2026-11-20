@@ -183,3 +183,139 @@ git config core.hooksPath scripts/git-hooks
 - Music tags and metadata powered by [Last.fm](https://www.last.fm/) via the
   [Last.fm API](https://www.last.fm/api)
 - Listening history via the [Spotify Web API](https://developer.spotify.com/)
+
+## Evaluation app
+
+Run the paired interface with example suggestions from the repository root:
+
+```sh
+uv sync
+uv run python -m evaluation_app --rehearsal
+```
+
+Open **http://127.0.0.1:8060**. Add `--setup manual` for the facilitator's
+single-recommender picker. The paired setup starts with a text request and then
+supports text plus playlist and playlist-only rounds. Rehearsal feedback is
+identified in a separate gitignored SQLite file. Study decisions and open
+questions are in [assumptions_and_decisions.md](assumptions_and_decisions.md)
+and [questions.md](questions.md).
+
+### Live laptop and Babel setup
+
+On an allocated Babel CPU node, run this in Bash from the repo root. It prepares
+the recording lookup if needed and starts the encoder and FAISS in separate
+processes. Use the same model and index artifacts for comparable sessions.
+
+```sh
+MLIP_STORAGE=/data/user_data/hpoonia/mlip
+MPD_ROOT="$MLIP_STORAGE/retrieval/mpd-v1"
+
+if [ ! -f "$MPD_ROOT/evaluation-app-lookup.sqlite" ]; then
+  uv run python -m evaluation_app.retrieval_service \
+    --build-lookup "$MPD_ROOT/snapshot/tracks.sqlite" \
+    --lookup "$MPD_ROOT/evaluation-app-lookup.sqlite"
+fi
+
+OMP_NUM_THREADS=4 "$MLIP_STORAGE/encoder-venv/bin/python" -m evaluation_app.encoder_service &
+encoder_pid=$!
+trap 'kill "$encoder_pid" 2>/dev/null || true' EXIT
+
+uv run python -m evaluation_app.retrieval_service \
+  --index "$MPD_ROOT/indexes/build-04/index" \
+  --lookup "$MPD_ROOT/evaluation-app-lookup.sqlite" \
+  --seed-embeddings /data/user_data/ksnair/mlip/embeddings/ytm-eval/clap.npz \
+  --seed-embeddings /data/user_data/ksnair/mlip/embeddings/ytm-eval/seed-youtube-clap.npz
+```
+
+Both workers bind to loopback. From the laptop, forward port 8061 to the
+allocated Babel node with SSH, adding your normal jump host if needed.
+
+```sh
+ssh -N -L 8061:127.0.0.1:8061 <allocated-babel-node>
+```
+
+In another laptop terminal, set `OPENROUTER_API_KEY` in the environment or the
+ignored `llm/.env` and launch the app from the checkout.
+
+```sh
+uv run python -m evaluation_app
+```
+
+The default OpenRouter model is `deepseek/deepseek-v4-flash-0731`. Set
+`MLIP_LLM_MODEL` to override it. Set `MLIP_LLM_ENV_FILE` to the path of an existing
+ignored `.env` when launching from a separate Git worktree. An alternative
+OpenAI-compatible adapter accepts
+`MLIP_LLM_URL` (full completions URL), `MLIP_LLM_MODEL` and `MLIP_LLM_KEY`.
+The live paired setup requires the CPU worker and LLM configuration. Use
+`--setup manual` to exercise a single live recommender independently.
+
+The YouTube Music baseline searches public playlists for text-only rounds. For
+playlist-only rounds, it creates a temporary private playlist on the team
+account, fetches native suggestions, and attempts to delete the copy. Prepare
+browser authentication with [setup_auth.py](youtube_music/scripts/setup_auth.py)
+while signed in to the team account. The app defaults to
+`data/youtube_music/browser.json`. Set `MLIP_YTM_AUTH_FILE` to use a credential
+file from another checkout. Credentials are required for playlist-only rounds.
+The YouTube Music panel is skipped for combined rounds.
+
+Export local feedback after the study. Keep the export in gitignored storage.
+
+```sh
+uv run python -m evaluation_app --export data/evaluation_app/pilot-export.json
+```
+
+Use a new export filename for each snapshot. To select a different study database
+throughout a run, pass `--db` when launching and exporting. The export includes
+keep rate over shown tracks, paired keep rates over rounds where both arms
+showed at least one song,
+empty slots, unavailable panels, and skipped panels, grouped by participant and
+recommender. These commands run local development servers for the pilot.
+Public hosting requires a production
+WSGI server and deployment configuration. The
+[AWS migration guide](docs/aws_migration_plan.md#public-retrieval-preview)
+has the live retrieval preview and operator instructions.
+
+### Analyze participant results
+
+Export from the **same database path used to launch the app**. Keep the export and
+analysis files in gitignored storage; they contain pseudonymous session IDs,
+song choices, ratings, and optional comments. Use a new output filename each
+time. For example:
+
+```sh
+uv run python -m evaluation_app --db data/evaluation_app/study.sqlite \
+  --export data/evaluation_app/pilot-export.json
+uv run python -m evaluation_app.results \
+  --input data/evaluation_app/pilot-export.json \
+  --output data/evaluation_app/pilot-metrics.json \
+  --participants-csv data/evaluation_app/pilot-participants.csv
+```
+
+The results command validates event references and panel assignments, then
+includes **completed, non-rehearsal paired sessions** by default. It excludes
+manual tests, unfinished sessions, and sessions with no round where both panels
+were available and showed at least one song. The `screening` counts show these
+exclusions. Use `--cohort rehearsal` to analyze rehearsal exports separately;
+never combine those outcomes with live participants.
+
+The primary result is the **mean across participants** of `(retrieval keeps /
+retrieval songs shown) - (assigned baseline keeps / baseline songs shown)`.
+Each participant's rates use only eligible paired rounds, including their
+refinements; each participant contributes one difference. The JSON reports
+results separately for the LLM and YouTube Music comparisons. A positive
+difference favors retrieval. Mirrored Keep/Reject decisions count once in each
+panel's rate, but their two offers are not independent observations. Sessions
+with fewer than ten eligible participants per comparison receive no confidence
+interval; larger samples get a fixed-seed participant bootstrap interval.
+
+The JSON participant rows also report shown, kept, rejected, undecided, judged
+fraction, play clicks, overlapping recordings, round modes, mode-specific paired
+counts, final playlist size, empty slots, unavailable and skipped panels,
+duration, and optional ratings. The CSV gives a compact participant-level table
+of the primary rates and session context.
+Unjudged offers remain in the `shown` denominator. A play click means an
+attempt, not confirmed audio playback. Final and fifth-round ratings describe
+the whole shared-playlist session and must not be attributed to either panel.
+The `all_rounds` breakdown is diagnostic; the primary paired comparison
+excludes rounds with an empty, unavailable, or inapplicable panel. These are
+descriptive pilot results, not a causal or significance claim on their own.

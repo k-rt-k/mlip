@@ -1,0 +1,18 @@
+[Unit]
+Description=Playlist Lab public retrieval preview
+Wants=playlist-lab-retrieval.service
+After=playlist-lab-retrieval.service
+
+[Service]
+User=playlist-lab
+WorkingDirectory=/opt/playlist-lab/app
+Environment=MLIP_STUDY_DB=/var/lib/playlist-lab/preview.sqlite
+UMask=0077
+TimeoutStartSec=180
+ExecStartPre=/usr/bin/curl -fsS --output /dev/null --retry 60 --retry-delay 2 --retry-max-time 150 --retry-all-errors --max-time 4 http://127.0.0.1:8061/health
+ExecStart=/opt/playlist-lab/app/.venv/bin/waitress-serve --listen=127.0.0.1:8063 --call evaluation_app.app:create_retrieval_preview
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

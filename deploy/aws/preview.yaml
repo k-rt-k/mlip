@@ -1,0 +1,78 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS-provided HTTPS address for the live Playlist Lab retrieval preview.
+Metadata:
+  'com.aws.cloudformation.Context':
+    ref:
+      - at: docs/aws_migration_plan.md
+        has: Public preview setup and cleanup
+Parameters:
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup::Id
+  CloudFrontSecurityGroup:
+    Type: AWS::EC2::SecurityGroup::Id
+  OriginId:
+    Type: String
+    AllowedPattern: 'vo_[A-Za-z0-9]+'
+  OriginPrivateDns:
+    Type: String
+
+Resources:
+  PreviewIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: CloudFront VPC origin to the Playlist Lab preview
+      GroupId: !Ref InstanceSecurityGroup
+      SourceSecurityGroupId: !Ref CloudFrontSecurityGroup
+      IpProtocol: tcp
+      FromPort: 8080
+      ToPort: 8080
+  Distribution:
+    Type: AWS::CloudFront::Distribution
+    DependsOn: PreviewIngress
+    Metadata:
+      'com.aws.cloudformation.Context':
+        why: The AWS default certificate and hostname provide HTTPS without domain registration.
+        must:
+          - Use the VPC connection and forward session cookies with caching disabled.
+    Properties:
+      DistributionConfig:
+        Comment: Playlist Lab retrieval preview
+        Enabled: true
+        HttpVersion: http2
+        IPV6Enabled: true
+        PriceClass: PriceClass_100
+        Origins:
+          - Id: playlist-lab
+            DomainName: !Ref OriginPrivateDns
+            VpcOriginConfig:
+              VpcOriginId: !Ref OriginId
+              OriginReadTimeout: 60
+        DefaultCacheBehavior:
+          TargetOriginId: playlist-lab
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD, OPTIONS, PUT, PATCH, POST, DELETE]
+          CachedMethods: [GET, HEAD]
+          Compress: true
+          # Managed-CachingDisabled and Managed-AllViewerAndCloudFrontHeaders-2022-06
+          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+          OriginRequestPolicyId: 33f36d7e-f396-46d9-90e0-52428a34d9dc
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+        CustomErrorResponses:
+          - ErrorCode: 500
+            ErrorCachingMinTTL: 0
+          - ErrorCode: 502
+            ErrorCachingMinTTL: 0
+          - ErrorCode: 503
+            ErrorCachingMinTTL: 0
+          - ErrorCode: 504
+            ErrorCachingMinTTL: 0
+      Tags:
+        - Key: Project
+          Value: PlaylistLab
+
+Outputs:
+  Url:
+    Value: !Sub 'https://${Distribution.DomainName}'
+  DistributionId:
+    Value: !Ref Distribution
