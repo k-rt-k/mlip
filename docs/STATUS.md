@@ -1,11 +1,31 @@
 # Project Status
 
 Scope: [SCOPE.md](SCOPE.md). Deliverables:
+[final project topic](../milestones/final_project_topic.md),
 [field evaluation design and model revision](../milestones/field_evaluation_design_and_model_revision.md),
 [initial ML solution](../milestones/initial_ml_solution.md),
 [baselines milestone](../milestones/baselines.md).
 
-## Field evaluation design and model revision — current milestone
+## Final project: temporal distribution shift (topic submitted 2026-11-20)
+
+Committed study of the deployed retrieval arm, which ranks the MPD catalog
+(playlists from January 2010 to November 2017) with a pinned CLAP encoder.
+[Submitted answers](../milestones/final_project_topic.md). Owner: unassigned.
+
+- [ ] Label catalog and reference songs with release dates from existing ISRC
+  metadata.
+- [ ] Score the deployed retrieval by release era: hit rate, recall and catalog
+  coverage. `experiments/retrieval/score_mpd_retrieval.py` covers text-only
+  requests; text plus seed songs needs an offline wrapper around
+  `evaluation_app/retrieval_service.py` `Catalog.shortlist`.
+- [ ] Attribute newer-era losses to missing catalog songs or weaker CLAP matches,
+  and state whether the catalog or the encoder needs updating.
+- [ ] Test shift in word usage. The 20 current prompts contain little
+  post-2017 vocabulary, so this needs additional trend-term prompts.
+- Seasonal variation (seasons, holidays) is assumed covered by the data and is
+  not tested.
+
+## Field evaluation design and model revision
 
 Due November 19, 2026, at 11:30pm. The assignment calls for revisions to the
 offline evaluation, a two-page randomized field evaluation design, and an

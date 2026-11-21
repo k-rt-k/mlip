@@ -101,3 +101,8 @@ These decisions supplement the submission; they do not rewrite it.
   partial-only recommender and keep removed songs as hidden reference positives.
   Platform continuation uses seed-only copies with neutral titles/descriptions,
   so the full source playlist is not supplied as task context.
+- **Final project topic (Distribution and Temporal Shift):** evaluate the
+  deployed retrieval by song release era to test whether quality drops for music
+  and word usage newer than the November 2017 catalog, and whether losses come
+  from catalog coverage or the CLAP encoder. Seasonal variation is assumed to
+  be covered by the data.
